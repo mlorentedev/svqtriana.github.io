@@ -54,6 +54,7 @@ p {
   text-transform: none;
   font-weight: bold;
   font-size: 40px;
+  text-align: center;
 }
 
 /*header section*/
@@ -468,7 +469,7 @@ a:focus {
 }
 
 .brand_section {
-  text-align: center;
+  text-align: left;
   background-color: #282828;
 }
 
