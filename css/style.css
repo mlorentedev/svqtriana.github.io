@@ -796,11 +796,11 @@ a:focus {
 }
 
 .info_items .item .img-box.box-1 {
-  background-image: url(../images/location-black.png);
+  background-image: url(../images/twitter-black.png);
 }
 
 .info_items .item .img-box.box-2 {
-  background-image: url(../images/whatsapp-black.png);
+  background-image: url(../images/instagram-black.png);
 }
 
 .info_items .item .img-box.box-3 {
@@ -813,11 +813,11 @@ a:focus {
 }
 
 .info_items .item .img-box:hover.box-1 {
-  background-image: url(../images/location-white.png);
+  background-image: url(../images/twitter-white.png);
 }
 
 .info_items .item .img-box:hover.box-2 {
-  background-image: url(../images/whatsapp-white.png);
+  background-image: url(../images/instagram-white.png);
 }
 
 .info_items .item .img-box:hover.box-3 {

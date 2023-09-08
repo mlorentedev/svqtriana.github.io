@@ -6,25 +6,25 @@ footer.innerHTML = `
         Contacto
     </h3>
     <div class="info_items">
-        <a target="_blank" href="https://maps.google.com/?q=Seville">
+        <a target="_blank" href="https://twitter.com/ps_svqtriana1">
         <div class="item ">
             <div class="img-box box-1">
             </div>
             <div class="detail-box">
             <p>
-                Sevilla, España
+                @PS_SVQTRIANA1
             </p>
             </div>
         </div>
         </a>
         <a target="_blank"
-        href="https://api.whatsapp.com/send?phone=+34645728609&amp;text=Hola,%20tengo%20una%20consulta%20a%20traves%20de%20la%20web.">
+        href="https://www.instagram.com/ps_svqtriana/">
         <div class="item ">
             <div class="img-box box-2">
             </div>
             <div class="detail-box">
             <p>
-                +34 645728609
+                @PS_SVQTRIANA
             </p>
             </div>
         </div>
