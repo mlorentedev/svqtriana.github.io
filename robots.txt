@@ -1,2 +1,14 @@
 User-agent: *
-Disallow: |
+Allow: /
+Disallow: /js/
+Disallow: /css/
+
+# Sitemap
+Sitemap: https://svqtriana.com/sitemap.xml
+
+# Important pages
+Allow: /index.html
+Allow: /nosotros.html
+Allow: /productos.html
+Allow: /media.html
+Allow: /images/

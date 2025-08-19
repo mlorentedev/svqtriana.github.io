@@ -60,6 +60,7 @@
     }
 }
 
+/* Mobile navigation improvements */
 @media (max-width: 992px) {
     .about_section .cartel {
         width: 60%;
@@ -89,6 +90,25 @@
 
     .service_section .card-deck .card {
         margin-bottom: 25px;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+        width: 100%;
+    }
+    
+    .navbar-nav .nav-item {
+        margin: 5px 0;
+    }
+    
+    .custom_nav-container.navbar-expand-lg .navbar-nav .nav-link {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .social {
+        justify-content: center;
+        padding: 15px 0;
     }
 }
 
@@ -183,6 +203,68 @@
     .info_items::before {
         display: none;
     }
+    
+    .navbar-brand img {
+        width: 100px !important;
+    }
+    
+    .custom_nav-container {
+        padding: 5px 0;
+    }
+    
+    .custom_nav-container.navbar-expand-lg .navbar-nav .nav-link {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Product grid responsive styles */
+.product-item {
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: rgba(40, 40, 40, 0.9);
+  border-radius: 8px;
+}
+
+.product-item .slider-img {
+  margin-bottom: 15px;
+}
+
+.product-item .slider-img img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.product-item h5 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.product-item ul {
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+
+.product-item li {
+  margin-bottom: 5px;
+  color: #f5faf4;
+}
+
+@media (max-width: 768px) {
+  .product-item {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .product-item h5 {
+    font-size: 1.1rem;
+  }
+  
+  .product-item ul {
+    font-size: 0.85rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -205,6 +287,25 @@
         display: flex;
         margin:auto
       }
+      
+    .history_section .row {
+        margin-left: 15px;
+        margin-right: 15px;
+    }
+    
+    .history_section p {
+        font-size: 16px;
+        padding: 0 5px;
+        text-align: left;
+    }
+    
+    .layout_padding {
+        padding: 25px 0;
+    }
+    
+    .layout_padding2 {
+        padding: 25px 0;
+    }
 
     .slider_item-container .slider_item-detail {
         text-align: center;
@@ -215,8 +316,27 @@
     }
 
     .why_section {
-        margin-left: 50px;  
-        margin-right: 50px;
+        margin-left: 15px;  
+        margin-right: 15px;
+    }
+    
+    .product-item {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .product-item h5 {
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    .brand_heading {
+        padding: 0 15px;
+    }
+    
+    .product-item ul {
+        font-size: 0.8rem;
+        padding-left: 15px;
     }
     
     .why_section .row .col-md-6 {

@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 
   <head xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
     <!-- Basic -->
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Cache-Control" content="no-cache, max-age=0"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <meta name="robots" content="ALL">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600"/>
+    <meta name="robots" content="index, follow">
+    <meta name="referrer" content="no-referrer-when-downgrade">
     <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Site Metas -->
@@ -16,38 +15,94 @@
     <meta name="description" content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
     <meta name="author" content="SVQ Triana" />
     <!-- Site sharing-->
+    <meta property="og:type"               content="website" />
     <meta property="og:url"                content="https://svqtriana.com/" />
-    <meta property="og:title"              content="PS SVQ Triana" />
+    <meta property="og:title"              content="PS SVQ Triana - Peña Sevillista" />
     <meta property="og:description"        content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
-    <meta property="og:image"              content="https://svqtriana.com/images/logo_192.png" /> <!-- invalid, but expected -->
+    <meta property="og:image"              content="https://svqtriana.com/images/logo_192.png" />
     <meta property="og:image:width"        content="1200"/>
     <meta property="og:image:height"       content="630"/>
-    <link property="image" type="image/png" href="https://svqtriana.com/images/logo_192.png" /> <!-- valid -->
+    <meta property="og:site_name"          content="PS SVQ Triana" />
+    <meta property="og:type"               content="website" />
+    <meta name="twitter:card"              content="summary_large_image" />
+    <meta name="twitter:title"             content="PS SVQ Triana - Peña Sevillista" />
+    <meta name="twitter:description"       content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
+    <meta name="twitter:image"             content="https://svqtriana.com/images/cartel-26.jpeg" />
+    <meta property="og:image:alt"          content="Logo de PS SVQ Triana" />
+    <meta property="og:locale"             content="es_ES" />
+    <meta name="twitter:card"              content="summary" />
+    <meta name="twitter:site"              content="@ps_svqtriana1" />
+    <link rel="canonical" href="https://svqtriana.com/" />
 
   <!--Tab icon-->
   <link rel="icon" type="image/png" href="images/logo_192.png" sizes="16x16">
   <title>SVQ TRIANA - Peña Sevillista</title>
   
-  <!-- slider stylesheet -->
-  <link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
-
-  <!-- icons library -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <!-- bootstrap core css -->
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-
-  <!-- fonts style -->
-  <link href="https://fonts.googleapis.com/css?family=Dosis:400,500|Poppins:400,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/glacial-indifference" type="text/css" />
-
-  <!-- Custom styles for this template -->
+  <!-- Resource hints for performance -->
+  <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
+  <link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin>
+  <link rel="dns-prefetch" href="https://code.jquery.com">
+  
+  <!-- Critical CSS first -->
+   <link href="css/fonts.css" rel="stylesheet" />
   <link href="css/style.css" rel="stylesheet" />
-  <!-- responsive style -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
   <link href="css/responsive.css" rel="stylesheet" />
-  <!-- Box slider style-->
-  <link rel="stylesheet" href="css/jquery.bxslider.css">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="images/site.webmanifest">
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="theme-color" content="#df0606">
+  <meta name="msapplication-TileColor" content="#df0606">
+  <meta name="application-name" content="PS SVQ Triana">
+  
+  <!-- Structured Data for Local Business -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsClub",
+    "name": "PS SVQ Triana - Peña Sevillista",
+    "alternateName": "SVQ Triana",
+    "description": "Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla. Somos una comunidad de aficionados del Sevilla FC unidos por la pasión sevillista.",
+    "url": "https://svqtriana.com",
+    "logo": "https://svqtriana.com/images/logo_192.png",
+    "image": "https://svqtriana.com/images/cartel-26.jpeg",
+    "foundingDate": "2019-07-27",
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Triana, Sevilla, España"
+    },
+    "location": {
+      "@type": "Place",
+      "name": "Triana, Sevilla",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Sevilla",
+        "addressRegion": "Andalucía",
+        "addressCountry": "ES"
+      }
+    },
+    "sameAs": [
+      "https://www.instagram.com/ps_svqtriana/",
+      "https://www.facebook.com/PS-SVQ-Triana-110014627020914",
+      "https://twitter.com/ps_svqtriana1"
+    ],
+    "sport": "Football",
+    "memberOf": {
+      "@type": "SportsTeam",
+      "name": "Sevilla FC"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Membresía de Peña",
+        "description": "Hazte socio de la peña sevillista",
+        "url": "https://docs.google.com/forms/d/e/1FAIpQLSdJ7KOc7hi-vBmWrmMwsD1zKJmmoM0TmtUd1IQ3cx_eS69azA/viewform"
+      }
+    ]
+  }
+  </script>
   </head>
 
   <body>
@@ -56,37 +111,53 @@
     <!-- end header section -->
 
     <!-- main section -->
-    <section class="about_section layout_padding" id="us">
-      <div class="container-fluid">
-        <div class="about_detail-box">
-          <div class="row">
-            <h3 class="custom_heading">
-              TEMPORADA 24/25
-            </h3>
-          </div>
+    <main>
+      <section class="about_section layout_padding" id="us" role="main">
+        <div class="container-fluid">
+          <div class="about_detail-box">
+            <header class="row">
+              <h1 class="custom_heading">
+                TEMPORADA 25/26
+              </h1>
+            </header>
             <div class="row">
-            <p class="text-centered">
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLSfs7_FnEzLZZWGWJDrsfNfsIKm971zwslPpmj9egR9UEcXRgA/viewform?usp=sf_link">HAZTE SOCIO</a>
-              <br>
-            </p>
-          </div>
-          <div class="row">
-            <div class="cartel">
-              <img src="images/cartel-25.jpg" alt="">
+              <p class="text-centered">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdJ7KOc7hi-vBmWrmMwsD1zKJmmoM0TmtUd1IQ3cx_eS69azA/viewform" aria-label="Formulario para hacerse socio de la peña">HAZTE SOCIO</a>
+              </p>
             </div>
-          </div>  
+            <div class="row">
+              <figure class="cartel">
+                <img src="images/cartel-26.jpeg" alt="Cartel oficial de la temporada 25/26 de PS SVQ Triana" loading="lazy">
+              </figure>
+            </div>  
+          </div>
         </div>
-        
-      </div>
-    </section>
+      </section>
+    </main>
     <!-- end main section -->
 
     <!-- footer section -->
     <script src="js/footer.js" type="text/javascript"></script>
     <!-- end footer section -->
 
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script src="js/bootstrap.js"></script>
+    <!-- Performance optimizations -->
+    <script src="js/performance.js" async></script>
+    
+    <!-- Updated jQuery for security -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
+            crossorigin="anonymous" defer></script>
+    <script src="js/bootstrap.min.js" defer></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => console.log('SW registered'))
+          .catch(err => console.log('SW registration failed'));
+      });
+    }
+    </script>
   </body>
 
 </html>
