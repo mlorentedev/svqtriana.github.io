@@ -1,62 +1,218 @@
+# SVQ Triana - Enhanced Caching and Performance Configuration
+
 # Enable GZIP compression
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE application/xml
-    AddOutputFilterByType DEFLATE application/xhtml+xml
-    AddOutputFilterByType DEFLATE application/rss+xml
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript
+  AddOutputFilterByType DEFLATE application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml text/xml
+  AddOutputFilterByType DEFLATE font/woff font/woff2 application/font-woff application/font-woff2
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE text/plain
+  
+  # Handle browser bugs
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  Header append Vary User-Agent
 </IfModule>
 
-# Set cache headers for static assets
+# Enable Brotli compression (if available)
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/javascript
+  AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json
+  AddOutputFilterByType BROTLI_COMPRESS font/woff font/woff2
+</IfModule>
+
+# Efficient Cache Lifetimes - Optimized for repeat visits
 <IfModule mod_expires.c>
     ExpiresActive on
     
-    # Images
-    ExpiresByType image/jpg "access plus 1 month"
-    ExpiresByType image/jpeg "access plus 1 month"
-    ExpiresByType image/gif "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType image/webp "access plus 1 month"
-    ExpiresByType image/svg+xml "access plus 1 month"
+    # HTML pages - 1 day (balance freshness with performance)
+    ExpiresByType text/html "access plus 1 day"
     
-    # CSS and JavaScript
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType application/x-javascript "access plus 1 month"
+    # CSS and JavaScript - 30 days (versioned assets)
+    ExpiresByType text/css "access plus 30 days"
+    ExpiresByType application/javascript "access plus 30 days"
+    ExpiresByType application/x-javascript "access plus 30 days"
+    ExpiresByType text/javascript "access plus 30 days"
     
-    # Fonts
+    # Web fonts - 1 year (rarely change)
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
     
-    # HTML files
-    ExpiresByType text/html "access plus 1 week"
+    # Images - 7 days (frequent enough for content updates)
+    ExpiresByType image/jpg "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 7 days"
+    ExpiresByType image/gif "access plus 7 days"
+    ExpiresByType image/png "access plus 7 days"
+    ExpiresByType image/webp "access plus 7 days"
+    ExpiresByType image/svg+xml "access plus 7 days"
+    ExpiresByType image/x-icon "access plus 30 days"
+    ExpiresByType image/vnd.microsoft.icon "access plus 30 days"
     
-    # Manifest and XML files
-    ExpiresByType application/manifest+json "access plus 1 month"
-    ExpiresByType application/xml "access plus 1 week"
-    ExpiresByType text/xml "access plus 1 week"
+    # Favicon and app icons - 30 days
+    ExpiresByType image/ico "access plus 30 days"
+    
+    # Manifest and config files
+    ExpiresByType application/manifest+json "access plus 7 days"
+    ExpiresByType application/json "access plus 1 hour"
+    ExpiresByType application/xml "access plus 1 hour"
+    ExpiresByType text/xml "access plus 1 hour"
+    
+    # Default for other files
+    ExpiresDefault "access plus 1 day"
 </IfModule>
 
-# Security headers
+# Advanced Cache Control Headers
+<IfModule mod_headers.c>
+    # Remove ETags (we use explicit cache control)
+    Header unset ETag
+    FileETag None
+    
+    # HTML pages - short cache with revalidation
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "public, max-age=86400, must-revalidate"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # CSS and JavaScript - long cache with immutable flag
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=2592000, immutable"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # Web fonts - very long cache
+    <FilesMatch "\.(woff|woff2|eot|ttf|otf)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        Header set Access-Control-Allow-Origin "*"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # Images - medium cache with efficient validation
+    <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=604800"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # Service Worker - no cache (always check for updates)
+    <FilesMatch "sw\.js$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    
+    # Manifest files
+    <FilesMatch "\.(webmanifest|manifest)$">
+        Header set Cache-Control "public, max-age=604800"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # JSON and XML files
+    <FilesMatch "\.(json|xml)$">
+        Header set Cache-Control "public, max-age=3600"
+        Header set Vary "Accept-Encoding"
+    </FilesMatch>
+</IfModule>
+
+# Security headers - Enhanced
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options nosniff
-    Header always set X-Frame-Options DENY
+    Header always set X-Frame-Options SAMEORIGIN
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     
-    # Content Security Policy - CRITICAL SECURITY
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://code.jquery.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://fontlibrary.org; font-src 'self' https://fonts.gstatic.com https://fontlibrary.org; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://www.google.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com; upgrade-insecure-requests;"
+    # Content Security Policy - Enhanced for performance
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://code.jquery.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://fontlibrary.org; font-src 'self' https://fonts.gstatic.com https://fontlibrary.org; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://www.google.com https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com; upgrade-insecure-requests;"
     
     # Additional security headers
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
+    
+    # HSTS for HTTPS
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Performance hint headers
+    Header always set Accept-CH "DPR, Viewport-Width, Width"
+    Header always set Critical-CH "DPR"
 </IfModule>
 
-# Redirect to HTTPS (if SSL is available)
-# RewriteEngine On
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# MIME Types for optimal delivery
+<IfModule mod_mime.c>
+    # Web fonts
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType application/vnd.ms-fontobject .eot
+    AddType font/ttf .ttf
+    AddType font/otf .otf
+    
+    # Images
+    AddType image/webp .webp
+    AddType image/svg+xml .svg
+    
+    # Application files
+    AddType application/manifest+json .webmanifest
+    AddType application/json .json
+    
+    # Enable proper content type for service workers
+    AddType application/javascript .js
+    AddType text/javascript .js
+</IfModule>
+
+# URL Rewriting for clean URLs and performance
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Force HTTPS redirect (uncomment when SSL is ready)
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    
+    # Remove www subdomain (optional - improves cache efficiency)
+    # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+    # RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+    
+    # Add trailing slash to directories for consistent caching
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !(.*)/$
+    RewriteRule ^(.*)$ $1/ [L,R=301]
+    
+    # Preload critical resources (HTTP/2 Server Push)
+    # RewriteRule ^index\.html$ - [E=push:/css/style.css,E=push:/js/performance.js,E=push:/fonts/GlacialIndifference-Regular.woff2]
+</IfModule>
+
+# Prevent access to sensitive files
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Require all denied
+</FilesMatch>
+
+# Block access to .htaccess itself
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# Block access to hidden files (except .well-known)
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} "!(^|/)\.well-known/([^./]+./?)+$" [NC]
+    RewriteCond %{SCRIPT_FILENAME} -d [OR]
+    RewriteCond %{SCRIPT_FILENAME} -f
+    RewriteRule "(^|/)\." - [F]
+</IfModule>
+
+# Performance optimizations
+<IfModule mod_setenvif.c>
+    # Set keep-alive for better performance
+    SetEnvIf Request_URI "\.(?:gif|jpe?g|png|webp)$" no-gzip dont-vary
+    SetEnvIf Request_URI "\.(?:exe|t?gz|zip|bz2|sit|rar)$" no-gzip dont-vary
+    SetEnvIf Request_URI "\.pdf$" no-gzip dont-vary
+</IfModule>
+
+# Enable HTTP/2 Server Push for critical resources (if supported)
+<IfModule mod_http2.c>
+    H2PushPriority text/css 32
+    H2PushPriority application/javascript 16
+    H2PushPriority font/woff2 8
+    H2PushPriority image/webp 4
+</IfModule>

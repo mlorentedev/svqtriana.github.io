@@ -33,16 +33,89 @@
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin>
   <link rel="dns-prefetch" href="https://code.jquery.com">
   
-  <!-- Critical CSS first -->
-   <link href="css/fonts.css" rel="stylesheet" />
-  <link href="css/style.css" rel="stylesheet" />
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
-  <link href="css/responsive.css" rel="stylesheet" />
-
-  <!-- Non-critical CSS - deferred loading -->
-  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/jquery.bxslider.css" media="print" onload="this.media='all'">
+  <!-- Critical CSS inlined for above-the-fold content -->
+  <style>
+    /* Critical reset and base styles */
+    html{scroll-behavior:smooth}
+    *{box-sizing:border-box}
+    body{font-family:"Arial","Helvetica",sans-serif;font-weight:400;font-style:normal;color:#f5faf4;background-color:#fff;margin:0}
+    img{max-width:100%;height:auto;vertical-align:middle}
+    
+    /* Critical font loading */
+    .font-loading body{font-family:"Arial","Helvetica",sans-serif}
+    .font-loaded body{font-family:"GlacialIndifferenceRegular","Poppins","Arial","Helvetica",sans-serif}
+    
+    /* Critical layout classes */
+    .container{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
+    .container-fluid{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
+    .row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}
+    .col-12{flex:0 0 100%;max-width:100%}
+    .col-md-6{flex:0 0 50%;max-width:50%}
+    .col-lg-4{flex:0 0 33.333333%;max-width:33.333333%}
+    .mb-4{margin-bottom:1.5rem}
+    .layout_padding{padding:45px 0}
+    .layout_padding2{padding:45px 0}
+    
+    /* Critical header styles */
+    .hero_area{height:20vh;background-color:#242424;min-height:80px}
+    .header_section .container-fluid{padding-right:15px;padding-left:15px}
+    .navbar-brand{display:flex;align-items:center;text-transform:uppercase;font-weight:bold;font-size:24px;color:#fafcfd}
+    .navbar-brand img{width:128px}
+    .custom_nav-container .navbar-toggler{outline:none}
+    .custom_nav-container .navbar-toggler .navbar-toggler-icon{background-image:url(images/webp/menu.webp);background-size:55px}
+    
+    /* Critical product section styles */
+    .brand_section{background-color:#242424}
+    .brand_heading{text-align:center;margin-bottom:30px}
+    .custom_heading_2{color:#fff;text-transform:none;font-weight:bold;font-size:40px;text-align:center}
+    .brand_item-container{padding:0 15px}
+    .product-card{background:#fff;border-radius:8px;padding:20px;margin:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);height:100%}
+    .product-image{margin-bottom:15px}
+    .product-title{color:#252525;font-size:18px;font-weight:bold;margin-bottom:10px}
+    .product-content{color:#252525}
+    .feature-item,.price-item{display:flex;justify-content:space-between;margin-bottom:5px}
+    .price-value{font-weight:bold;color:#df0606}
+    
+    /* Critical responsive styles */
+    @media (max-width:768px){
+      .custom_heading_2{font-size:32px}
+      .col-md-6{flex:0 0 100%;max-width:100%}
+      .hero_area{height:15vh;min-height:70px}
+      .product-card{margin:10px 0}
+    }
+    @media (max-width:576px){
+      .custom_heading_2{font-size:28px}
+      .col-lg-4{flex:0 0 100%;max-width:100%}
+    }
+  </style>
+  
+  <!-- Load web fonts asynchronously -->
+  <link rel="preconnect" href="/fonts" crossorigin>
+  
+  <!-- Load non-critical CSS asynchronously -->
+  <script>
+    // CSS loading utility
+    !function(e){"use strict";var t=function(t,n,r){function o(e){return i.body?e():void setTimeout(function(){o(e)})}function l(){d.addEventListener&&d.removeEventListener("load",l),d.media=r||"all"}var i=e.document,d=i.createElement("link");if(n)d.id=n;d.rel="stylesheet",d.href=t,d.media="only x",o(function(){i.head.appendChild(d)}),setTimeout(function(){d.addEventListener?d.addEventListener("load",l):d.attachEvent&&d.attachEvent("onload",l)});setTimeout(l,3e3)};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
+    // Load CSS files
+    loadCSS("css/fonts.css");
+    loadCSS("css/style.css");
+    loadCSS("css/bootstrap.css");
+    loadCSS("css/responsive.css");
+    loadCSS("css/jquery.bxslider.css");
+    loadCSS("https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap");
+    loadCSS("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+  </script>
+  
+  <!-- Fallback for browsers without JS -->
+  <noscript>
+    <link href="css/fonts.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/responsive.css" rel="stylesheet">
+    <link href="css/jquery.bxslider.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  </noscript>
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="images/site.webmanifest">
@@ -98,8 +171,7 @@
   </head>
 
 <body>
-  <!-- header section -->
-  <script src="js/header.js" type="text/javascript"></script>
+  <!-- header section will be loaded by deferred script -->
   <!-- end header section -->
 
   <!-- brand section -->
@@ -243,19 +315,46 @@
   </section>
   <!-- end brand section -->
 
-  <!-- footer section -->
-  <script src="js/footer.js" type="text/javascript"></script>
+  <!-- footer section will be loaded by deferred script -->
   <!-- end footer section -->
 
-  <!-- Performance optimizations -->
-  <script src="js/performance.js" async></script>
-  
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/jquery.bxslider.js"></script>
-
+  <!-- Load all JavaScript at the end for better performance -->
+  <!-- Critical scripts loaded immediately -->
   <script>
-    $(document).ready(function() {
+    // Inline critical performance optimizations
+    document.documentElement.classList.add('font-loading');
+    
+    // Font loading optimization
+    if ('fonts' in document) {
+      document.fonts.ready.then(() => {
+        document.documentElement.classList.remove('font-loading');
+        document.documentElement.classList.add('font-loaded');
+      });
+    } else {
+      setTimeout(() => {
+        document.documentElement.classList.remove('font-loading');
+        document.documentElement.classList.add('font-loaded');
+      }, 3000);
+    }
+  </script>
+  
+  <!-- Load non-critical scripts asynchronously -->
+  <script src="js/header.js" defer></script>
+  <script src="js/footer.js" defer></script>
+  <script src="js/performance.js" defer></script>
+  
+  <!-- External libraries loaded after page content -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous" defer></script>
+  <script src="js/bootstrap.min.js" defer></script>
+  <script src="js/jquery.bxslider.js" defer></script>
+
+  <script defer>
+    // Wait for DOM and jQuery to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ensure jQuery and bxSlider are loaded before initializing
+      function initSliders() {
+        if (typeof jQuery !== 'undefined' && jQuery.fn.bxSlider) {
+          jQuery(document).ready(function($) {
       // Initialize each slider separately to ensure they all work
       $('.bxslider').each(function() {
         var slider = $(this).bxSlider({
@@ -284,6 +383,13 @@
       // Set initial opacity to prevent flash
       $('.product-image').css('opacity', '0');
       $('.product-image').animate({'opacity': '1'}, 300);
+          });
+        } else {
+          // Retry after a short delay if libraries aren't loaded yet
+          setTimeout(initSliders, 100);
+        }
+      }
+      initSliders();
     });
   </script>
   
