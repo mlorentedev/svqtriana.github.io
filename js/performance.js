@@ -36,8 +36,8 @@
     // Preload critical resources
     function preloadCriticalResources() {
         const criticalImages = [
-            'images/logo_192.png',
-            'images/bg.jpg'
+            'images/webp/logo_192.webp',
+            'images/webp/bg.webp'
         ];
         
         criticalImages.forEach(src => {

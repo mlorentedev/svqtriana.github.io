@@ -206,7 +206,7 @@ a:focus {
 }
 
 .custom_nav-container .nav_search-btn {
-  background-image: url(../images/search-icon.png);
+  background-image: url(../images/webp/search-icon.webp);
   background-size: 22px;
   background-repeat: no-repeat;
   background-position-y: 7px;
@@ -251,7 +251,7 @@ a:focus {
 }
 
 .custom_nav-container .navbar-toggler .navbar-toggler-icon {
-  background-image: url(../images/menu.png);
+  background-image: url(../images/webp/menu.webp);
   background-size: 55px;
 }
 /*end header section*/
@@ -308,7 +308,7 @@ a:focus {
 
 /* Removed unused slider section styles */
 .bg {
-  background-image: url(../images/bg.jpg);
+  background-image: url(../images/webp/bg.webp);
   background-size: cover;
 }
 
@@ -328,7 +328,7 @@ a:focus {
 }
 
 .history_section {
-  /*background-image: url(../images/noche.jpg);*/
+  /*background-image: url(../images/webp/noche.webp);*/
   font-size: 22px;
   text-align: justify;
   background-position: center;
@@ -402,7 +402,7 @@ a:focus {
 }
 
 .about_section {
-  background-image: url(../images/fondorsp.jpeg);
+  background-image: url(../images/webp/fondorsp.webp);
   background-size: cover;
 }
 
@@ -539,37 +539,37 @@ a:focus {
   background-image: url(../images/video5.PNG);
 }
 .brand_img-box.item-1 {
-  background-image: url(../images/vaso_vacio.jpeg);
+  background-image: url(../images/webp/vaso_vacio.webp);
 }
 .brand_img-box.item-2 {
   background-image: url(../images/pulsera.PNG);
 }
 .brand_img-box.item-3 {
-  background-image: url(../images/bandera.jpeg);
+  background-image: url(../images/webp/bandera.webp);
 }
 .brand_img-box.item-4 {
-  background-image: url(../images/bufanda.jpg);
+  background-image: url(../images/webp/bufanda.webp);
 }
 .brand_img-box.item-5 {
-  background-image: url(../images/sudadera.jpg);
+  background-image: url(../images/webp/sudadera.webp);
 }
 .brand_img-box.item-6 {
-  background-image: url(../images/camiseta_aniversario.jpg);
+  background-image: url(../images/webp/camiseta_aniversario.webp);
 }
 .brand_img-box.item-7 {
-  background-image: url(../images/camiseta_oficial.jpg);
+  background-image: url(../images/webp/camiseta_oficial.webp);
 }
 .brand_img-box.item-8 {
-  background-image: url(../images/camiseta_destino.jpg);
+  background-image: url(../images/webp/camiseta_destino.webp);
 }
 .brand_img-box.item-9 {
-  background-image: url(../images/camiseta_leyenda.jpg);
+  background-image: url(../images/webp/camiseta_leyenda.webp);
 }
 .brand_img-box.item-10 {
-  background-image: url(../images/camiseta_origen.jpg);
+  background-image: url(../images/webp/camiseta_origen.webp);
 }
 .brand_img-box.item-11 {
-  background-image: url(../images/pegatinas.jpeg);
+  background-image: url(../images/webp/pegatinas.webp);
 }
 
 .brand_img-box {
@@ -726,15 +726,15 @@ a:focus {
 }
 
 .info_items .item .img-box.box-1 {
-  background-image: url(../images/twitter-black.png);
+  background-image: url(../images/webp/twitter-black.webp);
 }
 
 .info_items .item .img-box.box-2 {
-  background-image: url(../images/instagram-black.png);
+  background-image: url(../images/webp/instagram-black.webp);
 }
 
 .info_items .item .img-box.box-3 {
-  background-image: url(../images/email-black.png);
+  background-image: url(../images/webp/email-black.webp);
 }
 
 .info_items .item .img-box:hover {
@@ -743,15 +743,15 @@ a:focus {
 }
 
 .info_items .item .img-box:hover.box-1 {
-  background-image: url(../images/twitter-white.png);
+  background-image: url(../images/webp/twitter-white.webp);
 }
 
 .info_items .item .img-box:hover.box-2 {
-  background-image: url(../images/instagram-white.png);
+  background-image: url(../images/webp/instagram-white.webp);
 }
 
 .info_items .item .img-box:hover.box-3 {
-  background-image: url(../images/email-white.png);
+  background-image: url(../images/webp/email-white.webp);
 }
 
 /* footer section*/

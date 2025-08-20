@@ -122,7 +122,7 @@ a:focus {
 }
 
 .custom_nav-container .nav_search-btn {
-  background-image: url(../images/search-icon.png);
+  background-image: url(../images/webp/search-icon.webp);
 
   background-size: 22px;
   background-repeat: no-repeat;
@@ -160,7 +160,7 @@ a:focus {
 }
 
 .custom_nav-container .navbar-toggler .navbar-toggler-icon {
-  background-image: url(../images/menu.png);
+  background-image: url(../images/webp/menu.webp);
   background-size: 55px;
 }
 
@@ -246,17 +246,17 @@ a:focus {
 
 .slider_section .carousel-control-prev {
   left: 2%;
-  background-image: url(../images/prev.png);
+  background-image: url(../images/webp/prev.webp);
 }
 
 .slider_section .carousel-control-next {
   right: 2%;
-  background-image: url(../images/next.png);
+  background-image: url(../images/webp/next.webp);
 }
 
 /* end slider section */
 .bg {
-  background-image: url(../images/bg.jpg);
+  background-image: url(../images/webp/bg.webp);
   background-size: cover;
 }
 
@@ -323,23 +323,23 @@ a:focus {
   position: relative;
 
   &.item-1 {
-    background-image: url(../images/item-1.jpg);
+    background-image: url(../images/webp/item-1.webp);
   }
 
   &.item-2 {
-    background-image: url(../images/item-2.jpg);
+    background-image: url(../images/webp/item-2.webp);
   }
 
   &.item-3 {
-    background-image: url(../images/item-3.jpg);
+    background-image: url(../images/webp/item-3.webp);
   }
 
   &.item-4 {
-    background-image: url(../images/item-4.jpg);
+    background-image: url(../images/webp/item-4.webp);
   }
 
   &.item-5 {
-    background-image: url(../images/item-5.jpg);
+    background-image: url(../images/webp/item-5.webp);
   }
 }
 
@@ -513,12 +513,12 @@ a:focus {
 
   .carousel-control-prev {
     left: 2%;
-    background-image: url(../images/prev.png);
+    background-image: url(../images/webp/prev.webp);
   }
 
   .carousel-control-next {
     right: 2%;
-    background-image: url(../images/next.png);
+    background-image: url(../images/webp/next.webp);
   }
 }
 
@@ -529,7 +529,7 @@ a:focus {
   color: #fff;
   background: linear-gradient(rgba($color: #000, $alpha: 0.3),
       rgba($color: #000, $alpha: 0.3)),
-    url(../images/contact.jpg);
+    url(../images/webp/contact.webp);
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -627,30 +627,30 @@ a:focus {
   .item {
     .img-box {
       &.box-1 {
-        background-image: url(../images/location-blue.png);
+        background-image: url(../images/webp/location-blue.webp);
       }
 
       &.box-2 {
-        background-image: url(../images/telephone-blue.png);
+        background-image: url(../images/webp/telephone-blue.webp);
       }
 
       &.box-3 {
-        background-image: url(../images/envelope-blue.png);
+        background-image: url(../images/webp/envelope-blue.webp);
       }
 
       &:hover {
         background-color: #179dfb;
 
         &.box-1 {
-          background-image: url(../images/location-white.png);
+          background-image: url(../images/webp/location-white.webp);
         }
 
         &.box-2 {
-          background-image: url(../images/telephone-white.png);
+          background-image: url(../images/webp/telephone-white.webp);
         }
 
         &.box-3 {
-          background-image: url(../images/envelope-white.png);
+          background-image: url(../images/webp/envelope-white.webp);
         }
       }
     }

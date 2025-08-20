@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     brandLink.href = 'index.html';
     
     const brandImg = document.createElement('img');
-    brandImg.src = 'images/logo_192.png';
+    brandImg.src = 'images/webp/logo_192.webp';
     brandImg.alt = 'PS SVQ Triana Logo';
     brandLink.appendChild(brandImg);
     
