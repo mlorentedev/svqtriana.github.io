@@ -42,6 +42,7 @@
   <!-- Non-critical CSS - deferred loading -->
   <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/jquery.bxslider.css" media="print" onload="this.media='all'">
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="images/site.webmanifest">
@@ -249,17 +250,40 @@
   <!-- Performance optimizations -->
   <script src="js/performance.js" async></script>
   
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
-          crossorigin="anonymous" defer></script>
-  <script src="js/bootstrap.min.js" defer></script>
-  <script src="js/jquery.bxslider.js" defer></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.bxslider.js"></script>
+
   <script>
-    $(document).ready(function () {
-      $('.bxslider').bxSlider({
-        mode: 'fade',
-        pager: true,
-        auto: true
+    $(document).ready(function() {
+      // Initialize each slider separately to ensure they all work
+      $('.bxslider').each(function() {
+        var slider = $(this).bxSlider({
+          mode: 'fade',           // Use fade transition
+          auto: true,             // Enable auto sliding
+          autoStart: true,        // Start automatically
+          autoControls: false,    // No play/pause button
+          stopAutoOnClick: false, // Continue auto play after clicking
+          pager: true,            // Show pagination dots
+          controls: false,        // No prev/next arrows
+          speed: 800,               // Transition speed in ms
+          pause: 2500,            // Time between slides in ms
+          adaptiveHeight: false,  // Keep consistent height
+          responsive: true,       // Be responsive
+          touchEnabled: true,     // Enable touch swipe
+          infiniteLoop: true,     // Loop continuously
+          preloadImages: 'all',   // Load all images before starting
+          easing: 'ease-in-out',  // Smooth transition effect
+          onSliderLoad: function(currentIndex) {
+            // Make sure the slider container is visible
+            $(this).closest('.product-image').css('opacity', '1');
+          }
+        });
       });
+      
+      // Set initial opacity to prevent flash
+      $('.product-image').css('opacity', '0');
+      $('.product-image').animate({'opacity': '1'}, 300);
     });
   </script>
   

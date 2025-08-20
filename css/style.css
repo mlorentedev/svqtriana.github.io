@@ -649,9 +649,7 @@ a:focus {
   color: #fcf9fc;
 }
 
-.brand_section .row {
-  margin-left: 0px;
-}
+/* Remove problematic row styling that was causing image misalignment */
 
 /* Removed unused why_section styles */
 
@@ -1207,5 +1205,155 @@ img {
   
   .video-title {
     font-size: 1rem;
+  }
+}
+
+/* Fix for bxSlider centering */
+/* Reset and fix bxSlider wrapper */
+.product-card .bx-wrapper {
+  position: relative !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  max-width: 100% !important;
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+/* Fix viewport */
+.product-card .bx-viewport {
+  width: 100% !important;
+  height: 250px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  left: auto !important;
+  background: transparent !important;
+}
+
+/* Ensure product image container works */
+.product-image {
+  position: relative;
+  overflow: hidden;
+  height: 250px;
+  background: #000;
+}
+
+/* Fix the slider wrapper that bxSlider creates */
+.product-image .bx-wrapper .bx-viewport > div {
+  position: relative !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+/* Fix individual slides */
+  .product-image {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Add shadow to images */
+  .product-image .bxslider li img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+    /* Add subtle shadow overlay */
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  }
+  
+  /* Enhance fade transition with CSS */
+  .product-image .bx-wrapper .bx-viewport {
+    box-shadow: 
+      0 4px 6px rgba(0, 0, 0, 0.1),
+      0 8px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  /* Smooth fade animation */
+  .bx-fade {
+    transition: opacity 0.8s ease-in-out;
+  }
+  
+  /* Optional: Add a vignette effect */
+  .product-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.2) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* Make sure pager dots are above the vignette */
+  .product-card .bx-wrapper .bx-pager {
+    z-index: 2;
+  }
+
+/* Style the pager dots */
+.product-card .bx-wrapper .bx-pager {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 100;
+  padding: 0;
+}
+
+.product-card .bx-wrapper .bx-pager .bx-pager-item {
+  display: inline-block;
+  margin: 0 3px;
+}
+
+.product-card .bx-wrapper .bx-pager.bx-default-pager a {
+  background: rgba(255, 255, 255, 0.5);
+  text-indent: -9999px;
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  outline: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.product-card .bx-wrapper .bx-pager.bx-default-pager a:hover,
+.product-card .bx-wrapper .bx-pager.bx-default-pager a.active,
+.product-card .bx-wrapper .bx-pager.bx-default-pager a:focus {
+  background: #df0606;
+  border-color: #df0606;
+  transform: scale(1.2);
+}
+
+/* Remove any container padding that causes shift */
+.brand_item-container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .product-card .bx-viewport,
+  .product-image,
+  .product-image .bxslider li,
+  .product-image .bxslider li img {
+    height: 200px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-card .bx-viewport,
+  .product-image,
+  .product-image .bxslider li,
+  .product-image .bxslider li img {
+    height: 180px !important;
   }
 }
