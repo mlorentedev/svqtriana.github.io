@@ -28,9 +28,7 @@ const products = [
     id: 'pulsera',
     name: 'Pulsera oficial',
     images: ['/images/webp/pulsera2.webp'],
-    prices: [
-      { label: '', value: '1€' },
-    ],
+    prices: [{ label: '', value: '1€' }],
   },
 ];
 ---
@@ -52,57 +50,64 @@ const products = [
       </header>
 
       <div class="products-grid">
-        {products.map((product) => (
-          <article class="product-card">
-            <div class="product-image">
-              <img
-                src={product.images[0]}
-                alt={product.name}
-                loading="lazy"
-                width="400"
-                height="400"
-              />
-            </div>
-            <div class="product-content">
-              <h2 class="product-title">{product.name}</h2>
-
-              {product.colors && (
-                <div class="product-features">
-                  <div class="feature-item">
-                    <span class="feature-label">Colores:</span>
-                    <span class="feature-value">{product.colors}</span>
-                  </div>
-                </div>
-              )}
-
-              {product.sizes && (
-                <div class="product-features">
-                  <div class="feature-item">
-                    <span class="feature-label">Tallas:</span>
-                    <span class="feature-value">{product.sizes}</span>
-                  </div>
-                </div>
-              )}
-
-              <div class={`product-pricing ${product.prices.length === 1 ? 'single-price' : ''}`}>
-                {product.prices.map((price) => (
-                  <div class="price-item">
-                    {price.label && <span class="price-label">{price.label}</span>}
-                    <span class="price-value">{price.value}</span>
-                  </div>
-                ))}
+        {
+          products.map((product) => (
+            <article class="product-card">
+              <div class="product-image">
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  loading="lazy"
+                  width="400"
+                  height="400"
+                />
               </div>
-            </div>
-          </article>
-        ))}
+              <div class="product-content">
+                <h2 class="product-title">{product.name}</h2>
+
+                {product.colors && (
+                  <div class="product-features">
+                    <div class="feature-item">
+                      <span class="feature-label">Colores:</span>
+                      <span class="feature-value">{product.colors}</span>
+                    </div>
+                  </div>
+                )}
+
+                {product.sizes && (
+                  <div class="product-features">
+                    <div class="feature-item">
+                      <span class="feature-label">Tallas:</span>
+                      <span class="feature-value">{product.sizes}</span>
+                    </div>
+                  </div>
+                )}
+
+                <div class={`product-pricing ${product.prices.length === 1 ? 'single-price' : ''}`}>
+                  {product.prices.map((price) => (
+                    <div class="price-item">
+                      {price.label && <span class="price-label">{price.label}</span>}
+                      <span class="price-value">{price.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))
+        }
       </div>
 
       <div class="contact-info">
         <p>
-          Para realizar pedidos, contacta con nosotros a través de nuestras redes sociales
-          o envía un mensaje directo. ¡Estaremos encantados de atenderte!
+          Para realizar pedidos, contacta con nosotros a través de nuestras redes sociales o envía
+          un mensaje directo. ¡Estaremos encantados de atenderte!
         </p>
-        <a href="https://www.instagram.com/ps_svqtriana/" class="btn btn-primary" target="_blank" rel="noopener">
+        <a
+          href="https://www.instagram.com/ps_svqtriana/"
+          class="btn btn-primary"
+          target="_blank"
+          rel="noopener"
+        >
           Contactar por Instagram
         </a>
       </div>
@@ -141,7 +146,9 @@ const products = [
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .product-card:hover {

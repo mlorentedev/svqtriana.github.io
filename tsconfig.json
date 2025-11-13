@@ -13,14 +13,5 @@
       "@content/*": ["src/content/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".astro",
-    "js",
-    "css",
-    "fonts",
-    "images",
-    "*.html"
-  ]
+  "exclude": ["node_modules", "dist", ".astro", "js", "css", "fonts", "images", "*.html"]
 }

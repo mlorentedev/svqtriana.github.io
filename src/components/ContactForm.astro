@@ -43,34 +43,17 @@ const t = text[lang as keyof typeof text] || text.es;
     >
       <div class="form-group">
         <label for="name">{t.name}</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          autocomplete="name"
-        />
+        <input type="text" id="name" name="name" required autocomplete="name" />
       </div>
 
       <div class="form-group">
         <label for="email">{t.email}</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          autocomplete="email"
-        />
+        <input type="email" id="email" name="email" required autocomplete="email" />
       </div>
 
       <div class="form-group">
         <label for="message">{t.message}</label>
-        <textarea
-          id="message"
-          name="message"
-          rows="5"
-          required
-        ></textarea>
+        <textarea id="message" name="message" rows="5" required></textarea>
       </div>
 
       <div class="form-status" id="form-status"></div>
@@ -162,12 +145,12 @@ const t = text[lang as keyof typeof text] || text.es;
     border: 1px solid #f5c6cb;
   }
 
-  button[type="submit"] {
+  button[type='submit'] {
     width: 100%;
     position: relative;
   }
 
-  button[type="submit"]:disabled {
+  button[type='submit']:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
@@ -208,8 +191,8 @@ const t = text[lang as keyof typeof text] || text.es;
         method: 'POST',
         body: formData,
         headers: {
-          'Accept': 'application/json'
-        }
+          Accept: 'application/json',
+        },
       });
 
       if (response.ok) {

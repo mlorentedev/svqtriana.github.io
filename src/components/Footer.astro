@@ -47,21 +47,24 @@ const text = footerText[lang as keyof typeof footerText] || footerText.es;
         </p>
 
         <div class="social-links">
-          {socialLinks.map((social) => (
-            <a
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={social.name}
-              class="social-link"
-            >
-              <i class={`fa ${social.icon}`} aria-hidden="true"></i>
-            </a>
-          ))}
+          {
+            socialLinks.map((social) => (
+              <a
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                class="social-link"
+              >
+                <i class={`fa ${social.icon}`} aria-hidden="true" />
+              </a>
+            ))
+          }
         </div>
 
         <p class="footer-credit">
-          {text.by} <a href="https://github.com/mlorentedev" target="_blank" rel="noopener">mlorentedev</a>
+          {text.by}
+          <a href="https://github.com/mlorentedev" target="_blank" rel="noopener">mlorentedev</a>
         </p>
       </div>
     </div>

@@ -50,22 +50,31 @@ const menu = menuItems[lang as keyof typeof menuItems] || menuItems.es;
         <div class="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
           <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
             <ul class="navbar-nav">
-              {menu.map((item) => (
-                <li class={`nav-item ${currentPath === item.href ? 'active' : ''}`}>
-                  <a class="nav-link" href={item.href}>
-                    {item.label} {currentPath === item.href && <span class="sr-only">(current)</span>}
-                  </a>
-                </li>
-              ))}
+              {
+                menu.map((item) => (
+                  <li class={`nav-item ${currentPath === item.href ? 'active' : ''}`}>
+                    <a class="nav-link" href={item.href}>
+                      {item.label}{' '}
+                      {currentPath === item.href && <span class="sr-only">(current)</span>}
+                    </a>
+                  </li>
+                ))
+              }
             </ul>
 
             <!-- Language Switcher -->
             <div class="language-switcher ml-3">
-              {lang === 'es' ? (
-                <a href="/en/" class="nav-link" title="Switch to English">🇬🇧 EN</a>
-              ) : (
-                <a href="/" class="nav-link" title="Cambiar a Español">🇪🇸 ES</a>
-              )}
+              {
+                lang === 'es' ? (
+                  <a href="/en/" class="nav-link" title="Switch to English">
+                    🇬🇧 EN
+                  </a>
+                ) : (
+                  <a href="/" class="nav-link" title="Cambiar a Español">
+                    🇪🇸 ES
+                  </a>
+                )
+              }
             </div>
           </div>
         </div>

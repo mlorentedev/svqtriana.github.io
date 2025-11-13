@@ -138,6 +138,7 @@ Edit navigation items in `src/components/Header.astro`.
 ### Google Analytics
 
 The site includes Google Analytics. The tracking ID is configured in:
+
 - `src/layouts/BaseLayout.astro`
 
 To change the tracking ID, update the `gtag('config', 'YOUR-GA-ID')` line.
@@ -188,12 +189,12 @@ Frontmatter format:
 
 ```markdown
 ---
-title: "Post Title"
+title: 'Post Title'
 date: 2024-11-13
-author: "PS SVQ Triana"
-description: "Post description"
-image: "/images/post-image.jpg"
-tags: ["sevillismo", "triana"]
+author: 'PS SVQ Triana'
+description: 'Post description'
+image: '/images/post-image.jpg'
+tags: ['sevillismo', 'triana']
 featured: true
 ---
 
@@ -224,6 +225,7 @@ npm run build
 ## 🔍 SEO
 
 The site includes:
+
 - Meta tags (Open Graph, Twitter Cards)
 - Structured data (Schema.org)
 - Sitemap (automatically generated)
@@ -244,6 +246,7 @@ The site includes:
 ## 📱 Progressive Web App
 
 The site works as a PWA with:
+
 - Service worker for offline support
 - Web app manifest
 - Installable on mobile devices
@@ -262,17 +265,17 @@ The site works as a PWA with:
 
 Every pull request runs comprehensive automated tests:
 
-| Test Category | Purpose | Status |
-|--------------|---------|--------|
-| **Code Quality** | TypeScript & Prettier checks | Required ✅ |
-| **Build Test** | Verify successful build | Required ✅ |
-| **Lighthouse** | Performance > 90 all scores | Warning ⚠️ |
-| **Security** | npm audit & secret scanning | Warning ⚠️ |
-| **Accessibility** | axe-core automated tests | Warning ⚠️ |
-| **HTML Validation** | Validate HTML structure | Warning ⚠️ |
-| **Link Check** | Find broken links | Warning ⚠️ |
-| **Performance Regression** | Enforce bundle budgets | Required ✅ |
-| **Deployment Simulation** | Test GitHub Pages compatibility | Required ✅ |
+| Test Category              | Purpose                         | Status      |
+| -------------------------- | ------------------------------- | ----------- |
+| **Code Quality**           | TypeScript & Prettier checks    | Required ✅ |
+| **Build Test**             | Verify successful build         | Required ✅ |
+| **Lighthouse**             | Performance > 90 all scores     | Warning ⚠️  |
+| **Security**               | npm audit & secret scanning     | Warning ⚠️  |
+| **Accessibility**          | axe-core automated tests        | Warning ⚠️  |
+| **HTML Validation**        | Validate HTML structure         | Warning ⚠️  |
+| **Link Check**             | Find broken links               | Warning ⚠️  |
+| **Performance Regression** | Enforce bundle budgets          | Required ✅ |
+| **Deployment Simulation**  | Test GitHub Pages compatibility | Required ✅ |
 
 **📚 Full CI/CD Documentation:** See [docs/CI-CD.md](docs/CI-CD.md)
 
@@ -366,6 +369,7 @@ This project is private and proprietary to PS SVQ Triana.
 ## 📞 Support
 
 For issues or questions:
+
 - Instagram: [@ps_svqtriana](https://www.instagram.com/ps_svqtriana/)
 - Email: Contact through social media
 

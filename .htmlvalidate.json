@@ -17,7 +17,5 @@
     "element-name": "off",
     "long-title": ["warn", { "maxlength": 70 }]
   },
-  "elements": [
-    "html5"
-  ]
+  "elements": ["html5"]
 }

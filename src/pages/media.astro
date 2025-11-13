@@ -59,39 +59,41 @@ const videos = [
       </header>
 
       <div class="videos-grid">
-        {videos.map((video) => (
-          <article class="video-card">
-            <div class="video-thumbnail">
-              <img
-                src={video.thumbnail}
-                alt={`${video.title} ${video.season}`}
-                loading="lazy"
-                width="400"
-                height="225"
-              />
-              <a
-                href={video.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="video-overlay"
-                aria-label={`Ver video: ${video.title} ${video.season}`}
-              >
-                <div class="play-button">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-                <span class="watch-text">Ver video</span>
-              </a>
-            </div>
-            <div class="video-content">
-              <h2 class="video-title">
-                {video.title}
-                {video.season && <span class="highlight">{video.season}</span>}
-              </h2>
-            </div>
-          </article>
-        ))}
+        {
+          videos.map((video) => (
+            <article class="video-card">
+              <div class="video-thumbnail">
+                <img
+                  src={video.thumbnail}
+                  alt={`${video.title} ${video.season}`}
+                  loading="lazy"
+                  width="400"
+                  height="225"
+                />
+                <a
+                  href={video.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="video-overlay"
+                  aria-label={`Ver video: ${video.title} ${video.season}`}
+                >
+                  <div class="play-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                  <span class="watch-text">Ver video</span>
+                </a>
+              </div>
+              <div class="video-content">
+                <h2 class="video-title">
+                  {video.title}
+                  {video.season && <span class="highlight">{video.season}</span>}
+                </h2>
+              </div>
+            </article>
+          ))
+        }
       </div>
     </div>
   </section>
@@ -127,7 +129,9 @@ const videos = [
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .video-card:hover {

@@ -21,7 +21,7 @@ const fullTitle = `${title} - PS SVQ Triana`;
 const imageUrl = new URL(image, Astro.site).href;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang={lang} dir="ltr">
   <head>
     <meta charset="utf-8" />
@@ -76,46 +76,52 @@ const imageUrl = new URL(image, Astro.site).href;
     <title>{fullTitle}</title>
 
     <!-- Structured Data -->
-    <script is:inline type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "SportsClub",
-      "name": "PS SVQ Triana - Peña Sevillista",
-      "alternateName": "SVQ Triana",
-      "description": "Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla.",
-      "url": "https://svqtriana.com",
-      "logo": "https://svqtriana.com/images/webp/logo_192.webp",
-      "foundingDate": "2019-07-27",
-      "foundingLocation": {
-        "@type": "Place",
-        "name": "Triana, Sevilla, España"
-      },
-      "location": {
-        "@type": "Place",
-        "name": "Triana, Sevilla",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Sevilla",
-          "addressRegion": "Andalucía",
-          "addressCountry": "ES"
-        }
-      },
-      "sameAs": [
-        "https://www.instagram.com/ps_svqtriana/",
-        "https://www.facebook.com/PS-SVQ-Triana-110014627020914",
-        "https://twitter.com/ps_svqtriana1"
-      ],
-      "sport": "Football",
-      "memberOf": {
-        "@type": "SportsTeam",
-        "name": "Sevilla FC"
-      }
-    })} />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SportsClub',
+        name: 'PS SVQ Triana - Peña Sevillista',
+        alternateName: 'SVQ Triana',
+        description: 'Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla.',
+        url: 'https://svqtriana.com',
+        logo: 'https://svqtriana.com/images/webp/logo_192.webp',
+        foundingDate: '2019-07-27',
+        foundingLocation: {
+          '@type': 'Place',
+          name: 'Triana, Sevilla, España',
+        },
+        location: {
+          '@type': 'Place',
+          name: 'Triana, Sevilla',
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: 'Sevilla',
+            addressRegion: 'Andalucía',
+            addressCountry: 'ES',
+          },
+        },
+        sameAs: [
+          'https://www.instagram.com/ps_svqtriana/',
+          'https://www.facebook.com/PS-SVQ-Triana-110014627020914',
+          'https://twitter.com/ps_svqtriana1',
+        ],
+        sport: 'Football',
+        memberOf: {
+          '@type': 'SportsTeam',
+          name: 'Sevilla FC',
+        },
+      })}
+    />
 
     <!-- Google Analytics -->
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-86XPZWP474"></script>
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() {
+        dataLayer.push(arguments);
+      }
       gtag('js', new Date());
       gtag('config', 'G-86XPZWP474');
     </script>
@@ -132,7 +138,8 @@ const imageUrl = new URL(image, Astro.site).href;
     <script is:inline>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
+          navigator.serviceWorker
+            .register('/sw.js')
             .then(() => console.log('SW registered'))
             .catch(() => console.log('SW registration failed'));
         });
