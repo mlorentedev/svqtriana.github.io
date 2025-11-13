@@ -256,7 +256,41 @@ The site works as a PWA with:
 3. Go to Application > Service Workers
 4. Check "Offline" to test offline functionality
 
-## 🧪 Testing
+## 🧪 Testing & CI/CD
+
+### Automated Testing
+
+Every pull request runs comprehensive automated tests:
+
+| Test Category | Purpose | Status |
+|--------------|---------|--------|
+| **Code Quality** | TypeScript & Prettier checks | Required ✅ |
+| **Build Test** | Verify successful build | Required ✅ |
+| **Lighthouse** | Performance > 90 all scores | Warning ⚠️ |
+| **Security** | npm audit & secret scanning | Warning ⚠️ |
+| **Accessibility** | axe-core automated tests | Warning ⚠️ |
+| **HTML Validation** | Validate HTML structure | Warning ⚠️ |
+| **Link Check** | Find broken links | Warning ⚠️ |
+| **Performance Regression** | Enforce bundle budgets | Required ✅ |
+| **Deployment Simulation** | Test GitHub Pages compatibility | Required ✅ |
+
+**📚 Full CI/CD Documentation:** See [docs/CI-CD.md](docs/CI-CD.md)
+
+### Local Testing
+
+```bash
+# Type checking
+npm run check
+
+# Build test
+npm run build
+
+# Preview production build
+npm run preview
+
+# Code formatting check
+npx prettier --check "src/**/*.{astro,ts,js,json,css}"
+```
 
 ### Lighthouse CI
 
@@ -272,7 +306,13 @@ lhci autorun
 
 ### Performance Budget
 
-Performance budgets are configured in `lighthouse-budget.json`. The CI will fail if budgets are exceeded.
+Performance budgets are configured in `lighthouse-budget.json`. The CI will fail if budgets are exceeded:
+
+- JavaScript: < 300KB
+- CSS: < 100KB
+- Total Site: < 20MB
+- Time to Interactive: < 3s
+- First Contentful Paint: < 1.5s
 
 ## 🐛 Troubleshooting
 
