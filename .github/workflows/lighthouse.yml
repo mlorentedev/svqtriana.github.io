@@ -32,13 +32,7 @@ jobs:
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v11
         with:
-          urls: |
-            https://svqtriana.com/
-            https://svqtriana.com/nosotros
-            https://svqtriana.com/productos
-            https://svqtriana.com/media
-            https://svqtriana.com/encuentro
           uploadArtifacts: true
           temporaryPublicStorage: true
           budgetPath: ./lighthouse-budget.json
-          configPath: ./lighthouserc.json
+          configPath: ./lighthouserc.js
