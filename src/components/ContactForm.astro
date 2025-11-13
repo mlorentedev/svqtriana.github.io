@@ -185,13 +185,15 @@ const t = text[lang as keyof typeof text] || text.es;
 
 <script>
   const form = document.getElementById('contact-form') as HTMLFormElement;
-  const status = document.getElementById('form-status');
+  const status = document.getElementById('form-status') as HTMLElement | null;
   const buttonText = form?.querySelector('.button-text') as HTMLElement;
   const buttonLoading = form?.querySelector('.button-loading') as HTMLElement;
   const submitButton = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!status) return;
 
     // Disable button and show loading
     submitButton.disabled = true;

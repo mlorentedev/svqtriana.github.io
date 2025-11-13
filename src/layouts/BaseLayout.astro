@@ -76,7 +76,7 @@ const imageUrl = new URL(image, Astro.site).href;
     <title>{fullTitle}</title>
 
     <!-- Structured Data -->
-    <script type="application/ld+json" set:html={JSON.stringify({
+    <script is:inline type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "SportsClub",
       "name": "PS SVQ Triana - Peña Sevillista",
@@ -133,8 +133,8 @@ const imageUrl = new URL(image, Astro.site).href;
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('SW registered'))
-            .catch(err => console.log('SW registration failed'));
+            .then(() => console.log('SW registered'))
+            .catch(() => console.log('SW registration failed'));
         });
       }
     </script>
