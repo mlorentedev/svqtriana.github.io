@@ -1,0 +1,171 @@
+---
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'es' } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const menuItems = {
+  es: [
+    { href: '/', label: 'Inicio' },
+    { href: '/nosotros', label: 'Nosotros' },
+    { href: '/productos', label: 'Productos' },
+    { href: '/media', label: 'Media' },
+    { href: '/encuentro', label: 'Encuentro' },
+  ],
+  en: [
+    { href: '/en/', label: 'Home' },
+    { href: '/en/about', label: 'About' },
+    { href: '/en/products', label: 'Products' },
+    { href: '/en/media', label: 'Media' },
+    { href: '/en/meeting', label: 'Meeting' },
+  ],
+};
+
+const menu = menuItems[lang as keyof typeof menuItems] || menuItems.es;
+---
+
+<div class="hero_area">
+  <header class="header_section">
+    <div class="container-fluid">
+      <nav class="navbar navbar-expand-lg custom_nav-container pt-3">
+        <a class="navbar-brand" href={lang === 'es' ? '/' : '/en/'}>
+          <img src="/images/webp/logo_192.webp" alt="Logo PS SVQ Triana" width="128" height="128" />
+          <span class="sr-only">SVQ TRIANA</span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse ml-auto" id="navbarSupportedContent">
+          <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+            <ul class="navbar-nav">
+              {menu.map((item) => (
+                <li class={`nav-item ${currentPath === item.href ? 'active' : ''}`}>
+                  <a class="nav-link" href={item.href}>
+                    {item.label} {currentPath === item.href && <span class="sr-only">(current)</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <!-- Language Switcher -->
+            <div class="language-switcher ml-3">
+              {lang === 'es' ? (
+                <a href="/en/" class="nav-link" title="Switch to English">🇬🇧 EN</a>
+              ) : (
+                <a href="/" class="nav-link" title="Cambiar a Español">🇪🇸 ES</a>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+</div>
+
+<style>
+  .hero_area {
+    height: 20vh;
+    background-color: #242424;
+    min-height: 80px;
+  }
+
+  .header_section .container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 24px;
+    color: #fafcfd;
+  }
+
+  .navbar-brand img {
+    width: 128px;
+    height: 128px;
+  }
+
+  .custom_nav-container .navbar-toggler {
+    outline: none;
+    border: none;
+    padding: 0;
+  }
+
+  .custom_nav-container .navbar-toggler-icon {
+    background-image: url(/images/webp/menu.webp);
+    background-size: 55px;
+    width: 55px;
+    height: 55px;
+  }
+
+  .navbar-nav {
+    align-items: center;
+  }
+
+  .nav-item {
+    margin: 0 15px;
+  }
+
+  .nav-link {
+    color: #fafcfd;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 0;
+    transition: color 0.3s;
+  }
+
+  .nav-link:hover,
+  .nav-item.active .nav-link {
+    color: #df0606;
+  }
+
+  .language-switcher .nav-link {
+    padding: 5px 10px;
+    border: 1px solid #fafcfd;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .language-switcher .nav-link:hover {
+    background-color: #df0606;
+    border-color: #df0606;
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .hero_area {
+      height: 15vh;
+      min-height: 70px;
+    }
+
+    .navbar-brand img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .nav-item {
+      margin: 10px 0;
+    }
+
+    .language-switcher {
+      margin-left: 0 !important;
+      margin-top: 10px;
+    }
+  }
+</style>

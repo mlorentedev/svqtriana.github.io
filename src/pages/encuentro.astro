@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+---
+
+<BaseLayout
+  title="Encuentro"
+  description="Punto de encuentro de PS SVQ Triana en Cervecería el Punto de Triana para ver los partidos del Sevilla FC."
+  lang="es"
+>
+  <Header slot="header" lang="es" />
+
+  <section class="about_section layout_padding" id="us" role="main">
+    <div class="container">
+      <div class="about_detail-box">
+        <header class="row">
+          <h1 class="custom_heading">
+            Ven con nosotros a ver el Sevilla
+          </h1>
+        </header>
+
+        <div class="row">
+          <div class="cartel">
+            <img
+              src="/images/webp/cartelPunto.webp"
+              alt="Cartel de la Cervecería el Punto de Triana, punto de encuentro de PS SVQ Triana"
+              loading="lazy"
+              width="800"
+              height="600"
+            />
+          </div>
+        </div>
+
+        <div class="location-info">
+          <h2 class="location-title">Cervecería el Punto de Triana</h2>
+          <p class="location-description">
+            Nuestro punto de encuentro para disfrutar juntos de cada partido del Sevilla FC.
+            Ven a vivir la emoción del fútbol rodeado de verdaderos sevillistas.
+          </p>
+          <address class="location-address">
+            <strong>Dirección:</strong><br>
+            Calle San Jacinto, 71<br>
+            41010 Sevilla, España
+          </address>
+        </div>
+
+        <div class="map-container">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6340.277865918522!2d-6.013321098573216!3d37.38654652492175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd126dcec28e1743%3A0x2ba12f6709ca46aa!2sCervecer%C3%ADa%20el%20Punto%20de%20Triana!5e0!3m2!1ses!2ses!4v1631290608827!5m2!1ses!2ses"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Ubicación de Cervecería el Punto de Triana en Google Maps"
+          ></iframe>
+        </div>
+
+        <div class="cta-section">
+          <p>
+            ¿Quieres unirte a la familia sevillista de Triana?
+          </p>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdJ7KOc7hi-vBmWrmMwsD1zKJmmoM0TmtUd1IQ3cx_eS69azA/viewform"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener"
+          >
+            HAZTE SOCIO
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" lang="es" />
+</BaseLayout>
+
+<style>
+  .location-info {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    margin: 40px auto;
+    max-width: 800px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .location-title {
+    color: #df0606;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .location-description {
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .location-address {
+    color: #333;
+    font-size: 16px;
+    text-align: center;
+    font-style: normal;
+    line-height: 1.8;
+  }
+
+  .map-container {
+    margin: 40px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .map-container iframe {
+    display: block;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    margin-top: 40px;
+  }
+
+  .cta-section p {
+    color: #333;
+    font-size: 22px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .location-info {
+      padding: 20px;
+      margin: 30px 15px;
+    }
+
+    .location-title {
+      font-size: 24px;
+    }
+
+    .location-description {
+      font-size: 16px;
+    }
+
+    .map-container iframe {
+      height: 300px;
+    }
+
+    .cta-section p {
+      font-size: 18px;
+    }
+  }
+</style>

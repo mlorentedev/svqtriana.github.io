@@ -1,0 +1,263 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+const products = [
+  {
+    id: 'bufanda',
+    name: 'Bufanda oficial',
+    images: ['/images/webp/bufanda.webp'],
+    prices: [
+      { label: 'Socio', value: '10€' },
+      { label: 'No socio', value: '13€' },
+    ],
+  },
+  {
+    id: 'camiseta',
+    name: 'Camiseta oficial',
+    images: ['/images/webp/camiofi1.webp', '/images/webp/camiofi2.webp'],
+    colors: 'Azul oscuro y gris',
+    sizes: 'XS, S, M, L, XL',
+    prices: [
+      { label: 'Socio', value: '12€' },
+      { label: 'No socio', value: '15€' },
+    ],
+  },
+  {
+    id: 'pulsera',
+    name: 'Pulsera oficial',
+    images: ['/images/webp/pulsera2.webp'],
+    prices: [
+      { label: '', value: '1€' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Productos"
+  description="Productos oficiales de PS SVQ Triana: bufandas, camisetas, pulseras y más merchandising sevillista."
+  lang="es"
+>
+  <Header slot="header" lang="es" />
+
+  <section class="products_section layout_padding" role="main">
+    <div class="container">
+      <header class="section-header">
+        <h1 class="custom_heading">NUESTROS PRODUCTOS</h1>
+        <p class="section-subtitle">
+          Merchandising oficial de la peña. ¡Lleva los colores de SVQ Triana siempre contigo!
+        </p>
+      </header>
+
+      <div class="products-grid">
+        {products.map((product) => (
+          <article class="product-card">
+            <div class="product-image">
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                loading="lazy"
+                width="400"
+                height="400"
+              />
+            </div>
+            <div class="product-content">
+              <h2 class="product-title">{product.name}</h2>
+
+              {product.colors && (
+                <div class="product-features">
+                  <div class="feature-item">
+                    <span class="feature-label">Colores:</span>
+                    <span class="feature-value">{product.colors}</span>
+                  </div>
+                </div>
+              )}
+
+              {product.sizes && (
+                <div class="product-features">
+                  <div class="feature-item">
+                    <span class="feature-label">Tallas:</span>
+                    <span class="feature-value">{product.sizes}</span>
+                  </div>
+                </div>
+              )}
+
+              <div class={`product-pricing ${product.prices.length === 1 ? 'single-price' : ''}`}>
+                {product.prices.map((price) => (
+                  <div class="price-item">
+                    {price.label && <span class="price-label">{price.label}</span>}
+                    <span class="price-value">{price.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="contact-info">
+        <p>
+          Para realizar pedidos, contacta con nosotros a través de nuestras redes sociales
+          o envía un mensaje directo. ¡Estaremos encantados de atenderte!
+        </p>
+        <a href="https://www.instagram.com/ps_svqtriana/" class="btn btn-primary" target="_blank" rel="noopener">
+          Contactar por Instagram
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" lang="es" />
+</BaseLayout>
+
+<style>
+  .products_section {
+    background-color: #f5f5f5;
+    min-height: 70vh;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: #333;
+    margin-top: 10px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .product-image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    background: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-content {
+    padding: 20px;
+  }
+
+  .product-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .product-features {
+    margin-bottom: 15px;
+  }
+
+  .feature-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .feature-label {
+    font-weight: bold;
+    color: #666;
+  }
+
+  .feature-value {
+    color: #333;
+  }
+
+  .product-pricing {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #df0606;
+  }
+
+  .product-pricing.single-price {
+    justify-content: center;
+  }
+
+  .price-item {
+    text-align: center;
+  }
+
+  .price-label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  .price-value {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    color: #df0606;
+  }
+
+  .contact-info {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .contact-info p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .products-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .product-image {
+      height: 250px;
+    }
+
+    .product-title {
+      font-size: 20px;
+    }
+
+    .price-value {
+      font-size: 24px;
+    }
+  }
+</style>

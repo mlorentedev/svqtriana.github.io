@@ -1,0 +1,165 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+---
+
+<BaseLayout
+  title="Nosotros"
+  description="Historia de PS SVQ Triana. Peña sevillista fundada en 2019 en el barrio de Triana."
+  lang="es"
+>
+  <Header slot="header" lang="es" />
+
+  <section class="about_section layout_padding" role="main">
+    <div class="container">
+      <div class="about_detail-box">
+        <header class="row">
+          <h1 class="custom_heading">
+            ¿QUIÉNES SOMOS?
+          </h1>
+        </header>
+        <div class="row">
+          <div class="col-12">
+            <p>
+              Vinimos al mundo la tarde calurosa del <span style="color:#df0606;">27 de julio de 2019.</span>
+              <br><br>
+              Varios chavales del barrio de Triana llevábamos tiempo barruntando la idea de crear una peña sevillista
+              en nuestro arrabal. El boca a boca y un grupo de WhatsApp que echaba humo (donde surgieron conversaciones
+              en torno al nombre, al escudo y a todos los sueños que aquello nos creaba día tras día) fueron la semilla
+              que acabó germinando en lo que somos hoy día.
+              <br><br>
+              Éramos muchos chavales que nos conocíamos de toda la vida del barrio y siempre andábamos desperdigados
+              tanto en las previas como en los viajes del Sevilla. Tuvimos claro que esa vacante sin cubrir era para
+              nosotros. Hoy podemos asegurar que los que en ese tiempo eran conocidos de vista con los que quizás habías
+              corrido de pequeño dándole patadas a un balón pero que jamás te habías parado a indagar si vuestro
+              sentimiento sevillista se merecía un brindis, han pasado a ser familia.
+              <br><br>
+              La peña comenzó con buena aceptación y en los primeros días de abono alcanzamos unos 80 socios. Esas semanas
+              sacamos nuestra célebre bufanda que fue el primer escalón necesario para empezar a sentirnos representados,
+              pero todo cambió cuando lanzamos el Spot 19/20 (prácticamente habíamos cumplido un mes de vida). <br>Se viralizó
+              tanto que incluso el Sevilla FC lo compartió en rrss, tv, y radio. Fueron días maravillosos y ajetreados
+              donde doblamos los socios. En cualquier red social y grupo de WhatsApp que entrábamos estaba el vídeo y los
+              versos del poema (versos que rezan en nuestra bandera oficial). Superó en un día las 150.000 visualizaciones
+              y no nos quedaban manos para agradecer tantos comentarios y muestras de cariño. Ahí vimos claramente que lo
+              que pudo ser un sueño efímero de una tarde calurosa de julio, se había convertido en una realidad que nos
+              sobrepasaba. Aunque se nos tildó como <i>"la peña de los chavales de Triana"</i>, desde el primer momento hemos
+              tenido socios de todas las edades y así sigue siendo. Todo el trabajo del primer año nos hizo alcanzar los
+              230 socios.
+              <br><br>
+              Luego llegaría el primer viaje de la peña (de forma clandestina al Villamarín), llegaría nuestro I Pregón de
+              Navidad en diciembre de 2019, llegaría un autobús (organizado por nosotros) y rebosante de sevillismo
+              caminito de Pamplona, llegaría otro autobús de las mismas características arribando en Getafe y llegaría una
+              pandemia que nos truncó el vuelo. Incluso inmersos en ella hicimos un Sorteo Solidario para el Comedor Social
+              de Triana en el que pudimos ayudar con nuestro granito de arena a los que más lo necesitan, a la par que vería
+              la luz nuestro Spot 20/21 con un grito de esperanza…
+              <br><br>
+              Y aquí estamos con más fuerza que nunca. Igual que aquella tarde calurosa de julio.
+              <br><br>
+              <b><span style="color:#df0606;">¿Quieres seguir escribiendo la historia con nosotros?</span></b>
+            </p>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-12 col-md-6 mb-4">
+            <figure class="history-image-container">
+              <img
+                src="/images/webp/derby19.webp"
+                alt="Aficionados de PS SVQ Triana en el derby sevillano de 2019"
+                loading="lazy"
+                class="img-fluid rounded"
+              />
+            </figure>
+          </div>
+          <div class="col-12 col-md-6 mb-4">
+            <figure class="history-image-container">
+              <img
+                src="/images/webp/getafe20.webp"
+                alt="Viaje de la peña al estadio del Getafe en 2020"
+                loading="lazy"
+                class="img-fluid rounded"
+              />
+            </figure>
+          </div>
+          <div class="col-12 col-md-6 mb-4">
+            <figure class="history-image-container">
+              <img
+                src="/images/webp/getafe20_2.webp"
+                alt="Más imágenes del viaje a Getafe en 2020"
+                loading="lazy"
+                class="img-fluid rounded"
+              />
+            </figure>
+          </div>
+          <div class="col-12 col-md-6 mb-4">
+            <figure class="history-image-container">
+              <img
+                src="/images/webp/comida19.webp"
+                alt="Comida de hermandad de la peña en 2019"
+                loading="lazy"
+                class="img-fluid rounded"
+              />
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" lang="es" />
+</BaseLayout>
+
+<style>
+  .history-image-container {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .history-image-container img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease;
+  }
+
+  .history-image-container:hover img {
+    transform: scale(1.05);
+  }
+
+  .col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+
+  .mt-5 {
+    margin-top: 3rem;
+  }
+
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .rounded {
+    border-radius: 0.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .col-md-6 {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+</style>

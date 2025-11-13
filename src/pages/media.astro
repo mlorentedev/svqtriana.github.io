@@ -1,0 +1,241 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+const videos = [
+  {
+    id: 'spot-1920',
+    title: 'SPOT PS SVQ Triana',
+    season: '19/20',
+    url: 'https://youtu.be/RLk9ikpQwSw',
+    thumbnail: '/images/webp/video1.webp',
+  },
+  {
+    id: 'getafe',
+    title: 'GETAFE - SEVILLA FC',
+    season: '19/20',
+    url: 'https://youtu.be/7MwGqb3BJ_Y',
+    thumbnail: '/images/webp/video2.webp',
+  },
+  {
+    id: 'desplazamientos',
+    title: 'Desplazamientos',
+    season: '19/20',
+    url: 'https://youtu.be/BQ16EOFLZEM',
+    thumbnail: '/images/webp/video3.webp',
+  },
+  {
+    id: 'spot-2021',
+    title: 'SPOT PS SVQ Triana',
+    season: '20/21',
+    url: 'https://youtu.be/gyamGKXwkMc',
+    thumbnail: '/images/webp/video4.webp',
+  },
+  {
+    id: 'debut',
+    title: 'Nuestro debut en Nervión',
+    season: '',
+    url: 'https://youtu.be/NZbk3zVNMaY',
+    thumbnail: '/images/webp/video5.webp',
+  },
+];
+---
+
+<BaseLayout
+  title="Media"
+  description="Videos y contenido multimedia de PS SVQ Triana. Spots, desplazamientos y momentos inolvidables."
+  lang="es"
+>
+  <Header slot="header" lang="es" />
+
+  <section class="media_section layout_padding" role="main">
+    <div class="container">
+      <header class="section-header">
+        <h1 class="custom_heading">NUESTROS VIDEOS</h1>
+        <p class="section-subtitle">
+          Revive los mejores momentos de la peña a través de nuestros videos
+        </p>
+      </header>
+
+      <div class="videos-grid">
+        {videos.map((video) => (
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <img
+                src={video.thumbnail}
+                alt={`${video.title} ${video.season}`}
+                loading="lazy"
+                width="400"
+                height="225"
+              />
+              <a
+                href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="video-overlay"
+                aria-label={`Ver video: ${video.title} ${video.season}`}
+              >
+                <div class="play-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+                <span class="watch-text">Ver video</span>
+              </a>
+            </div>
+            <div class="video-content">
+              <h2 class="video-title">
+                {video.title}
+                {video.season && <span class="highlight">{video.season}</span>}
+              </h2>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" lang="es" />
+</BaseLayout>
+
+<style>
+  .media_section {
+    background-color: #f5f5f5;
+    min-height: 70vh;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: #333;
+    margin-top: 10px;
+  }
+
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+  }
+
+  .video-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .video-thumbnail {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    overflow: hidden;
+    background: #000;
+  }
+
+  .video-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .video-card:hover .video-overlay {
+    opacity: 1;
+  }
+
+  .play-button {
+    width: 70px;
+    height: 70px;
+    background: #df0606;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .video-card:hover .play-button {
+    transform: scale(1.1);
+  }
+
+  .play-button svg {
+    width: 30px;
+    height: 30px;
+    margin-left: 4px;
+  }
+
+  .watch-text {
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .video-content {
+    padding: 20px;
+  }
+
+  .video-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin: 0;
+  }
+
+  .highlight {
+    color: #df0606;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .videos-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .play-button {
+      width: 60px;
+      height: 60px;
+    }
+
+    .play-button svg {
+      width: 25px;
+      height: 25px;
+    }
+
+    .video-title {
+      font-size: 18px;
+    }
+  }
+</style>

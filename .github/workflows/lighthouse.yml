@@ -1,0 +1,44 @@
+name: Lighthouse CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: |
+            https://svqtriana.com/
+            https://svqtriana.com/nosotros
+            https://svqtriana.com/productos
+            https://svqtriana.com/media
+            https://svqtriana.com/encuentro
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+          budgetPath: ./lighthouse-budget.json
+          configPath: ./lighthouserc.json

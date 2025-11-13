@@ -1,0 +1,142 @@
+---
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonicalURL?: string;
+  lang?: string;
+}
+
+const {
+  title,
+  description,
+  image = '/images/webp/logo_192.webp',
+  canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
+  lang = 'es',
+} = Astro.props;
+
+const fullTitle = `${title} - PS SVQ Triana`;
+const imageUrl = new URL(image, Astro.site).href;
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Cache-Control" content="public, max-age=3600" />
+    <meta name="robots" content="index, follow" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Site Metas -->
+    <meta name="keywords" content="Sevilla, Triana, SFC, futbol, peña, SVQ." />
+    <meta name="description" content={description} />
+    <meta name="author" content="SVQ Triana" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="PS SVQ Triana" />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ps_svqtriana1" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Google AdSense -->
+    <meta name="google-adsense-account" content="ca-pub-5217718596352992" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="/images/webp/logo_192.webp" sizes="16x16" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <meta name="theme-color" content="#df0606" />
+    <meta name="msapplication-TileColor" content="#df0606" />
+    <meta name="application-name" content="PS SVQ Triana" />
+
+    <!-- Resource hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+    <title>{fullTitle}</title>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SportsClub",
+      "name": "PS SVQ Triana - Peña Sevillista",
+      "alternateName": "SVQ Triana",
+      "description": "Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla.",
+      "url": "https://svqtriana.com",
+      "logo": "https://svqtriana.com/images/webp/logo_192.webp",
+      "foundingDate": "2019-07-27",
+      "foundingLocation": {
+        "@type": "Place",
+        "name": "Triana, Sevilla, España"
+      },
+      "location": {
+        "@type": "Place",
+        "name": "Triana, Sevilla",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Sevilla",
+          "addressRegion": "Andalucía",
+          "addressCountry": "ES"
+        }
+      },
+      "sameAs": [
+        "https://www.instagram.com/ps_svqtriana/",
+        "https://www.facebook.com/PS-SVQ-Triana-110014627020914",
+        "https://twitter.com/ps_svqtriana1"
+      ],
+      "sport": "Football",
+      "memberOf": {
+        "@type": "SportsTeam",
+        "name": "Sevilla FC"
+      }
+    })} />
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-86XPZWP474"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-86XPZWP474');
+    </script>
+  </head>
+
+  <body>
+    <slot name="header" />
+    <main>
+      <slot />
+    </main>
+    <slot name="footer" />
+
+    <!-- Service Worker Registration -->
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => console.log('SW registered'))
+            .catch(err => console.log('SW registration failed'));
+        });
+      }
+    </script>
+  </body>
+</html>

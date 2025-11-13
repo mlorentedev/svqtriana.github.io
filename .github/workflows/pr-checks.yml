@@ -1,0 +1,292 @@
+name: PR Checks and Tests
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+# Cancel in-progress runs for the same PR
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Code Quality Checks
+  code-quality:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript type checking
+        run: npm run check
+
+      - name: Check code formatting with Prettier
+        run: npx prettier --check "src/**/*.{astro,ts,js,json,css}"
+        continue-on-error: true
+
+  # Job 2: Build Test
+  build-test:
+    name: Build & Validation
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Check build output
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist directory not created"
+            exit 1
+          fi
+          echo "Build successful! Checking output files..."
+          ls -la dist/
+
+      - name: Verify critical files exist
+        run: |
+          critical_files=(
+            "dist/index.html"
+            "dist/nosotros/index.html"
+            "dist/productos/index.html"
+            "dist/media/index.html"
+            "dist/encuentro/index.html"
+            "dist/robots.txt"
+            "dist/sw.js"
+          )
+
+          for file in "${critical_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Error: Critical file missing: $file"
+              exit 1
+            fi
+          done
+          echo "All critical files present!"
+
+      - name: Check for broken links in HTML
+        run: |
+          echo "Checking for common broken link patterns..."
+          if grep -r "href=\"undefined\"" dist/ || grep -r "src=\"undefined\"" dist/; then
+            echo "Error: Found undefined links in HTML"
+            exit 1
+          fi
+          echo "No undefined links found!"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: dist/
+          retention-days: 7
+
+  # Job 3: Performance & Lighthouse Tests
+  lighthouse:
+    name: Performance Tests (Lighthouse)
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  # Job 4: Security Checks
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Check for secrets in code
+        run: |
+          echo "Checking for potential secrets..."
+          if grep -r "password\s*=\s*['\"]" src/ || grep -r "api_key\s*=\s*['\"]" src/; then
+            echo "Warning: Potential secrets found in code"
+            exit 1
+          fi
+          echo "No obvious secrets found!"
+
+  # Job 5: Accessibility Tests
+  accessibility:
+    name: Accessibility Tests
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Install axe-core CLI
+        run: npm install -g @axe-core/cli
+
+      - name: Start preview server
+        run: npm run preview &
+        env:
+          PORT: 4321
+
+      - name: Wait for server
+        run: npx wait-on http://localhost:4321 --timeout 30000
+
+      - name: Run accessibility tests
+        run: |
+          axe http://localhost:4321 --exit || echo "Accessibility issues found - review needed"
+        continue-on-error: true
+
+  # Job 6: Asset Optimization Check
+  asset-check:
+    name: Asset Optimization
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Check image sizes
+        run: |
+          echo "Checking for large images..."
+          large_images=$(find dist/images -type f -size +500k 2>/dev/null || true)
+          if [ ! -z "$large_images" ]; then
+            echo "Warning: Large images found (>500KB):"
+            echo "$large_images"
+            echo "Consider optimizing these images"
+          else
+            echo "All images are optimally sized!"
+          fi
+
+      - name: Check total bundle size
+        run: |
+          echo "Calculating total bundle size..."
+          total_size=$(du -sh dist/ | cut -f1)
+          echo "Total build size: $total_size"
+
+          # Check if dist size exceeds 10MB
+          size_in_mb=$(du -sm dist/ | cut -f1)
+          if [ $size_in_mb -gt 10 ]; then
+            echo "Warning: Build size exceeds 10MB"
+          else
+            echo "Build size is within acceptable limits"
+          fi
+
+  # Job 7: Final Status Check
+  pr-status:
+    name: PR Status Summary
+    runs-on: ubuntu-latest
+    needs: [code-quality, build-test, lighthouse, security, accessibility, asset-check]
+    if: always()
+
+    steps:
+      - name: Check all job results
+        run: |
+          echo "All checks completed!"
+          echo "Code Quality: ${{ needs.code-quality.result }}"
+          echo "Build Test: ${{ needs.build-test.result }}"
+          echo "Lighthouse: ${{ needs.lighthouse.result }}"
+          echo "Security: ${{ needs.security.result }}"
+          echo "Accessibility: ${{ needs.accessibility.result }}"
+          echo "Asset Check: ${{ needs.asset-check.result }}"
+
+      - name: Determine overall status
+        run: |
+          if [ "${{ needs.code-quality.result }}" != "success" ] || \
+             [ "${{ needs.build-test.result }}" != "success" ]; then
+            echo "❌ Critical checks failed - PR cannot be merged"
+            exit 1
+          fi
+
+          if [ "${{ needs.lighthouse.result }}" != "success" ] || \
+             [ "${{ needs.security.result }}" != "success" ] || \
+             [ "${{ needs.accessibility.result }}" != "success" ]; then
+            echo "⚠️  Some checks failed - review required before merging"
+          else
+            echo "✅ All checks passed - PR ready to merge!"
+          fi

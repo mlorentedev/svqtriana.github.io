@@ -1,0 +1,47 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+---
+
+<BaseLayout
+  title="SVQ TRIANA"
+  description="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla."
+  lang="es"
+>
+  <Header slot="header" lang="es" />
+
+  <section class="about_section layout_padding" id="us" role="main">
+    <div class="container-fluid">
+      <div class="about_detail-box">
+        <header class="row">
+          <h1 class="custom_heading">
+            TEMPORADA 25/26
+          </h1>
+        </header>
+        <div class="row">
+          <p class="text-centered">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdJ7KOc7hi-vBmWrmMwsD1zKJmmoM0TmtUd1IQ3cx_eS69azA/viewform"
+               class="btn btn-primary"
+               aria-label="Formulario para hacerse socio de la peña">
+              HAZTE SOCIO
+            </a>
+          </p>
+        </div>
+        <div class="row">
+          <figure class="cartel">
+            <img
+              src="/images/webp/cartel-26.webp"
+              alt="Cartel oficial de la temporada 25/26 de PS SVQ Triana"
+              loading="lazy"
+              width="800"
+              height="1200"
+            />
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" lang="es" />
+</BaseLayout>

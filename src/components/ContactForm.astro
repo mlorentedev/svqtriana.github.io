@@ -1,0 +1,231 @@
+---
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'es' } = Astro.props;
+
+const text = {
+  es: {
+    title: 'Contacta con nosotros',
+    name: 'Nombre',
+    email: 'Email',
+    message: 'Mensaje',
+    send: 'Enviar',
+    sending: 'Enviando...',
+    success: '¡Mensaje enviado con éxito!',
+    error: 'Error al enviar el mensaje. Por favor, intenta de nuevo.',
+  },
+  en: {
+    title: 'Contact us',
+    name: 'Name',
+    email: 'Email',
+    message: 'Message',
+    send: 'Send',
+    sending: 'Sending...',
+    success: 'Message sent successfully!',
+    error: 'Error sending message. Please try again.',
+  },
+};
+
+const t = text[lang as keyof typeof text] || text.es;
+---
+
+<section class="contact-form-section">
+  <div class="container">
+    <h2 class="form-title">{t.title}</h2>
+
+    <form
+      id="contact-form"
+      class="contact-form"
+      action="https://formspree.io/f/YOUR_FORM_ID"
+      method="POST"
+    >
+      <div class="form-group">
+        <label for="name">{t.name}</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">{t.email}</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="message">{t.message}</label>
+        <textarea
+          id="message"
+          name="message"
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-status" id="form-status"></div>
+
+      <button type="submit" class="btn btn-primary">
+        <span class="button-text">{t.send}</span>
+        <span class="button-loading" style="display: none;">{t.sending}</span>
+      </button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact-form-section {
+    background-color: #f5f5f5;
+    padding: 60px 20px;
+  }
+
+  .form-title {
+    text-align: center;
+    color: #df0606;
+    font-size: 32px;
+    margin-bottom: 40px;
+  }
+
+  .contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #df0606;
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .form-status {
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    display: none;
+  }
+
+  .form-status.success {
+    display: block;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .form-status.error {
+    display: block;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  button[type="submit"] {
+    width: 100%;
+    position: relative;
+  }
+
+  button[type="submit"]:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    .contact-form {
+      padding: 30px 20px;
+    }
+
+    .form-title {
+      font-size: 28px;
+    }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = document.getElementById('form-status');
+  const buttonText = form?.querySelector('.button-text') as HTMLElement;
+  const buttonLoading = form?.querySelector('.button-loading') as HTMLElement;
+  const submitButton = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Disable button and show loading
+    submitButton.disabled = true;
+    buttonText.style.display = 'none';
+    buttonLoading.style.display = 'inline';
+    status.style.display = 'none';
+    status.classList.remove('success', 'error');
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        status.textContent = form.dataset.successMessage || 'Message sent successfully!';
+        status.classList.add('success');
+        form.reset();
+      } else {
+        throw new Error('Form submission failed');
+      }
+    } catch (error) {
+      status.textContent = form.dataset.errorMessage || 'Error sending message. Please try again.';
+      status.classList.add('error');
+    } finally {
+      // Re-enable button and hide loading
+      submitButton.disabled = false;
+      buttonText.style.display = 'inline';
+      buttonLoading.style.display = 'none';
+      status.style.display = 'block';
+    }
+  });
+</script>

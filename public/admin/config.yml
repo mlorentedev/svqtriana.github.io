@@ -1,0 +1,179 @@
+# Decap CMS Configuration for PS SVQ Triana
+backend:
+  name: github
+  repo: mlorentedev/svqtriana.github.io
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+
+# Local development backend
+local_backend: true
+
+# Media storage
+media_folder: public/images/uploads
+public_folder: /images/uploads
+
+# Publishing mode
+publish_mode: editorial_workflow
+
+# i18n configuration
+i18n:
+  structure: multiple_files
+  locales: [es, en]
+  default_locale: es
+
+# Collections
+collections:
+  # Blog posts
+  - name: blog
+    label: Blog
+    label_singular: Post
+    folder: src/content/blog
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    i18n: true
+    fields:
+      - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+      - { label: 'Fecha de publicación', name: 'date', widget: 'datetime', i18n: duplicate }
+      - { label: 'Autor', name: 'author', widget: 'string', default: 'PS SVQ Triana', i18n: duplicate }
+      - { label: 'Descripción', name: 'description', widget: 'text', i18n: true }
+      - { label: 'Imagen destacada', name: 'image', widget: 'image', required: false, i18n: duplicate }
+      - { label: 'Etiquetas', name: 'tags', widget: 'list', default: ['sevillismo'], i18n: duplicate }
+      - { label: 'Destacado', name: 'featured', widget: 'boolean', default: false, i18n: duplicate }
+      - { label: 'Contenido', name: 'body', widget: 'markdown', i18n: true }
+
+  # Events/Encounters
+  - name: events
+    label: Eventos
+    label_singular: Evento
+    folder: src/content/events
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    i18n: true
+    fields:
+      - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+      - { label: 'Fecha del evento', name: 'eventDate', widget: 'datetime', i18n: duplicate }
+      - { label: 'Fecha de publicación', name: 'publishDate', widget: 'datetime', i18n: duplicate }
+      - { label: 'Ubicación', name: 'location', widget: 'string', i18n: true }
+      - { label: 'Descripción', name: 'description', widget: 'text', i18n: true }
+      - { label: 'Imagen', name: 'image', widget: 'image', required: false, i18n: duplicate }
+      - { label: 'Precio socio', name: 'priceMember', widget: 'string', required: false, i18n: duplicate }
+      - { label: 'Precio no socio', name: 'priceNonMember', widget: 'string', required: false, i18n: duplicate }
+      - { label: 'Link de inscripción', name: 'registrationLink', widget: 'string', required: false, i18n: duplicate }
+      - { label: 'Contenido', name: 'body', widget: 'markdown', i18n: true }
+
+  # Products
+  - name: products
+    label: Productos
+    label_singular: Producto
+    folder: src/content/products
+    create: true
+    slug: '{{slug}}'
+    i18n: true
+    fields:
+      - { label: 'Nombre', name: 'name', widget: 'string', i18n: true }
+      - { label: 'Descripción', name: 'description', widget: 'text', i18n: true }
+      - { label: 'Imágenes', name: 'images', widget: 'list', field: { label: 'Imagen', name: 'image', widget: 'image' }, i18n: duplicate }
+      - { label: 'Colores', name: 'colors', widget: 'string', required: false, i18n: true }
+      - { label: 'Tallas', name: 'sizes', widget: 'string', required: false, i18n: true }
+      - { label: 'Precio socio', name: 'priceMember', widget: 'string', i18n: duplicate }
+      - { label: 'Precio no socio', name: 'priceNonMember', widget: 'string', required: false, i18n: duplicate }
+      - { label: 'Disponible', name: 'available', widget: 'boolean', default: true, i18n: duplicate }
+      - { label: 'Orden', name: 'order', widget: 'number', default: 0, value_type: 'int', i18n: duplicate }
+
+  # Videos
+  - name: videos
+    label: Videos
+    label_singular: Video
+    folder: src/content/videos
+    create: true
+    slug: '{{slug}}'
+    i18n: true
+    fields:
+      - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+      - { label: 'Temporada', name: 'season', widget: 'string', required: false, i18n: duplicate }
+      - { label: 'URL de YouTube', name: 'url', widget: 'string', i18n: duplicate }
+      - { label: 'Miniatura', name: 'thumbnail', widget: 'image', i18n: duplicate }
+      - { label: 'Descripción', name: 'description', widget: 'text', required: false, i18n: true }
+      - { label: 'Fecha', name: 'date', widget: 'datetime', i18n: duplicate }
+      - { label: 'Orden', name: 'order', widget: 'number', default: 0, value_type: 'int', i18n: duplicate }
+
+  # Pages (custom pages content)
+  - name: pages
+    label: Páginas
+    label_singular: Página
+    files:
+      - label: 'Página de Inicio'
+        name: 'home'
+        file: 'src/content/pages/home.md'
+        i18n: true
+        fields:
+          - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+          - { label: 'Temporada', name: 'season', widget: 'string', i18n: true }
+          - { label: 'Imagen del cartel', name: 'posterImage', widget: 'image', i18n: duplicate }
+          - { label: 'Link de inscripción', name: 'registrationLink', widget: 'string', i18n: duplicate }
+          - { label: 'Texto del botón', name: 'buttonText', widget: 'string', i18n: true }
+
+      - label: 'Sobre Nosotros'
+        name: 'about'
+        file: 'src/content/pages/about.md'
+        i18n: true
+        fields:
+          - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+          - { label: 'Contenido', name: 'body', widget: 'markdown', i18n: true }
+
+      - label: 'Punto de Encuentro'
+        name: 'meeting-point'
+        file: 'src/content/pages/meeting-point.md'
+        i18n: true
+        fields:
+          - { label: 'Título', name: 'title', widget: 'string', i18n: true }
+          - { label: 'Nombre del lugar', name: 'placeName', widget: 'string', i18n: true }
+          - { label: 'Descripción', name: 'description', widget: 'text', i18n: true }
+          - { label: 'Dirección', name: 'address', widget: 'text', i18n: true }
+          - { label: 'Google Maps URL', name: 'mapUrl', widget: 'string', i18n: duplicate }
+          - { label: 'Imagen', name: 'image', widget: 'image', i18n: duplicate }
+
+  # Site settings
+  - name: settings
+    label: Configuración
+    files:
+      - label: 'Configuración General'
+        name: 'general'
+        file: 'src/content/settings/general.json'
+        fields:
+          - { label: 'Nombre del sitio', name: 'siteName', widget: 'string' }
+          - { label: 'Descripción del sitio', name: 'siteDescription', widget: 'text' }
+          - { label: 'Logo', name: 'logo', widget: 'image' }
+          - label: 'Redes Sociales'
+            name: 'socialMedia'
+            widget: 'object'
+            fields:
+              - { label: 'Instagram', name: 'instagram', widget: 'string' }
+              - { label: 'Facebook', name: 'facebook', widget: 'string' }
+              - { label: 'Twitter', name: 'twitter', widget: 'string' }
+          - label: 'Contacto'
+            name: 'contact'
+            widget: 'object'
+            fields:
+              - { label: 'Email', name: 'email', widget: 'string' }
+              - { label: 'Teléfono', name: 'phone', widget: 'string', required: false }
+          - { label: 'Google Analytics ID', name: 'googleAnalyticsId', widget: 'string' }
+          - { label: 'Google AdSense ID', name: 'googleAdsenseId', widget: 'string' }
+
+      - label: 'Navegación'
+        name: 'navigation'
+        file: 'src/content/settings/navigation.json'
+        fields:
+          - label: 'Menú Principal (Español)'
+            name: 'mainMenuEs'
+            widget: 'list'
+            fields:
+              - { label: 'Etiqueta', name: 'label', widget: 'string' }
+              - { label: 'URL', name: 'url', widget: 'string' }
+          - label: 'Menú Principal (Inglés)'
+            name: 'mainMenuEn'
+            widget: 'list'
+            fields:
+              - { label: 'Etiqueta', name: 'label', widget: 'string' }
+              - { label: 'URL', name: 'url', widget: 'string' }

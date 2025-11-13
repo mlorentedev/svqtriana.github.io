@@ -1,0 +1,16 @@
+{
+  "siteName": "PS SVQ Triana",
+  "siteDescription": "Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla.",
+  "logo": "/images/webp/logo_192.webp",
+  "socialMedia": {
+    "instagram": "https://www.instagram.com/ps_svqtriana/",
+    "facebook": "https://www.facebook.com/PS-SVQ-Triana-110014627020914",
+    "twitter": "https://twitter.com/ps_svqtriana1"
+  },
+  "contact": {
+    "email": "contact@svqtriana.com",
+    "phone": ""
+  },
+  "googleAnalyticsId": "G-86XPZWP474",
+  "googleAdsenseId": "ca-pub-5217718596352992"
+}

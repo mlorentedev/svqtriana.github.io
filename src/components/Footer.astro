@@ -1,0 +1,150 @@
+---
+interface Props {
+  lang?: string;
+}
+
+const { lang = 'es' } = Astro.props;
+const currentYear = new Date().getFullYear();
+
+const socialLinks = [
+  {
+    name: 'Instagram',
+    url: 'https://www.instagram.com/ps_svqtriana/',
+    icon: 'fa-instagram',
+  },
+  {
+    name: 'Facebook',
+    url: 'https://www.facebook.com/PS-SVQ-Triana-110014627020914',
+    icon: 'fa-facebook',
+  },
+  {
+    name: 'Twitter',
+    url: 'https://twitter.com/ps_svqtriana1',
+    icon: 'fa-twitter',
+  },
+];
+
+const footerText = {
+  es: {
+    rights: 'Todos los derechos reservados',
+    by: 'Por',
+  },
+  en: {
+    rights: 'All rights reserved',
+    by: 'By',
+  },
+};
+
+const text = footerText[lang as keyof typeof footerText] || footerText.es;
+---
+
+<footer class="container-fluid footer_section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7 col-md-9 mx-auto">
+        <p class="footer-text">
+          &copy; {currentYear} PS SVQ Triana. {text.rights}.
+        </p>
+
+        <div class="social-links">
+          {socialLinks.map((social) => (
+            <a
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={social.name}
+              class="social-link"
+            >
+              <i class={`fa ${social.icon}`} aria-hidden="true"></i>
+            </a>
+          ))}
+        </div>
+
+        <p class="footer-credit">
+          {text.by} <a href="https://github.com/mlorentedev" target="_blank" rel="noopener">mlorentedev</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer_section {
+    background-color: #242424;
+    padding: 40px 0 20px;
+    color: #fafcfd;
+    margin-top: 60px;
+  }
+
+  .footer-text {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid #fafcfd;
+    color: #fafcfd;
+    transition: all 0.3s ease;
+  }
+
+  .social-link:hover {
+    background-color: #df0606;
+    border-color: #df0606;
+    transform: translateY(-3px);
+  }
+
+  .footer-credit {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 20px;
+    opacity: 0.8;
+  }
+
+  .footer-credit a {
+    color: #df0606;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .footer-credit a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .footer_section {
+      padding: 30px 0 15px;
+    }
+
+    .social-links {
+      gap: 15px;
+    }
+
+    .social-link {
+      width: 35px;
+      height: 35px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<!-- Font Awesome for social icons -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  crossorigin="anonymous"
+/>
