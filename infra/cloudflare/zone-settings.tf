@@ -44,3 +44,26 @@ resource "cloudflare_zone_setting" "min_tls_version" {
 # email_obfuscation
 #   On, and compatible: it injects /cdn-cgi/scripts/.../email-decode.min.js,
 #   which is same-origin and therefore covered by script-src 'self'.
+#
+# Bot Fight Mode / JavaScript Detections
+#   MUST STAY OFF, and this is the one that is not obvious. It injects an
+#   INLINE script - not a file - that bootstraps
+#   /cdn-cgi/challenge-platform/scripts/jsd/main.js:
+#
+#     <script>(function(){...window.__CF$cv$params={r:'a3674e1ec9a0fd76',
+#      t:'MTc4ODYzMzAyNg=='}...})();</script>
+#
+#   The r and t values change on every request, so no hash and no nonce can
+#   ever allow it. Turning it back on means either a console error on every
+#   page or putting 'unsafe-inline' back into script-src, which is the finding
+#   this configuration exists to close.
+#
+#   Turning it off also helps the thing the site was optimised for: Bot Fight
+#   Mode challenges non-browser traffic, and the AI crawlers that increasingly
+#   answer "where is this peña" are non-browser traffic.
+#
+#   Not declared here because the Free-plan bot settings are not exposed to
+#   this provider, and reading them needs a Bot Management token permission
+#   this project's token deliberately does not carry. It is a dashboard
+#   setting: Security > Bots > Bot Fight Mode. If a CSP violation for an
+#   inline script ever appears in production, check this first.
