@@ -18,12 +18,13 @@ variable "enable_hsts" {
   description = <<-EOT
     Turn on Strict-Transport-Security.
 
-    Off by default because it is the one setting here that is genuinely hard to
+    On since 2026-09-05. It is the one setting here that is genuinely hard to
     walk back: once a browser has seen the header it refuses plain HTTP for the
-    whole max-age, and clearing that early means serving a max-age=0 header and
-    waiting for every visitor to come back. Turn it on once you are content that
-    the apex and www both serve HTTPS - they do today - and leave preload off.
+    whole max-age, and clearing it early means serving max-age=0 and waiting for
+    every visitor to return. Enabled deliberately, after confirming the apex and
+    www both serve HTTPS. Preload stays off - that list lives in the browsers,
+    and getting off it is slower still.
   EOT
   type        = bool
-  default     = false
+  default     = true
 }

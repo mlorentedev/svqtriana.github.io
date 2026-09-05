@@ -86,10 +86,10 @@ The recurring job. Once a year, around July.
 `hasOfferCatalog` JSON-LD in the head. **Change both**, or search engines will
 advertise a price the page does not show.
 
-## Job 4: applying the Cloudflare configuration
+## Job 4: changing the Cloudflare configuration
 
-Not yet done. See [`infra/cloudflare/README.md`](../../infra/cloudflare/README.md).
-Blocked on a valid `CLOUDFLARE_API_TOKEN`; the stored one fails verification.
+Applied 2026-09-05. See [`infra/cloudflare/README.md`](../../infra/cloudflare/README.md).
+Change the code, then plan and apply — never click it in the dashboard.
 
 Two things there that will bite if skipped:
 
@@ -101,7 +101,7 @@ Two things there that will bite if skipped:
   `Refused to load`. The likeliest casualties are the Google Maps embed on
   `/encuentro` and the product slider.
 
-Once applied, delete `.htaccess`.
+`.htaccess` was deleted in the same change; it never did anything here.
 
 ---
 

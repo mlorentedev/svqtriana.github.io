@@ -35,80 +35,22 @@
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin>
   
-  <!-- Critical CSS inlined for above-the-fold content -->
-  <style>
-    /* Critical reset and base styles */
-    html{scroll-behavior:smooth}
-    *{box-sizing:border-box}
-    body{font-family:"Arial","Helvetica",sans-serif;font-weight:400;font-style:normal;color:#f5faf4;background-color:#fff;margin:0}
-    img{max-width:100%;height:auto;vertical-align:middle}
-    
-    /* Critical font loading */
-    .font-loading body{font-family:"Arial","Helvetica",sans-serif}
-    .font-loaded body{font-family:"GlacialIndifferenceRegular","Poppins","Arial","Helvetica",sans-serif}
-    
-    /* Critical layout classes */
-    .container-fluid{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
-    .row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}
-    .col-md-6{flex:0 0 50%;max-width:50%}
-    .img-fluid{max-width:100%;height:auto}
-    .rounded{border-radius:0.25rem}
-    .layout_padding{padding:45px 0}
-    
-    /* Critical header styles */
-    .hero_area{height:20vh;background-color:#242424;min-height:80px}
-    .header_section .container-fluid{padding-right:15px;padding-left:15px}
-    .navbar-brand{display:flex;align-items:center;text-transform:uppercase;font-weight:bold;font-size:24px;color:#fafcfd}
-    .navbar-brand img{width:128px}
-    .custom_nav-container .navbar-toggler{outline:none}
-    .custom_nav-container .navbar-toggler .navbar-toggler-icon{background-image:url(images/webp/menu.webp);background-size:55px}
-    
-    /* Critical main content styles */
-    .about_section{background-image:url(images/webp/fondorsp.webp);background-size:cover;background-position:center;background-repeat:no-repeat}
-    .about_section .row{margin-left:30px;margin-right:30px;align-items:center}
-    .about_detail-box .row{text-align:center;display:flex;justify-content:center;flex-wrap:wrap}
-    .about_detail-box p{margin:30px 0;text-align:justify;color:#fff}
-    
-    /* Critical typography */
-    .custom_heading{color:#fff;text-transform:none;font-weight:bold;font-size:40px;text-align:center}
-    p{text-align:justify;font-size:25px;line-height:1.6}
-    
-    /* Critical responsive styles */
-    @media (max-width:768px){
-      .custom_heading{font-size:32px}
-      .about_section .row{margin-left:15px;margin-right:15px}
-      .hero_area{height:15vh;min-height:70px}
-      .col-md-6{flex:0 0 100%;max-width:100%}
-      p{font-size:18px;line-height:1.5}
-    }
-    @media (max-width:576px){
-      .custom_heading{font-size:28px}
-      .about_section .row{margin-left:10px;margin-right:10px}
-      p{font-size:16px;line-height:1.4}
-    }
-  </style>
   
   <!-- Load web fonts asynchronously -->
   
-  <!-- Non-blocking CSS. media="print" keeps these off the critical path; the
-       onload handler promotes them once they arrive. Order is the cascade
-       order, so keep it. Static tags (rather than the old JS loadCSS shim)
-       let the preload scanner find them and let the CDN link carry SRI. -->
-  <link rel="stylesheet" href="css/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/bootstrap.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/responsive.css" media="print" onload="this.media='all'">
+  <!-- All the CSS, render-blocking on purpose. It totals 8.5K gzipped, which is
+       less than the hand-maintained "critical CSS" blocks that used to be
+       inlined here. Blocking on it costs one small request and removes the
+       second paint those blocks caused - the page no longer reflows when the
+       real rules arrive. Order is cascade order; keep it. -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/responsive.css">
 
-  <!-- Fallback for browsers without JS -->
-  <noscript>
-    <link href="css/fonts.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/responsive.css" rel="stylesheet">
-  </noscript>
 
   <!-- Box slider style-->
-  <link rel="stylesheet" href="css/jquery.bxslider.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/jquery.bxslider.css">
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="images/site.webmanifest">
@@ -261,39 +203,10 @@
     </p>
   </footer>
 
-  <!-- Load all JavaScript at the end for better performance -->
-  <!-- Critical scripts loaded immediately -->
-  <script>
-    // Inline critical performance optimizations
-    document.documentElement.classList.add('font-loading');
-    
-    // Font loading optimization
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      });
-    } else {
-      setTimeout(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      }, 3000);
-    }
-  </script>
   
   <!-- Load non-critical scripts asynchronously -->
   <script src="js/performance.js" defer></script>
   
-  <!-- Service Worker Registration -->
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('SW registered'))
-        .catch(err => console.log('SW registration failed'));
-    });
-  }
-  </script>
 </body>
 
 </html>

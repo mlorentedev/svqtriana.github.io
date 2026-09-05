@@ -36,82 +36,20 @@
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin>
   <link rel="dns-prefetch" href="https://code.jquery.com">
   
-  <!-- Critical CSS inlined for above-the-fold content -->
-  <style>
-    /* Critical reset and base styles */
-    html{scroll-behavior:smooth}
-    *{box-sizing:border-box}
-    body{font-family:"Arial","Helvetica",sans-serif;font-weight:400;font-style:normal;color:#f5faf4;background-color:#fff;margin:0}
-    img{max-width:100%;height:auto;vertical-align:middle}
-    
-    /* Critical font loading */
-    .font-loading body{font-family:"Arial","Helvetica",sans-serif}
-    .font-loaded body{font-family:"GlacialIndifferenceRegular","Poppins","Arial","Helvetica",sans-serif}
-    
-    /* Critical layout classes */
-    .container{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
-    .container-fluid{width:100%;padding-right:15px;padding-left:15px;margin-right:auto;margin-left:auto}
-    .row{display:flex;flex-wrap:wrap;margin-right:-15px;margin-left:-15px}
-    .col-12{flex:0 0 100%;max-width:100%}
-    .col-md-6{flex:0 0 50%;max-width:50%}
-    .col-lg-4{flex:0 0 33.333333%;max-width:33.333333%}
-    .mb-4{margin-bottom:1.5rem}
-    .layout_padding{padding:45px 0}
-    .layout_padding2{padding:45px 0}
-    
-    /* Critical header styles */
-    .hero_area{height:20vh;background-color:#242424;min-height:80px}
-    .header_section .container-fluid{padding-right:15px;padding-left:15px}
-    .navbar-brand{display:flex;align-items:center;text-transform:uppercase;font-weight:bold;font-size:24px;color:#fafcfd}
-    .navbar-brand img{width:128px}
-    .custom_nav-container .navbar-toggler{outline:none}
-    .custom_nav-container .navbar-toggler .navbar-toggler-icon{background-image:url(images/webp/menu.webp);background-size:55px}
-    
-    /* Critical product section styles */
-    .brand_section{background-color:#242424}
-    .brand_heading{text-align:center;margin-bottom:30px}
-    .custom_heading_2{color:#fff;text-transform:none;font-weight:bold;font-size:40px;text-align:center}
-    .brand_item-container{padding:0 15px}
-    .product-card{background:#fff;border-radius:8px;padding:20px;margin:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);height:100%}
-    .product-image{margin-bottom:15px}
-    .product-title{color:#252525;font-size:18px;font-weight:bold;margin-bottom:10px}
-    .product-content{color:#252525}
-    .feature-item,.price-item{display:flex;justify-content:space-between;margin-bottom:5px}
-    .price-value{font-weight:bold;color:#df0606}
-    
-    /* Critical responsive styles */
-    @media (max-width:768px){
-      .custom_heading_2{font-size:32px}
-      .col-md-6{flex:0 0 100%;max-width:100%}
-      .hero_area{height:15vh;min-height:70px}
-      .product-card{margin:10px 0}
-    }
-    @media (max-width:576px){
-      .custom_heading_2{font-size:28px}
-      .col-lg-4{flex:0 0 100%;max-width:100%}
-    }
-  </style>
   
   <!-- Load web fonts asynchronously -->
   
-  <!-- Non-blocking CSS. media="print" keeps these off the critical path; the
-       onload handler promotes them once they arrive. Order is the cascade
-       order, so keep it. Static tags (rather than the old JS loadCSS shim)
-       let the preload scanner find them and let the CDN link carry SRI. -->
-  <link rel="stylesheet" href="css/fonts.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/bootstrap.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/responsive.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/jquery.bxslider.css" media="print" onload="this.media='all'">
+  <!-- All the CSS, render-blocking on purpose. It totals 8.5K gzipped, which is
+       less than the hand-maintained "critical CSS" blocks that used to be
+       inlined here. Blocking on it costs one small request and removes the
+       second paint those blocks caused - the page no longer reflows when the
+       real rules arrive. Order is cascade order; keep it. -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/jquery.bxslider.css">
 
-  <!-- Fallback for browsers without JS -->
-  <noscript>
-    <link href="css/fonts.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/responsive.css" rel="stylesheet">
-    <link href="css/jquery.bxslider.css" rel="stylesheet">
-  </noscript>
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="images/site.webmanifest">
@@ -138,13 +76,13 @@
       "itemListElement": [
         {
           "@type": "Product",
-          "name": "Camiseta Oficial PS SVQ Triana",
-          "description": "Camiseta oficial disponible en azul oscuro y gris, tallas XS a XL",
-          "image": "https://svqtriana.com/images/webp/camiofi1.webp",
+          "name": "Bufanda Oficial PS SVQ Triana",
+          "description": "Bufanda oficial roja y negra de la peña sevillista",
+          "image": "https://svqtriana.com/images/webp/bufanda.webp",
           "offers": {
             "@type": "AggregateOffer",
-            "lowPrice": "12",
-            "highPrice": "15",
+            "lowPrice": "10",
+            "highPrice": "12",
             "priceCurrency": "EUR"
           }
         },
@@ -157,6 +95,17 @@
             "@type": "AggregateOffer",
             "lowPrice": "10",
             "highPrice": "12",
+            "priceCurrency": "EUR"
+          }
+        },
+        {
+          "@type": "Product",
+          "name": "Pegatinas PS SVQ Triana",
+          "description": "Lote de 6 pegatinas de la peña sevillista",
+          "image": "https://svqtriana.com/images/webp/pegatina_escudo.webp",
+          "offers": {
+            "@type": "Offer",
+            "price": "1",
             "priceCurrency": "EUR"
           }
         }
@@ -215,55 +164,24 @@
           <div class="product-card">
             <div class="product-image">
               <ul class="bxslider">
-                <li><img src="images/webp/camiofi1.webp" alt="Camiseta oficial azul oscuro"></li>
-                <li><img src="images/webp/camiofi2.webp" alt="Camiseta oficial gris"></li>
+                <li><img src="images/webp/bufanda.webp" alt="Bufanda oficial roja y negra"></li>
               </ul>
             </div>
             <div class="product-content">
-              <h2 class="product-title">Camiseta oficial</h2>
-              <div class="product-features">
-                <div class="feature-item">
-                  <span class="feature-label">Colores:</span>
-                  <span class="feature-value">Azul oscuro y gris</span>
-                </div>
-                <div class="feature-item">
-                  <span class="feature-label">Tallas:</span>
-                  <span class="feature-value">XS, S, M, L, XL</span>
-                </div>
-              </div>
+              <h2 class="product-title">Bufanda oficial roja y negra</h2>
               <div class="product-pricing">
                 <div class="price-item">
                   <span class="price-label">Socio</span>
-                  <span class="price-value">12€</span>
+                  <span class="price-value">10€</span>
                 </div>
                 <div class="price-item">
                   <span class="price-label">No socio</span>
-                  <span class="price-value">15€</span>
+                  <span class="price-value">12€</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="product-card">
-            <div class="product-image">
-              <ul class="bxslider">
-                <li><img src="images/webp/pulsera2.webp" alt="Pulsera oficial de la peña"></li>
-                <li><img src="images/webp/pulsera.webp" alt="Pulsera oficial vista alternativa"></li>
-              </ul>
-            </div>
-            <div class="product-content">
-              <h2 class="product-title">Pulsera oficial</h2>
-              <div class="product-pricing single-price">
-                <div class="price-item centered">
-                  <span class="price-value">1€</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="col-12 col-md-6 col-lg-4 mb-4">
           <div class="product-card">
             <div class="product-image">
@@ -286,30 +204,24 @@
             </div>
           </div>
         </div>
-
         <div class="col-12 col-md-6 col-lg-4 mb-4">
           <div class="product-card">
             <div class="product-image">
               <ul class="bxslider">
-                <li><img src="images/webp/bufanda.webp" alt="Bufanda oficial roja y negra"></li>
+                <li><img src="images/webp/pulsera2.webp" alt="Pulsera oficial de la peña"></li>
+                <li><img src="images/webp/pulsera.webp" alt="Pulsera oficial vista alternativa"></li>
               </ul>
             </div>
             <div class="product-content">
-              <h2 class="product-title">Bufanda oficial roja y negra</h2>
-              <div class="product-pricing">
-                <div class="price-item">
-                  <span class="price-label">Socio</span>
-                  <span class="price-value">10€</span>
-                </div>
-                <div class="price-item">
-                  <span class="price-label">No socio</span>
-                  <span class="price-value">12€</span>
+              <h2 class="product-title">Pulsera oficial</h2>
+              <div class="product-pricing single-price">
+                <div class="price-item centered">
+                  <span class="price-value">1€</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         <div class="col-12 col-md-6 col-lg-4 mb-4">
           <div class="product-card">
             <div class="product-image">
@@ -373,25 +285,6 @@
     </p>
   </footer>
 
-  <!-- Load all JavaScript at the end for better performance -->
-  <!-- Critical scripts loaded immediately -->
-  <script>
-    // Inline critical performance optimizations
-    document.documentElement.classList.add('font-loading');
-    
-    // Font loading optimization
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      });
-    } else {
-      setTimeout(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      }, 3000);
-    }
-  </script>
   
   <!-- Load non-critical scripts asynchronously -->
   <script src="js/performance.js" defer></script>
@@ -402,70 +295,8 @@
           crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="js/jquery.bxslider.js" defer></script>
 
-  <script defer>
-    // bxSlider measures the wrapper once, at init, and writes that width onto
-    // every slide. The stylesheets load asynchronously (media="print" until
-    // onload), so on DOMContentLoaded the card is still unstyled and the
-    // measurement is wrong - slides came out 555px wide inside a 529px viewport,
-    // shifted left with the card background showing at the edge. Wait for
-    // window load, when the CSS has applied and the layout is final.
-    (function () {
-      var sliders = [];
-
-      function initSliders() {
-        if (typeof jQuery === 'undefined' || !jQuery.fn.bxSlider) {
-          return setTimeout(initSliders, 100);
-        }
-        jQuery('.bxslider').each(function () {
-          sliders.push(jQuery(this).bxSlider({
-            mode: 'fade',
-            auto: true,
-            autoStart: true,
-            autoControls: false,
-            stopAutoOnClick: false,
-            pager: true,
-            controls: false,
-            speed: 800,
-            pause: 2500,
-            adaptiveHeight: false,
-            responsive: true,
-            touchEnabled: true,
-            infiniteLoop: true,
-            preloadImages: 'all',
-            easing: 'ease-in-out'
-          }));
-        });
-      }
-
-      // A late webfont or image can still change the card width after load, and
-      // bxSlider only re-measures on resize. Re-measure once things settle.
-      function reload() {
-        sliders.forEach(function (s) {
-          if (s && typeof s.reloadSlider === 'function') s.reloadSlider();
-        });
-      }
-
-      if (document.readyState === 'complete') {
-        initSliders();
-      } else {
-        window.addEventListener('load', initSliders);
-      }
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function () { setTimeout(reload, 50); });
-      }
-    })();
-  </script>
+  <script src="js/slider.js" defer></script>
   
-  <!-- Service Worker Registration -->
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('SW registered'))
-        .catch(err => console.log('SW registration failed'));
-    });
-  }
-  </script>
 </body>
 
 </html>
