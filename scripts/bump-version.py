@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
 """Bump the site version everywhere it appears, in one command.
 
-The version lives in four places that must agree:
+The version is the deploy date: `vYYYYMMDD`, with `.N` appended for a second
+deploy on the same day. Calendar versioning rather than semantic, because
+nothing here is a dependency anyone pins - there is no API to break, and the
+question a version actually answers on this site is "how current is what I am
+looking at". `v20260905` answers that to a visitor and to whoever is debugging
+a stale cache. `v2.5` answered it to nobody.
+
+It lives in five places that must agree:
 
   1. CACHE_VERSION in sw.js          - names the service worker's caches
   2. sw.js's PRECACHE_URLS           - ?v= on the css/js entries
   3. the ?v= on every css/js URL     - the cache key the browser and
      in the five pages                 Cloudflare actually see
-  4. the footer stamp                - what a visitor can read back to you
+  4. the footer stamp and its        - what a visitor can read back to you,
+     aria-label                        including through a screen reader
+  5. the newest CHANGELOG.md heading - what that version actually changed
 
 They agree because check_pages.py fails when they do not, and they are easy to
 keep in agreement because of this script. That combination is deliberate: the
@@ -15,9 +24,13 @@ README carried "bump CACHE_VERSION" as a written instruction for a year, and
 the first change that needed it forgot anyway.
 
 Usage:
-    scripts/bump-version.py          # v2.5 -> v2.6
-    scripts/bump-version.py 3.0      # explicit
+    scripts/bump-version.py            # today's date
+    scripts/bump-version.py 20261101   # explicit
+
+It does not write the CHANGELOG entry - that is the one part a human has to
+think about, and generating "various fixes" would defeat the point.
 """
+from datetime import date
 from pathlib import Path
 import re
 import sys
@@ -36,14 +49,23 @@ old = found.group(1)
 if len(sys.argv) > 1:
     new = sys.argv[1].lstrip("v")
 else:
-    # Minor bump. A major bump is a judgement call, so it is never guessed.
-    parts = old.split(".")
-    if len(parts) != 2 or not all(p.isdigit() for p in parts):
-        sys.exit(f"cannot auto-bump {old!r}: pass the new version explicitly")
-    new = f"{parts[0]}.{int(parts[1]) + 1}"
+    today = date.today().strftime("%Y%m%d")
+    # A second deploy on the same day still has to change the cache key, so the
+    # date grows a counter rather than colliding. Without this the second
+    # deploy of a day would ship new HTML against yesterday's cached CSS - the
+    # exact failure the versioning exists to prevent.
+    if old == today:
+        new = f"{today}.1"
+    elif old.startswith(f"{today}."):
+        new = f"{today}.{int(old.split('.')[1]) + 1}"
+    else:
+        new = today
 
 if new == old:
     sys.exit(f"already at v{old}")
+
+if not re.fullmatch(r"\d{8}(\.\d+)?", new):
+    sys.exit(f"v{new} is not a deploy date: expected vYYYYMMDD or vYYYYMMDD.N")
 
 # Everything is rewritten in memory and checked before anything reaches disk.
 # Writing sw.js first and validating the pages afterwards left the tree holding

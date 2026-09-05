@@ -27,6 +27,7 @@ every link in the nav and makes the site look broken when it is not.
 | `infra/cloudflare/` | Response headers, cache rules and analytics, as Terraform. |
 | `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`, `bump-version.py`. |
 | `docs/` | Runbooks and the notes explaining decisions that look odd. |
+| `CHANGELOG.md` | What changed on each deploy. The footer version links here. |
 
 ## The seasonal job
 
@@ -72,7 +73,9 @@ Things that look like mistakes and are not, or look fine and are not.
   serve the old file under the same name: the service worker's, 30 days and
   cache-first, and Cloudflare's edge, 7 days. Run `scripts/bump-version.py`:
   it moves `CACHE_VERSION`, the `?v=` on every `css/` and `js/` URL, and the
-  footer stamp together. `scripts/check_pages.py` fails until all four agree.
+  footer stamp together, and stamps today's date as the version. Then write the
+  `CHANGELOG.md` entry by hand — `scripts/check_pages.py` fails until all five
+  agree, the changelog included.
   The query string is what makes it a new cache key for both, so no purge is
   needed.
 

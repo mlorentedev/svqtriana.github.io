@@ -50,17 +50,21 @@ The recurring job. Once a year, around July.
    bump members who visited recently keep seeing last season's poster.
 
    ```sh
-   scripts/bump-version.py        # v2.5 -> v2.6, everywhere it appears
+   scripts/bump-version.py        # stamps today's date, everywhere it appears
    ```
 
-   It moves four things that must agree: `CACHE_VERSION`, the `?v=` on every
-   `css/` and `js/` URL, the footer stamp, and its `aria-label`.
-   `scripts/check_pages.py` fails while any of them disagree, so a half-done
-   bump cannot reach `main`.
+   The version is the deploy date, `vYYYYMMDD`, with `.N` for a second deploy
+   the same day. The script moves four things that must agree: `CACHE_VERSION`,
+   the `?v=` on every `css/` and `js/` URL, the footer stamp and its
+   `aria-label`.
 
-6. **`lastmod` in `sitemap.xml`.**
+6. **Write the `CHANGELOG.md` entry.** The script deliberately does not: a
+   generated "various fixes" would defeat the point. `check_pages.py` fails
+   while the newest heading and `CACHE_VERSION` disagree.
 
-7. Check it: `scripts/serve.py 8000`, then `scripts/check_pages.py`.
+7. **`lastmod` in `sitemap.xml`.**
+
+8. Check it: `scripts/serve.py 8000`, then `scripts/check_pages.py`.
 
 ## Job 2: a new video
 
