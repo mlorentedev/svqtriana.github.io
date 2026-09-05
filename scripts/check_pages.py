@@ -82,6 +82,16 @@ for name, text in pages.items():
     check("svqtriana@gmail.com" in text,
           f"{name}: contact address missing from the served HTML")
 
+    # css/bootstrap.css is v4 and hides the menu with `.collapse:not(.show)`,
+    # while js/bootstrap.min.js is v3 and toggles the v3 class `in`, which no
+    # stylesheet here defines. Leaving the button on data-toggle="collapse"
+    # therefore produces a menu that changes class and never appears - which is
+    # exactly what shipped once, because the check asserted the class changed
+    # rather than that the menu became visible.
+    check('data-toggle="collapse"' not in text,
+          f"{name}: the toggler is back on Bootstrap's data-toggle; the bundled "
+          f"JS is v3 and the CSS is v4, so the menu will never open on mobile")
+
     header, footer = block("header", text), block("footer", text)
     check(bool(header), f"{name}: no <header> in the served HTML")
     check(bool(footer), f"{name}: no <footer> in the served HTML")
@@ -103,6 +113,12 @@ for group, label in ((headers, "header"), (footers, "footer")):
         reference = group[PAGES[0]]
         odd = sorted(n for n, v in group.items() if v != reference)
         failures.append(f"the {label} has drifted out of sync on: {odd}")
+
+nav_js = (REPO / "js" / "performance.js").read_text(encoding="utf-8")
+check("classList.toggle('show')" in nav_js,
+      "js/performance.js no longer toggles the 'show' class: the mobile menu "
+      "depends on it, because the bundled Bootstrap JS and CSS are different "
+      "major versions")
 
 if failures:
     for message in failures:

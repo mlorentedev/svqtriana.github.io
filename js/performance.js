@@ -104,3 +104,30 @@
     const el = document.getElementById('footer-year');
     if (el) el.textContent = new Date().getFullYear();
 })();
+
+// Mobile navigation toggle.
+//
+// This cannot be left to the bundled Bootstrap: css/bootstrap.css is v4.3.1 and
+// hides the menu with `.collapse:not(.show)`, while js/bootstrap.min.js is
+// v3.4.1 and toggles the v3 class `in`, which no stylesheet here defines. The
+// deleted js/header.js papered over the mismatch with a hand-written
+// classList.add('show'); this is that line, kept deliberately and with the
+// reason written down.
+(function () {
+    const button = document.querySelector('.navbar-toggler');
+    const menu = document.getElementById('navbarSupportedContent');
+    if (!button || !menu) return;
+
+    button.addEventListener('click', function () {
+        const open = menu.classList.toggle('show');
+        button.setAttribute('aria-expanded', String(open));
+    });
+
+    // Following a link should not leave the menu open behind the new page.
+    menu.addEventListener('click', function (event) {
+        if (event.target.closest('a') && menu.classList.contains('show')) {
+            menu.classList.remove('show');
+            button.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
