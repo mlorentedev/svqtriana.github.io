@@ -120,6 +120,23 @@ check("classList.toggle('show')" in nav_js,
       "depends on it, because the bundled Bootstrap JS and CSS are different "
       "major versions")
 
+# Asserting that both strings exist does not connect the button to the menu.
+# performance.js returns silently when getElementById misses, so a renamed id
+# leaves this green and the menu dead - the same shape of hole that let the
+# original breakage ship.
+# Anchored on the menu declaration specifically: performance.js has more
+# than one getElementById, and matching the first one found the footer year.
+target = re.search(r"const menu = document\.getElementById\('([^']+)'\)", nav_js)
+check(bool(target), "js/performance.js no longer looks up the menu by id")
+if target:
+    menu_id = target.group(1)
+    for name, text in pages.items():
+        check(f'id="{menu_id}"' in text,
+              f"{name}: performance.js toggles #{menu_id}, which this page "
+              f"does not contain - the menu would not open")
+        check(f'aria-controls="{menu_id}"' in text,
+              f"{name}: the toggler's aria-controls does not name #{menu_id}")
+
 if failures:
     for message in failures:
         print(f"FAIL {message}")
