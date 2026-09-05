@@ -1,0 +1,98 @@
+name: edge drift
+
+# Asks production for the files we think we are serving, and diffs them against
+# the repository.
+#
+# See issue #24. Cloudflare rewrote robots.txt at the edge for an unknown
+# period: 8 lines in the repository, 68 served, with eight AI crawlers under
+# Disallow: / and a Content-Signal directive that is not valid robots.txt
+# syntax. It undid the whole reason the pages were restructured, and it was
+# silent - 200 OK, a plausible-looking file, and the crawlers simply stop
+# arriving. It surfaced by accident, from a weight-1 Lighthouse audit.
+#
+# Two things follow from how that failed, and shape this file:
+#
+#   - It runs on a SCHEDULE, not on push. Nobody has to commit anything for the
+#     edge to start rewriting a response, so a check that only runs on a pull
+#     request would never have caught it.
+#   - It sends a browser User-Agent. Cloudflare's injections are conditional on
+#     it in at least one case - the Web Analytics beacon is absent for a
+#     default curl - so checking with curl's own UA can report clean while a
+#     visitor gets something else.
+
+on:
+  schedule:
+    # 07:00 UTC daily. The failure mode is slow and silent, so daily is enough;
+    # what matters is that it runs at all without anyone pushing.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+  # Also on changes to the files themselves, to catch the opposite mistake:
+  # editing one and never deploying it.
+  push:
+    branches: [main]
+    paths:
+      - "robots.txt"
+      - "llms.txt"
+      - "ads.txt"
+      - "sitemap.xml"
+      - ".github/workflows/edge-drift.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Production serves what this repository contains
+        env:
+          SITE: https://svqtriana.com
+          UA: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        run: |
+          set -uo pipefail
+          fail=0
+
+          for f in robots.txt llms.txt ads.txt sitemap.xml; do
+            [ -f "$f" ] || { echo "skip $f: not in the repository"; continue; }
+
+            # Cache-busting query so a stale edge copy is not mistaken for
+            # agreement, and -f so a non-200 is a failure rather than an empty
+            # file that happens to match nothing.
+            if ! curl -sfA "$UA" "$SITE/$f?drift=$RANDOM" -o "/tmp/$f.served"; then
+              echo "FAIL $f: production did not return it"
+              fail=1
+              continue
+            fi
+
+            if diff -u "$f" "/tmp/$f.served" > "/tmp/$f.diff"; then
+              echo "ok   $f"
+            else
+              echo "FAIL $f: what production serves is not what this repository contains"
+              echo "--- repository / +++ served ---"
+              head -40 "/tmp/$f.diff"
+              fail=1
+            fi
+          done
+
+          # The pages themselves carry no such check: they are compared by
+          # scripts/check_pages.py against the working tree, and an injected
+          # <script> is legitimate for the analytics beacon. This one narrow
+          # assertion is the one that matters, because no hash or nonce can
+          # allow a per-request inline script and the CSP forbids it.
+          echo
+          for p in "" nosotros productos media encuentro; do
+            n=$(curl -sA "$UA" "$SITE/$p?drift=$RANDOM" | grep -c '<script>' || true)
+            if [ "$n" -ne 0 ]; then
+              echo "FAIL /$p: $n inline <script> in the served HTML; this repository ships none,"
+              echo "     so it came from the edge and the CSP will block it"
+              fail=1
+            else
+              echo "ok   /$p no injected inline script"
+            fi
+          done
+
+          exit $fail
