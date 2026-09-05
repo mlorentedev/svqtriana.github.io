@@ -45,9 +45,17 @@ The recurring job. Once a year, around July.
    currently only in the poster's pixels, which is deliberate — see *Open
    questions*.
 
-5. **Bump `CACHE_VERSION` in `sw.js`.** Not optional. HTML is cached for a day
-   and images for a week, cache-first, so without the bump members who visited
-   recently keep seeing last season's poster.
+5. **Bump `CACHE_VERSION` in `sw.js`, and restamp the `?v=`.** Not optional.
+   HTML is cached for a day and images for a week, cache-first, so without the
+   bump members who visited recently keep seeing last season's poster.
+
+   ```sh
+   # every css/ and js/ URL in the five pages, plus sw.js's own precache list
+   sed -i 's/?v=2\.5/?v=2.6/g' index.html nosotros.html productos.html media.html encuentro.html
+   ```
+
+   `scripts/check_pages.py` fails while `sw.js` and the pages disagree, so a
+   half-done bump cannot reach `main`.
 
 6. **`lastmod` in `sitemap.xml`.**
 
@@ -78,7 +86,7 @@ The recurring job. Once a year, around July.
    carries the video's own name as `<h2 class="video-title">` and the season as
    `<p class="video-season">`.
 
-5. Bump `CACHE_VERSION`.
+5. Bump `CACHE_VERSION` and restamp the `?v=`, as in Job 1 step 5.
 
 ## Job 3: prices or products change
 

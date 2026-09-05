@@ -68,9 +68,16 @@ Things that look like mistakes and are not, or look fine and are not.
   and `css/style.css.map` used to sit beside `style.css` and had drifted to
   1433 lines against 680; recompiling would have silently deleted half the
   stylesheet. They were deleted for that reason. `style.css` is hand-edited.
-- **Changing a stylesheet or a script is not enough on its own.** The service
-  worker caches CSS and JS for 30 days, cache-first. Bump `CACHE_VERSION` in
-  `sw.js` or returning visitors keep the old file.
+- **Changing a stylesheet or a script is not enough on its own.** Two caches
+  serve the old file under the same name: the service worker's, 30 days and
+  cache-first, and Cloudflare's edge, 7 days. Bump `CACHE_VERSION` in `sw.js`
+  and restamp the `?v=` on every `css/` and `js/` URL in the five pages —
+  `python3 scripts/check_pages.py` fails until they agree. The query string is
+  what makes it a new cache key for both, so no purge is needed.
+
+  This paragraph used to say only "bump `CACHE_VERSION`", and the very next
+  change that moved rules out of an inline `<style>` and into `style.css`
+  forgot to. A documented knob is not a mechanism; the check is.
 - **The header and footer are copy-pasted across five files.** That is the cost
   of having no templating; they used to be built in JavaScript, which hid the
   whole nav from crawlers that do not run JS. `scripts/check_pages.py` fails if
