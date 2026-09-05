@@ -9,6 +9,18 @@ the output — see scripts/compare-render.py.
 
     scripts/prune-bootstrap.py            # report only
     scripts/prune-bootstrap.py --write    # rewrite css/bootstrap.css
+
+IT READS THE FILE IT REWRITES, so running it a second time prunes the already
+pruned stylesheet. Adding a class to a page and re-running restores nothing:
+the rule for that class is not in the input any more. The full stylesheet only
+exists in git history, so start from there every time:
+
+    git show f12cc73:css/bootstrap.css > css/bootstrap.css   # last unpruned copy
+    scripts/prune-bootstrap.py --write
+
+f12cc73 is the last commit that carried the complete 10043-line stylesheet.
+If that hash ever goes stale, `git log --oneline -- css/bootstrap.css` finds
+it again: it is the entry before the one whose message mentions pruning.
 """
 
 import argparse
@@ -51,7 +63,22 @@ def split_top_level(css: str) -> list[str]:
             in_str = c
         elif c == "/" and css[i:i + 2] == "/*":
             end = css.find("*/", i)
-            i = len(css) if end == -1 else end + 2
+            end = len(css) if end == -1 else end + 2
+            if depth == 0:
+                # A top-level comment is emitted as its own chunk rather than
+                # skipped over. Skipping advanced `i` but not `start`, so the
+                # comment stayed glued to the front of the rule that followed
+                # it - and the selector parser then read the Bootstrap banner
+                # as a selector list: it split inside "Twitter, Inc." and
+                # matched ".com" in getbootstrap.com as a class. Neither half
+                # survived, so the banner AND the :root block it preceded were
+                # both dropped. That shipped.
+                before = css[start:i]
+                if before.strip():
+                    chunks.append(before)
+                chunks.append(css[i:end])
+                start = end
+            i = end
             continue
         elif c == "{":
             depth += 1
@@ -89,6 +116,16 @@ def prune(css: str, used: set[str]) -> str:
     for chunk in split_top_level(css):
         stripped = chunk.strip()
         if not stripped:
+            continue
+        if stripped.startswith("/*"):
+            # Licence banners travel with the code. MIT requires the copyright
+            # and permission notice to accompany all copies or substantial
+            # portions, and what this script emits is 683 lines of Bootstrap's
+            # own declarations, byte for byte. `/*!` is the long-standing
+            # convention for "a minifier must not strip this"; ordinary
+            # comments carry no such obligation and are dropped.
+            if stripped.startswith("/*!"):
+                out.append(stripped)
             continue
         if stripped.startswith("@media") or stripped.startswith("@supports"):
             head, _, rest = stripped.partition("{")

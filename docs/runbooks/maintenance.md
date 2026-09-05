@@ -95,7 +95,33 @@ The recurring job. Once a year, around July.
 `hasOfferCatalog` JSON-LD in the head. **Change both**, or search engines will
 advertise a price the page does not show.
 
-## Job 4: changing the Cloudflare configuration
+## Job 4: re-pruning css/bootstrap.css
+
+Only needed if a page starts using a Bootstrap class it did not use before —
+the pruned stylesheet no longer contains that rule.
+
+**`scripts/prune-bootstrap.py` reads the file it rewrites**, so running it
+again prunes the already-pruned copy and restores nothing. Always start from
+the complete stylesheet in git history:
+
+```sh
+git show f12cc73:css/bootstrap.css > css/bootstrap.css
+scripts/prune-bootstrap.py --write
+```
+
+Then prove nothing moved, which is the only check that means anything here:
+
+```sh
+git show f12cc73:css/bootstrap.css > /tmp/bootstrap-original.css
+scripts/compare-render.py /tmp/bootstrap-original.css
+```
+
+It renders all five pages at five widths under both stylesheets and compares
+the computed style and box of every element — 3613 of them. Expect
+`no computed-style or box differences`; it reports 644 when a single used rule
+goes missing, so a pass is worth something.
+
+## Job 5: changing the Cloudflare configuration
 
 Applied 2026-09-05. See [`infra/cloudflare/README.md`](../../infra/cloudflare/README.md).
 Change the code, then plan and apply — never click it in the dashboard.
