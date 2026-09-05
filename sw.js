@@ -1,5 +1,5 @@
 // SVQ Triana Service Worker - Efficient Caching Strategy
-const CACHE_VERSION = 'v2.0';
+const CACHE_VERSION = 'v2.1';
 const STATIC_CACHE = `svq-triana-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `svq-triana-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `svq-triana-images-${CACHE_VERSION}`;

@@ -18,19 +18,18 @@
   <meta property="og:type"               content="website" />
   <meta property="og:url"                content="https://svqtriana.com/" />
   <meta property="og:title"              content="PS SVQ Triana - Peña Sevillista" />
-  <meta property="og:description"        content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
-  <meta property="og:image"              content="https://svqtriana.com/images/webp/logo_192.webp" />
-  <meta property="og:image:width"        content="1200"/>
-  <meta property="og:image:height"       content="630"/>
+  <meta property="og:description"        content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla. Abierta la renovación y las nuevas altas de la temporada 26/27." />
+  <!-- Scrapers (WhatsApp, Facebook, X) are unreliable with WebP: share the JPEG master. -->
+  <meta property="og:image"              content="https://svqtriana.com/images/cartel-27.jpg" />
+  <meta property="og:image:width"        content="1131"/>
+  <meta property="og:image:height"       content="1600"/>
+  <meta property="og:image:alt"          content="Cartel oficial de la temporada 2026/2027 de PS SVQ Triana" />
   <meta property="og:site_name"          content="PS SVQ Triana" />
-  <meta property="og:type"               content="website" />
+  <meta property="og:locale"             content="es_ES" />
   <meta name="twitter:card"              content="summary_large_image" />
   <meta name="twitter:title"             content="PS SVQ Triana - Peña Sevillista" />
-  <meta name="twitter:description"       content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
-  <meta name="twitter:image"             content="https://svqtriana.com/images/webp/cartel-26.webp" />
-  <meta property="og:image:alt"          content="Logo de PS SVQ Triana" />
-  <meta property="og:locale"             content="es_ES" />
-  <meta name="twitter:card"              content="summary" />
+  <meta name="twitter:description"       content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla. Abierta la renovación y las nuevas altas de la temporada 26/27." />
+  <meta name="twitter:image"             content="https://svqtriana.com/images/cartel-27.jpg" />
   <meta name="twitter:site"              content="@ps_svqtriana1" />
   <link rel="canonical" href="https://svqtriana.com/" />
 
@@ -44,6 +43,8 @@
   <!-- Resource hints for performance -->
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin>
+  <!-- The season poster is the LCP element: ask for it before the CSS resolves. -->
+  <link rel="preload" as="image" href="images/webp/cartel-27.webp" fetchpriority="high">
   <link rel="dns-prefetch" href="https://code.jquery.com">
   
   <!-- Critical CSS inlined for above-the-fold content -->
@@ -85,28 +86,29 @@
     .text-centered{font-size:25px;text-align:center}
     p{text-align:justify;font-size:25px;line-height:1.6}
     
-    /* Critical responsive styles */
+    /* Critical responsive styles.
+       Order matters: these blocks share one specificity, so the LAST matching
+       one wins. They must run widest-to-narrowest, matching css/responsive.css
+       — otherwise a phone matches every block and lands on the 2048px rule. */
+    .about_section .cartel{width:40%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
+    @media (max-width:1120px){
+      .about_section .cartel{width:50%}
+    }
+    @media (max-width:992px){
+      .about_section .cartel{width:60%}
+    }
     @media (max-width:768px){
       .custom_heading{font-size:32px}
       .about_section .row{margin-left:15px;margin-right:15px}
-      .about_section .cartel{width:80%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
+      .about_section .cartel{width:80%}
       p{font-size:18px;line-height:1.5}
       .hero_area{height:15vh;min-height:70px}
     }
     @media (max-width:576px){
       .custom_heading{font-size:28px}
       .about_section .row{margin-left:10px;margin-right:10px}
-      .about_section .cartel{width:100%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
+      .about_section .cartel{width:100%}
       p{font-size:16px;line-height:1.4}
-    }
-    @media (max-width:992px){
-      .about_section .cartel{width:60%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
-    }
-    @media (max-width:1120px){
-      .about_section .cartel{width:50%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
-    }
-    @media (max-width:2048px){
-      .about_section .cartel{width:40%;height:auto;text-align:center;display:flex;justify-content:center;align-items:center;margin:0 auto}
     }
   </style>
   
@@ -152,7 +154,7 @@
     "description": "Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla. Somos una comunidad de aficionados del Sevilla FC unidos por la pasión sevillista.",
     "url": "https://svqtriana.com",
     "logo": "https://svqtriana.com/images/webp/logo_192.webp",
-    "image": "https://svqtriana.com/images/webp/cartel-26.webp",
+    "image": "https://svqtriana.com/images/cartel-27.jpg",
     "foundingDate": "2019-07-27",
     "foundingLocation": {
       "@type": "Place",
@@ -205,12 +207,12 @@
 
     <!-- main section -->
     <main>
-      <section class="about_section layout_padding" id="us" role="main">
+      <section class="about_section layout_padding" id="us">
         <div class="container-fluid">
           <div class="about_detail-box">
             <header class="row">
               <h1 class="custom_heading">
-                TEMPORADA 25/26
+                TEMPORADA 26/27
               </h1>
             </header>
             <div class="row">
@@ -220,9 +222,11 @@
             </div>
             <div class="row">
               <figure class="cartel">
-                <img src="images/webp/cartel-26.webp" alt="Cartel oficial de la temporada 25/26 de PS SVQ Triana" loading="lazy">
+                <img src="images/webp/cartel-27.webp"
+                     alt="Cartel oficial de la temporada 2026/2027 de PS SVQ Triana: renovación 20€ (28€ con camiseta) y nueva alta 25€ (35€ con camiseta)"
+                     width="1080" height="1528" fetchpriority="high" decoding="async">
               </figure>
-            </div>  
+            </div>
           </div>
         </div>
       </section>
