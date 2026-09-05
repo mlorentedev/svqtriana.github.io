@@ -14,22 +14,21 @@ locals {
   # Derived from what the pages actually load, not from a template:
   #   - inline <script> and <style> blocks on every page (critical CSS, the
   #     gtag bootstrap, the slider init), hence 'unsafe-inline'
-  #   - jQuery from code.jquery.com, the only remaining third-party script
-  #   - Google Analytics from googletagmanager, reporting to google-analytics
+  #   - jQuery from code.jquery.com, the only remaining third-party script,
+  #     and only on /productos
   #   - the Cloudflare Web Analytics beacon, injected by Cloudflare itself
   #   - encuentro embeds a Google Maps iframe
   #   - the membership form posts to docs.google.com
   content_security_policy = join("; ", [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://code.jquery.com https://www.googletagmanager.com https://static.cloudflareinsights.com",
+    "script-src 'self' 'unsafe-inline' https://code.jquery.com https://static.cloudflareinsights.com",
     "style-src 'self' 'unsafe-inline'",
     # No cdnjs anywhere: Font Awesome and Owl Carousel are gone. The icons are
     # inline SVG and the only webfont is self-hosted, so nothing loads a font
     # from a third party.
     "font-src 'self'",
-    # GA4 does not report to one fixed host; it picks a regional endpoint.
-    "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
-    "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com",
+    "img-src 'self' data:",
+    "connect-src 'self' https://cloudflareinsights.com",
     "frame-src https://www.google.com https://www.youtube.com",
     "frame-ancestors 'self'",
     "form-action 'self' https://docs.google.com",

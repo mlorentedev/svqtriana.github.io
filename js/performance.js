@@ -107,12 +107,15 @@
 
 // Mobile navigation toggle.
 //
-// This cannot be left to the bundled Bootstrap: css/bootstrap.css is v4.3.1 and
-// hides the menu with `.collapse:not(.show)`, while js/bootstrap.min.js is
-// v3.4.1 and toggles the v3 class `in`, which no stylesheet here defines. The
-// deleted js/header.js papered over the mismatch with a hand-written
-// classList.add('show'); this is that line, kept deliberately and with the
-// reason written down.
+// This is the only implementation: the site ships no Bootstrap JavaScript. It
+// used to, and that is worth knowing before anyone adds it back - the bundled
+// css/bootstrap.css is v4.3.1 and hides the menu with `.collapse:not(.show)`,
+// while the JS that shipped alongside it was v3.4.1 and toggled the v3 class
+// `in`, which no stylesheet here defines. The menu was dead on every page for
+// exactly that reason. Reintroducing Bootstrap's JS without matching its major
+// version to the CSS would break it again, silently.
+//
+// scripts/check_pages.py fails if this toggle or its target id goes missing.
 (function () {
     const button = document.querySelector('.navbar-toggler');
     const menu = document.getElementById('navbarSupportedContent');
