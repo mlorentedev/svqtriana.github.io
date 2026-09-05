@@ -1,42 +1,53 @@
 name: review
 
-# Fails when the reviewer said it could not review, and nothing else says
-# otherwise. See issue #19: four PRs merged within minutes of a CodeRabbit
-# "review limit reached" notice, each carrying a green `CodeRabbit: SUCCESS`
-# status and zero reviews. A status that goes green when the check did not run
-# is worse than no status, because it reads as an answer.
+# Reports whether this PR was actually reviewed, and re-reports every time the
+# answer could have changed.
+#
+# See #19: four PRs merged within minutes of a CodeRabbit "review limit
+# reached" notice, each carrying a green `CodeRabbit: SUCCESS` status and zero
+# reviews. A status that goes green when the check did not run is worse than no
+# status, because it reads as an answer.
 #
 # This does not forbid merging unreviewed. It forbids doing so silently: the
-# job goes red, and the way to clear it is to say so in a comment.
+# `attested` check goes red, and the way to clear it is to write the disclosure.
+#
+# It reports through the Checks API rather than through this job's own exit
+# status, and that indirection is the whole design. See #26: the job used to BE
+# the check, so it could only report at the moment its trigger fired - which is
+# before CodeRabbit posts its notice. It went green on #25 for the exact case it
+# exists to catch. Creating the check run explicitly means any trigger can
+# update the verdict on the PR's head sha, including an issue_comment, whose
+# implicit check run lands on the default branch and is therefore useless (#23).
+#
+# So: the job always exits 0, and `attested` carries the answer.
 
 on:
   pull_request:
-  # So a review arriving late re-answers the question by itself - which is
-  # what happened on #15, 6m25s after the merge. This one runs in the PR's
-  # context, so its check lands on the PR's head sha.
+  # A review arriving late re-answers the question by itself - which is what
+  # happened on #15, 6m25s after the merge.
   pull_request_review:
     types: [submitted]
+  # The rate-limit notice and the disclosure are both plain comments, and both
+  # change the answer. This trigger only works because of the Checks API.
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
   pull-requests: read
-
-# NOT triggered on issue_comment, though posting the disclosure is exactly the
-# event that changes the answer. An issue_comment workflow runs against the
-# default branch, so its check run lands on main's sha and never clears the one
-# on the PR's head - observed on #22, where two green issue_comment runs sat
-# beside a red pull_request run and the PR stayed blocked. After posting the
-# '## Review triage' comment, re-run this job.
+  checks: write
 
 jobs:
-  attested:
+  report:
+    # issue_comment also fires for issues, which have no head sha.
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     runs-on: ubuntu-latest
     steps:
       - name: A rate-limit notice is not a review
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
         run: |
           set -euo pipefail
 
@@ -45,8 +56,8 @@ jobs:
 
           # Tell a review from a notice about a review by CONTENT, never by
           # author: a review names files, lines or claims; a notice talks about
-          # the review itself. Same reasoning applies to any reviewer, which is
-          # why the pattern is about the message and not about who sent it.
+          # the review itself. Matching on the author would be the same mistake
+          # in a different place, and would break when the reviewer changes.
           notice=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
             --jq '[.[] | select(.body | test("(?i)review limit reached|used all (your )?free .{0,20}reviews|couldn.t start this review"))] | length')
 
@@ -60,8 +71,7 @@ jobs:
 
           # The escape hatch, and it is deliberately a sentence someone has to
           # write. "Merged unreviewed, reviewer quota exhausted" is a
-          # disclosure; saying nothing is a claim of review that never
-          # happened.
+          # disclosure; saying nothing is a claim of review that never happened.
           disclosed=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
             --jq '[.[] | select(.body | test("(?i)^#+ *Review triage"))] | length')
 
@@ -71,13 +81,36 @@ jobs:
           echo "## Review triage:   $disclosed"
 
           if [ "$notice" -gt 0 ] && [ "$reviews" -eq 0 ] && [ "$inline" -eq 0 ] && [ "$disclosed" -eq 0 ]; then
-            echo
-            echo "::error::This PR carries a notice that the review could not run, and no"
-            echo "::error::review exists on $head. Merging is allowed; merging silently is not."
-            echo "::error::Post a '## Review triage' comment saying so, then re-run this job."
-            echo "::error::(Re-running is required: a comment cannot clear this check by itself.)"
-            exit 1
+            conclusion=failure
+            title="Unreviewed, and not disclosed"
+            summary=$'A notice says the review could not run, and no review exists on this commit.\n\nMerging unreviewed is allowed. Merging silently is not: post a `## Review triage` comment saying so, and this check clears itself within a minute — no re-run needed.'
+          else
+            conclusion=success
+            if [ "$reviews" -gt 0 ] || [ "$inline" -gt 0 ]; then
+              title="Reviewed on this commit"
+              summary="A review exists on ${head}."
+            elif [ "$disclosed" -gt 0 ]; then
+              title="Unreviewed, and disclosed"
+              summary="No review on ${head}, and a \`## Review triage\` comment says so."
+            else
+              title="No reviewer has declined to review"
+              summary="No rate-limit notice on this PR. If one arrives, this check re-reports."
+            fi
           fi
 
-          echo
-          echo "ok: either a review exists on this head sha, or the absence of one is disclosed"
+          # The check run is created against the PR head sha explicitly, which
+          # is what lets an issue_comment run update it. Same name every time,
+          # so the newest result is the one the PR shows.
+          gh api -X POST "repos/$REPO/check-runs" \
+            -f name=attested \
+            -f head_sha="$head" \
+            -f status=completed \
+            -f conclusion="$conclusion" \
+            -f output[title]="$title" \
+            -f output[summary]="$summary" \
+            --jq '"reported \(.conclusion) as check run \(.id)"'
+
+          # Always 0. The check run above is the verdict; this job's own status
+          # would pin the answer to the moment its trigger fired, which is the
+          # defect this design exists to remove.
+          echo "job exits 0 by design; the 'attested' check run carries the result"
