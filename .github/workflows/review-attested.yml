@@ -11,29 +11,32 @@ name: review
 
 on:
   pull_request:
-  # So the job can be re-run by the events that would change its answer: the
-  # review arriving late (which is what happened on #15, 6m25s after merge),
-  # or a human posting the disclosure.
+  # So a review arriving late re-answers the question by itself - which is
+  # what happened on #15, 6m25s after the merge. This one runs in the PR's
+  # context, so its check lands on the PR's head sha.
   pull_request_review:
     types: [submitted]
-  issue_comment:
-    types: [created]
 
 permissions:
   contents: read
   pull-requests: read
 
+# NOT triggered on issue_comment, though posting the disclosure is exactly the
+# event that changes the answer. An issue_comment workflow runs against the
+# default branch, so its check run lands on main's sha and never clears the one
+# on the PR's head - observed on #22, where two green issue_comment runs sat
+# beside a red pull_request run and the PR stayed blocked. After posting the
+# '## Review triage' comment, re-run this job.
+
 jobs:
   attested:
-    # issue_comment fires for issues too, which have no head sha to check.
-    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
     runs-on: ubuntu-latest
     steps:
       - name: A rate-limit notice is not a review
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
 
@@ -72,6 +75,7 @@ jobs:
             echo "::error::This PR carries a notice that the review could not run, and no"
             echo "::error::review exists on $head. Merging is allowed; merging silently is not."
             echo "::error::Post a '## Review triage' comment saying so, then re-run this job."
+            echo "::error::(Re-running is required: a comment cannot clear this check by itself.)"
             exit 1
           fi
 
