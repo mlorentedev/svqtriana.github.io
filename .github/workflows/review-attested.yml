@@ -37,6 +37,18 @@ permissions:
   pull-requests: read
   checks: write
 
+# Three triggers can fire within seconds of each other - the notice arrives, a
+# review lands, the disclosure is written - and they race. An older run posting
+# `failure` after a newer one posted `success` leaves a stale verdict pinned to
+# the PR, which is the same class of wrongness this gate exists to remove: a
+# check that reports something other than the current state.
+#
+# Keyed on the PR number, so runs for different PRs never queue behind each
+# other, and newest wins within one PR.
+concurrency:
+  group: attested-${{ github.event.pull_request.number || github.event.issue.number }}
+  cancel-in-progress: true
+
 jobs:
   report:
     # issue_comment also fires for issues, which have no head sha.
@@ -101,14 +113,29 @@ jobs:
           # The check run is created against the PR head sha explicitly, which
           # is what lets an issue_comment run update it. Same name every time,
           # so the newest result is the one the PR shows.
-          gh api -X POST "repos/$REPO/check-runs" \
-            -f name=attested \
-            -f head_sha="$head" \
-            -f status=completed \
-            -f conclusion="$conclusion" \
-            -f output[title]="$title" \
-            -f output[summary]="$summary" \
-            --jq '"reported \(.conclusion) as check run \(.id)"'
+          # Failing loudly rather than under set -e. A fork pull request gets a
+          # read-only GITHUB_TOKEN whatever `checks: write` says, so this POST
+          # would 403 and the job would die with a stack of gh output and no
+          # explanation - a gate that vanishes rather than reports.
+          #
+          # This repository has no forks; every PR is a branch on it. The fix
+          # for a repository that does have them is NOT pull_request_target,
+          # which runs with a write token in the base repository's context and
+          # is the trigger every hardening guide warns about. It would trade a
+          # real risk for a hypothetical one. Detect and say so instead.
+          if ! gh api -X POST "repos/$REPO/check-runs" \
+                 -f name=attested \
+                 -f head_sha="$head" \
+                 -f status=completed \
+                 -f conclusion="$conclusion" \
+                 -f output[title]="$title" \
+                 -f output[summary]="$summary" \
+                 --jq '"reported \(.conclusion) as check run \(.id)"'; then
+            echo "::error::Could not publish the 'attested' check run. If this PR"
+            echo "::error::comes from a fork, GITHUB_TOKEN is read-only regardless"
+            echo "::error::of the permissions block, and the verdict was: $conclusion"
+            exit 1
+          fi
 
           # Always 0. The check run above is the verdict; this job's own status
           # would pin the answer to the moment its trigger fired, which is the
