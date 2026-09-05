@@ -393,6 +393,11 @@ a:focus {
 .about_section {
   background-image: url(../images/webp/fondorsp.webp);
   background-size: cover;
+  /* Without this the position defaults to 0% 0%, so the whole crop came off the
+     right - 22% on a laptop, 69% on a phone, taking the crest and the SEVILLA FC
+     wordmark with it. Centred, the crop is symmetric and the bowl stays framed. */
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .about_section img {
