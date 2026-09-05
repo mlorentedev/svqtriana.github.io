@@ -21,8 +21,8 @@ every link in the nav and makes the site look broken when it is not.
 | Path | What it is |
 |---|---|
 | `*.html` | The five pages. Each is standalone: its own `<head>`, its own inlined critical CSS, and a copy of the shared header and footer. |
-| `css/` | `style.css` is the real stylesheet. **`style.scss` and `style.css.map` are stale** — see *Traps* below. |
-| `js/` | `performance.js` plus vendored jQuery/Bootstrap/bxSlider. |
+| `css/` | `style.css` is the real stylesheet, hand-edited. There is no SASS build. |
+| `js/` | `performance.js` (nav toggle, footer year) and bxSlider, which only `/productos` loads. No Bootstrap JS — see *Traps*. |
 | `images/` | Masters. `images/webp/` holds the optimised copies the site actually serves. |
 | `infra/cloudflare/` | Response headers, cache rules and analytics, as Terraform. |
 | `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`. |
@@ -64,10 +64,10 @@ Things that look like mistakes and are not, or look fine and are not.
   Full list: [`docs/root-files.md`](docs/root-files.md).
 - **Paths are case-sensitive in production.** `Ads.txt` sat in this repository
   for a year while AdSense fetched `/ads.txt` and got a 404.
-- **`css/style.scss` no longer builds `css/style.css`.** They have diverged —
-  1358 lines against 680 — and the CSS no longer references the map.
-  Recompiling would silently delete half the stylesheet. Do not run a SASS
-  build here until someone reconciles them.
+- **There is no SASS build, and adding one back is a trap.** `css/style.scss`
+  and `css/style.css.map` used to sit beside `style.css` and had drifted to
+  1433 lines against 680; recompiling would have silently deleted half the
+  stylesheet. They were deleted for that reason. `style.css` is hand-edited.
 - **Changing a stylesheet or a script is not enough on its own.** The service
   worker caches CSS and JS for 30 days, cache-first. Bump `CACHE_VERSION` in
   `sw.js` or returning visitors keep the old file.
@@ -75,6 +75,11 @@ Things that look like mistakes and are not, or look fine and are not.
   of having no templating; they used to be built in JavaScript, which hid the
   whole nav from crawlers that do not run JS. `scripts/check_pages.py` fails if
   the five copies drift apart.
+- **Do not add Bootstrap's JavaScript back without checking its major version.**
+  `css/bootstrap.css` is v4.3.1. The JS that used to ship alongside it was
+  v3.4.1, which toggles the v3 class `in` while the v4 CSS hides via
+  `.collapse:not(.show)` — the mobile menu was dead on every page for exactly
+  that reason. Nothing in the site uses a Bootstrap JS component now.
 - **`.htaccess` does nothing.** GitHub Pages does not run Apache. Response
   headers come from `infra/cloudflare/`. The file is kept only until that is
   applied, then it should go.
