@@ -33,11 +33,14 @@ variable "manage_web_analytics" {
   description = <<-EOT
     Whether Terraform owns the Web Analytics site.
 
-    Leave false until the existing site has been imported. A create would
-    duplicate it, since Web Analytics is already enabled on this zone.
+    Set false until the existing site has been imported, true after.
+
+    Deliberately has NO default. With one, forgetting to pass the variable
+    after an import silently resolves count to 0, and Terraform plans to
+    DESTROY the site it just adopted. Being forced to state it is cheaper than
+    that.
   EOT
   type        = bool
-  default     = false
 }
 
 resource "cloudflare_web_analytics_site" "site" {

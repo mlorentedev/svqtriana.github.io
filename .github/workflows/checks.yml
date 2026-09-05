@@ -10,11 +10,19 @@ on:
   push:
     branches: [main]
 
+# This workflow runs pull-request code. Grant it nothing it does not need, and
+# do not leave the token in the checkout's git config where that code can read
+# it - actions/checkout persists it by default.
+permissions:
+  contents: read
+
 jobs:
   site:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v6
         with:
@@ -85,6 +93,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
       - uses: hashicorp/setup-terraform@v3
       - run: terraform -chdir=infra/cloudflare init -backend=false
       - run: terraform -chdir=infra/cloudflare validate
