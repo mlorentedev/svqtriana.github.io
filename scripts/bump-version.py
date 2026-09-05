@@ -45,15 +45,15 @@ else:
 if new == old:
     sys.exit(f"already at v{old}")
 
-sw_path.write_text(
-    sw.replace(f"const CACHE_VERSION = 'v{old}';",
-               f"const CACHE_VERSION = 'v{new}';", 1),
-    encoding="utf-8")
-print(f"sw.js: v{old} -> v{new}")
-
-# The precache list interpolates ASSET_VERSION, so it needs no edit - but say
-# so, rather than leaving the reader to wonder whether it was missed.
-print("sw.js: PRECACHE_URLS interpolate ASSET_VERSION, nothing to change")
+# Everything is rewritten in memory and checked before anything reaches disk.
+# Writing sw.js first and validating the pages afterwards left the tree holding
+# a bumped service worker beside pages still on the old stamp whenever a page
+# did not match - a state check_pages.py rejects and nothing here would undo.
+pending: list[tuple[Path, str]] = [
+    (sw_path, sw.replace(f"const CACHE_VERSION = 'v{old}';",
+                         f"const CACHE_VERSION = 'v{new}';", 1)),
+]
+report: list[str] = [f"sw.js: v{old} -> v{new}"]
 
 for name in PAGES:
     p = REPO / name
@@ -62,10 +62,21 @@ for name in PAGES:
     t, stamp = re.subn(rf'(<a class="footer-version"[^>]*>)v{re.escape(old)}(</a>)',
                        rf"\g<1>v{new}\g<2>", t)
     t, label = re.subn(rf'(aria-label="Versión )v{re.escape(old)}', rf"\g<1>v{new}", t)
-    if not urls or not stamp:
-        sys.exit(f"{name}: expected asset URLs and a footer stamp at v{old}, "
-                 f"found {urls} and {stamp}")
-    p.write_text(t, encoding="utf-8")
-    print(f"{name}: {urls} asset URLs, footer stamp, aria-label ({label})")
+    # The aria-label counts too. It is the version a screen-reader user is
+    # given, and check_pages.py compares it, so accepting zero replacements
+    # here just moves the failure one command later.
+    if not (urls and stamp and label):
+        sys.exit(f"{name}: expected asset URLs, a footer stamp and an aria-label "
+                 f"at v{old}; found {urls}, {stamp} and {label}. Nothing written.")
+    pending.append((p, t))
+    report.append(f"{name}: {urls} asset URLs, footer stamp, aria-label")
 
-print(f"\nNow run: python3 scripts/check_pages.py")
+for path, text in pending:
+    path.write_text(text, encoding="utf-8")
+for line in report:
+    print(line)
+
+# The precache list interpolates ASSET_VERSION, so it needs no edit - but say
+# so, rather than leaving the reader to wonder whether it was missed.
+print("sw.js: PRECACHE_URLS interpolate ASSET_VERSION, nothing to change")
+print("\nNow run: python3 scripts/check_pages.py")

@@ -173,7 +173,32 @@ if declared:
         check(shown == f"v{declared}",
               f"{name}: footer shows {shown}, sw.js declares v{declared}")
 
-    unversioned = re.findall(r"'(/(?:css|js)/[^']+)'", sw)
+        # The aria-label carries the version too, and it is the only form a
+        # screen-reader user gets. Checking the visible text alone let a stale
+        # label pass a check whose whole point is that the version cannot lie.
+        spoken = one(r'<a class="footer-version"[^>]*aria-label="Versión (v[^ "]+)', text)
+        check(spoken == f"v{declared}",
+              f"{name}: footer aria-label says {spoken}, sw.js declares v{declared}")
+
+    # Every css/js entry in PRECACHE_URLS, whichever way it is quoted.
+    #
+    # The first version of this matched single quotes only, and the same commit
+    # rewrote those entries as backticks so they could interpolate
+    # ASSET_VERSION. It therefore found nothing and passed for the wrong
+    # reason - vacuously true, on the exact file it was written to guard. The
+    # test that was meant to prove it worked injected a SINGLE-QUOTED entry,
+    # which is the one form it could still see.
+    #
+    # So: find the entries first, assert there are some, then check each one.
+    # A guard that cannot say how many things it checked cannot tell you it
+    # checked nothing.
+    entries = re.findall(r"[`'\"](/(?:css|js)/[^`'\"]+)[`'\"]", sw)
+    check(len(entries) >= 5,
+          f"sw.js precaches {len(entries)} css/js URLs; expected at least 5. "
+          f"Either the precache list shrank or this check has gone blind to "
+          f"the way the entries are now written")
+
+    unversioned = [e for e in entries if "?v=" not in e]
     check(not unversioned,
           f"sw.js precaches unversioned URLs {unversioned}: the pages request "
           f"them with {stamp}, so these entries are stored under a key nothing "
