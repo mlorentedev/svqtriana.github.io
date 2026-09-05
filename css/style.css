@@ -520,29 +520,33 @@ a:focus {
 
 .brand_img-box.item-1_video,
 .video-preview.item-1_video {
-  background-image: url(../images/video1.PNG);
+  background-image: url(../images/webp/video1.webp);
 }
 .brand_img-box.item-2_video,
 .video-preview.item-2_video {
-  background-image: url(../images/video2.PNG);
+  background-image: url(../images/webp/video2.webp);
 }
 .brand_img-box.item-3_video,
 .video-preview.item-3_video {
-  background-image: url(../images/video3.PNG);
+  background-image: url(../images/webp/video3.webp);
 }
 .brand_img-box.item-4_video,
 .video-preview.item-4_video {
-  background-image: url(../images/video4.PNG);
+  background-image: url(../images/webp/video4.webp);
 }
 .brand_img-box.item-5_video,
 .video-preview.item-5_video {
-  background-image: url(../images/video5.PNG);
+  background-image: url(../images/webp/video5.webp);
+}
+.brand_img-box.item-6_video,
+.video-preview.item-6_video {
+  background-image: url(../images/webp/video6.webp);
 }
 .brand_img-box.item-1 {
   background-image: url(../images/webp/vaso_vacio.webp);
 }
 .brand_img-box.item-2 {
-  background-image: url(../images/pulsera.PNG);
+  background-image: url(../images/webp/pulsera.webp);
 }
 .brand_img-box.item-3 {
   background-image: url(../images/webp/bandera.webp);
@@ -1144,10 +1148,23 @@ img {
 }
 
 .video-content {
-  padding: 20px;
+  padding: 18px 20px 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  text-align: center;
+  flex: 1;
+}
+
+.video-season {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #df0606;
 }
 
 .video-title {
@@ -1356,4 +1373,32 @@ img {
   .product-image .bxslider li img {
     height: 180px !important;
   }
+}
+/* Footer credit link. Was two inline onmouseover/onmouseout handlers, which a
+   strict Content-Security-Policy would block. */
+.footer-credit {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+
+.footer-credit a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #fbfcfd;
+  transition: color 0.3s ease;
+}
+
+.footer-credit a:hover,
+.footer-credit a:focus {
+  color: #df0606;
+}
+
+/* The gallery lists keep the browser's default 40px list padding, and bxSlider
+   positions each slide absolutely inside it. Every slide therefore sat 40px to
+   the right of its viewport, leaving a dark strip down the left edge of each
+   product card. Bootstrap's reset does not reach this list. */
+ul.bxslider {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }

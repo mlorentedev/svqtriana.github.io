@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 
-  <head xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+  <head>
     <!-- Basic -->
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Cache-Control" content="no-cache, max-age=0"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <meta name="robots" content="ALL">
+    <meta name="robots" content="index, follow">
     <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Site Metas -->
-    <meta name="keywords" content="Sevilla, Triana, SFC, futbol, peña, SVQ." />
     <meta name="description" content="Historia de PS SVQ Triana: peña sevillista fundada el 27 de julio de 2019 en Triana. Conoce nuestros orígenes, crecimiento y pasión sevillista." />
     <meta name="author" content="SVQ Triana" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <!-- Site sharing-->
-    <meta property="og:url"                content="https://svqtriana.com/" />
+    <meta property="og:url"                content="https://svqtriana.com/nosotros" />
     <meta property="og:title"              content="Nuestra Historia - PS SVQ Triana" />
     <meta property="og:description"        content="Historia de PS SVQ Triana: peña sevillista fundada el 27 de julio de 2019 en Triana. Descubre nuestros orígenes y pasión sevillista." />
-    <meta property="og:image"              content="https://svqtriana.com/images/webp/logo_192.webp" /> <!-- invalid, but expected -->
-    <meta property="og:image:width"        content="1200"/>
-    <meta property="og:image:height"       content="630"/>
-    <link property="image" type="image/webp" href="https://svqtriana.com/images/webp/logo_192.webp" /> <!-- valid -->
+    <meta property="og:image"              content="https://svqtriana.com/images/cartel-27.jpg" />
+    <meta property="og:image:width"        content="1131"/>
+    <meta property="og:image:height"       content="1600"/>
+    <meta property="og:image:alt"          content="Cartel oficial de la temporada 2026/2027 de PS SVQ Triana" />
+    <meta property="og:type"               content="website" />
+    <meta property="og:site_name"          content="PS SVQ Triana" />
+    <meta property="og:locale"             content="es_ES" />
 
   <!-- Google AdSense Account -->
   <meta name="google-adsense-account" content="ca-pub-5217718596352992" />
 
   <!--Tab icon-->
   <link rel="icon" type="image/webp" href="images/webp/logo_192.webp" sizes="16x16">
-  <title>SVQ TRIANA - Peña Sevillista</title>
+  <title>Nuestra historia | PS SVQ Triana</title>
+  <link rel="canonical" href="https://svqtriana.com/nosotros" />
   
   <!-- Resource hints for performance -->
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
@@ -90,31 +90,36 @@
   </style>
   
   <!-- Load web fonts asynchronously -->
-  <link rel="preconnect" href="/fonts" crossorigin>
   
-  <!-- Load non-critical CSS asynchronously -->
-  <script>
-    // CSS loading utility
-    !function(e){"use strict";var t=function(t,n,r){function o(e){return i.body?e():void setTimeout(function(){o(e)})}function l(){d.addEventListener&&d.removeEventListener("load",l),d.media=r||"all"}var i=e.document,d=i.createElement("link");if(n)d.id=n;d.rel="stylesheet",d.href=t,d.media="only x",o(function(){i.head.appendChild(d)}),setTimeout(function(){d.addEventListener?d.addEventListener("load",l):d.attachEvent&&d.attachEvent("onload",l)});setTimeout(l,3e3)};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
-    // Load CSS files
-    loadCSS("css/fonts.css");
-    loadCSS("css/style.css");
-    loadCSS("css/bootstrap.css");
-    loadCSS("css/responsive.css");
-    loadCSS("https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap");
-    loadCSS("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
-    loadCSS("https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css");
-  </script>
-  
+  <!-- Non-blocking CSS. media="print" keeps these off the critical path; the
+       onload handler promotes them once they arrive. Order is the cascade
+       order, so keep it. Static tags (rather than the old JS loadCSS shim)
+       let the preload scanner find them and let the CDN link carry SRI. -->
+  <link rel="stylesheet" href="css/fonts.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/bootstrap.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/responsive.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css"
+        integrity="sha384-pb48TpU6xuBnw0Hg/AajWKCHyZggk38ZS2dxscTTCYzSRY99E7l55q0Q0Ht79UEx"
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+
   <!-- Fallback for browsers without JS -->
   <noscript>
     <link href="css/fonts.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+          crossorigin="anonymous" referrerpolicy="no-referrer" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css"
+          integrity="sha384-pb48TpU6xuBnw0Hg/AajWKCHyZggk38ZS2dxscTTCYzSRY99E7l55q0Q0Ht79UEx"
+          crossorigin="anonymous" referrerpolicy="no-referrer" rel="stylesheet">
   </noscript>
 
   <!-- Box slider style-->
@@ -138,8 +143,37 @@
   </head>
   
 <body>
-  <!-- header section will be loaded by deferred script -->
-  <!-- end header section -->
+  <div class="hero_area">
+    <header class="header_section" id="home">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg custom_nav-container pt-3">
+          <a class="navbar-brand" href="/">
+            <img src="images/webp/logo_192.webp" alt="PS SVQ Triana Logo" width="128" height="128">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abrir el menú">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+              <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/#home">INICIO</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nosotros">NUESTRA HISTORIA</a></li>
+                <li class="nav-item"><a class="nav-link" href="/productos">MATERIAL</a></li>
+                <li class="nav-item"><a class="nav-link" href="/media">GALERÍA</a></li>
+                <li class="nav-item">
+                  <div class="social">
+                    <a href="https://www.instagram.com/ps_svqtriana/" class="fa fa-instagram" aria-label="Seguir en Instagram" target="_blank" rel="noopener noreferrer"></a>
+                    <a href="https://www.facebook.com/PS-SVQ-Triana-110014627020914" class="fa fa-facebook" aria-label="Seguir en Facebook" target="_blank" rel="noopener noreferrer"></a>
+                    <a href="https://twitter.com/ps_svqtriana1" class="fa fa-twitter" aria-label="Seguir en Twitter" target="_blank" rel="noopener noreferrer"></a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+  </div>
 
  <!-- about section -->
   <main>
@@ -218,8 +252,37 @@
   <!-- end about section -->
 
 
-  <!-- footer section will be loaded by deferred script -->
-  <!-- end footer section -->
+  <footer class="container-fluid footer_section" id="contact" style="padding: 8px 15px;">
+    <div class="container">
+      <h2 class="custom_heading_2" style="margin-bottom: 8px;">Contacto</h2>
+      <div class="info_items">
+        <a href="https://twitter.com/ps_svqtriana1" target="_blank" rel="noopener noreferrer" aria-label="Contactar por Twitter">
+          <div class="item">
+            <div class="img-box box-1" role="img" aria-label="Icono de Twitter"></div>
+            <div class="detail-box"><p>@PS_SVQTRIANA1</p></div>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/ps_svqtriana/" target="_blank" rel="noopener noreferrer" aria-label="Contactar por Instagram">
+          <div class="item">
+            <div class="img-box box-2" role="img" aria-label="Icono de Instagram"></div>
+            <div class="detail-box"><p>@PS_SVQTRIANA</p></div>
+          </div>
+        </a>
+        <a href="mailto:svqtriana@gmail.com?subject=[WEB]" aria-label="Enviar email">
+          <div class="item">
+            <div class="img-box box-3" role="img" aria-label="Icono de email"></div>
+            <div class="detail-box"><p>svqtriana@gmail.com</p></div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <p style="margin-top: 8px; margin-bottom: 0;">
+      &copy; <span id="footer-year">2026</span> PS SVQ Triana - Todos los derechos reservados<br>
+      <small class="footer-credit">Desarrollado por
+        <a href="https://github.com/mlorentedev" target="_blank" rel="noopener noreferrer">@mlorentedev</a>
+      </small>
+    </p>
+  </footer>
 
   <!-- Load all JavaScript at the end for better performance -->
   <!-- Critical scripts loaded immediately -->
@@ -242,12 +305,12 @@
   </script>
   
   <!-- Load non-critical scripts asynchronously -->
-  <script src="js/header.js" defer></script>
-  <script src="js/footer.js" defer></script>
   <script src="js/performance.js" defer></script>
   
   <!-- External libraries loaded after page content -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+          integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="js/bootstrap.min.js" defer></script>
   <!-- Service Worker Registration -->
   <script>
