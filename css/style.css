@@ -1404,3 +1404,50 @@ ul.bxslider {
   padding: 0;
   list-style: none;
 }
+
+/* Social icons.
+   These are inline SVG rather than Font Awesome classes: FA 4.7.0 predates both
+   the X mark and TikTok, so those two could not come from it, and mixing an icon
+   font with SVG in one row gives two different optical weights. currentColor
+   means the hover state is a single colour change. */
+.social {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 6px;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 50%;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.social-link svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.social-link:hover,
+.social-link:focus-visible {
+  color: #df0606;
+}
+
+.social-link:focus-visible {
+  outline: 2px solid #df0606;
+  outline-offset: 2px;
+}
+
+@media (max-width: 991px) {
+  .social {
+    justify-content: center;
+    padding-top: 6px;
+  }
+}
