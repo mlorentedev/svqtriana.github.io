@@ -715,7 +715,10 @@ a:focus {
 }
 
 .info_items .item .img-box.box-1 {
-  background-image: url(../images/webp/twitter-black.webp);
+  /* The X mark, same path as the inline SVG in the header's social row.
+     Inline rather than another image file: the bird was retired in 2023 and
+     the footer was still showing it while the header showed the X. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23231f20'%3E%3Cpath d='M18.24 2.25h3.31l-7.23 8.26L22.82 21.75h-6.65l-5.21-6.81-5.96 6.81H1.69l7.73-8.84L1.25 2.25h6.82l4.71 6.23 5.46-6.23zm-1.16 17.52h1.83L7.02 4.13H5.06l12.02 15.64z'/%3E%3C/svg%3E");
 }
 
 .info_items .item .img-box.box-2 {
@@ -732,7 +735,7 @@ a:focus {
 }
 
 .info_items .item .img-box:hover.box-1 {
-  background-image: url(../images/webp/twitter-white.webp);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Cpath d='M18.24 2.25h3.31l-7.23 8.26L22.82 21.75h-6.65l-5.21-6.81-5.96 6.81H1.69l7.73-8.84L1.25 2.25h6.82l4.71 6.23 5.46-6.23zm-1.16 17.52h1.83L7.02 4.13H5.06l12.02 15.64z'/%3E%3C/svg%3E");
 }
 
 .info_items .item .img-box:hover.box-2 {
@@ -1475,4 +1478,25 @@ iframe {
   iframe {
     height: 200px;
   }
+}
+
+/* Version stamp in the footer credit. Same value as CACHE_VERSION in sw.js,
+   which is what makes it worth showing: it identifies the assets the visitor
+   actually received, not an abstract release number. scripts/check_pages.py
+   fails if the two ever disagree. */
+.footer-sep {
+  margin: 0 0.25em;
+  opacity: 0.5;
+}
+
+.footer-version {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+.footer-version:hover,
+.footer-version:focus {
+  opacity: 1;
+  text-decoration: underline;
 }

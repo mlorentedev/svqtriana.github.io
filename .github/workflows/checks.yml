@@ -59,7 +59,9 @@ jobs:
             # deleted with this check green.
             grep -rhoE "url\(['\"]?\.\./[^)]+\)" css/*.css \
               | sed -E "s|url\(['\"]?\.\./([^)]+)\)|\1|" | tr -d "'\""
-          } | sort -u | while read -r f; do
+            # Strip the ?v= cache-busting stamp: it is part of the URL, never
+            # part of the filename on disk.
+          } | sed -E 's/\?.*$//' | sort -u | while read -r f; do
             [ -f "$f" ] || { echo "missing asset: $f"; exit 1; }
           done || fail=1
           exit $fail

@@ -49,10 +49,10 @@
        inlined here. Blocking on it costs one small request and removes the
        second paint those blocks caused - the page no longer reflows when the
        real rules arrive. Order is cascade order; keep it. -->
-  <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/bootstrap.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/fonts.css?v=2.5">
+  <link rel="stylesheet" href="css/style.css?v=2.5">
+  <link rel="stylesheet" href="css/bootstrap.css?v=2.5">
+  <link rel="stylesheet" href="css/responsive.css?v=2.5">
 
 
   <!-- PWA Manifest -->
@@ -201,13 +201,17 @@
       &copy; <span id="footer-year">2026</span> PS SVQ Triana - Todos los derechos reservados<br>
       <small class="footer-credit">Desarrollado por
         <a href="https://github.com/mlorentedev" target="_blank" rel="noopener noreferrer">@mlorentedev</a>
+        <span class="footer-sep" aria-hidden="true">&middot;</span>
+        <a class="footer-version" href="https://github.com/mlorentedev/svqtriana.github.io"
+           target="_blank" rel="noopener noreferrer"
+           aria-label="Versión v2.5 - ver el código fuente en GitHub">v2.5</a>
       </small>
     </p>
   </footer>
 
       
     <!-- Load non-critical scripts asynchronously -->
-        <script src="js/performance.js" defer></script>
+        <script src="js/performance.js?v=2.5" defer></script>
     
 
   </body>

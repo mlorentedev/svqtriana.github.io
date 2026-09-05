@@ -25,7 +25,7 @@ every link in the nav and makes the site look broken when it is not.
 | `js/` | `performance.js` (nav toggle, footer year) and bxSlider, which only `/productos` loads. No Bootstrap JS — see *Traps*. |
 | `images/` | Masters. `images/webp/` holds the optimised copies the site actually serves. |
 | `infra/cloudflare/` | Response headers, cache rules and analytics, as Terraform. |
-| `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`. |
+| `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`, `bump-version.py`. |
 | `docs/` | Runbooks and the notes explaining decisions that look odd. |
 
 ## The seasonal job
@@ -38,7 +38,7 @@ the full checklist, but the short version:
 cp ~/Downloads/cartel-28.jpg images/
 scripts/to-webp.py images/cartel-28.jpg
 # then update index.html: heading, <img>, og:image, twitter:image, JSON-LD
-# and bump CACHE_VERSION in sw.js, or nobody sees the new poster
+scripts/bump-version.py   # or nobody sees the new poster
 ```
 
 ## Checks
@@ -68,9 +68,28 @@ Things that look like mistakes and are not, or look fine and are not.
   and `css/style.css.map` used to sit beside `style.css` and had drifted to
   1433 lines against 680; recompiling would have silently deleted half the
   stylesheet. They were deleted for that reason. `style.css` is hand-edited.
-- **Changing a stylesheet or a script is not enough on its own.** The service
-  worker caches CSS and JS for 30 days, cache-first. Bump `CACHE_VERSION` in
-  `sw.js` or returning visitors keep the old file.
+- **Changing a stylesheet or a script is not enough on its own.** Two caches
+  serve the old file under the same name: the service worker's, 30 days and
+  cache-first, and Cloudflare's edge, 7 days. Run `scripts/bump-version.py`:
+  it moves `CACHE_VERSION`, the `?v=` on every `css/` and `js/` URL, and the
+  footer stamp together. `scripts/check_pages.py` fails until all four agree.
+  The query string is what makes it a new cache key for both, so no purge is
+  needed.
+
+  This paragraph used to say only "bump `CACHE_VERSION`", and the very next
+  change that moved rules out of an inline `<style>` and into `style.css`
+  forgot to. A documented knob is not a mechanism; the check is.
+- **The service worker caches your local edits too.** While `scripts/serve.py`
+  is running, editing `css/style.css` without changing the `?v=` leaves the
+  browser serving the copy the worker already holds — the edit looks like it
+  did nothing. Unregister it in DevTools → Application, or run in the console:
+
+  ```js
+  navigator.serviceWorker.getRegistrations().then(r => r.forEach(x => x.unregister()));
+  caches.keys().then(k => k.forEach(c => caches.delete(c)));
+  ```
+
+  This cost real minutes here: a correct stylesheet change looked broken.
 - **The header and footer are copy-pasted across five files.** That is the cost
   of having no templating; they used to be built in JavaScript, which hid the
   whole nav from crawlers that do not run JS. `scripts/check_pages.py` fails if

@@ -70,8 +70,11 @@ for name, text in pages.items():
 
     check(text.count("<h1") == 1, f"{name}: expected exactly one <h1>, found {text.count('<h1')}")
 
+    # Matched up to the query string: the hrefs carry a ?v= cache-busting
+    # stamp, checked for separately at the bottom of this file.
     for href in PAGE_CSS.get(name, REQUIRED_CSS):
-        check(f'href="{href}"' in text, f"{name}: missing stylesheet {href}")
+        check(re.search(rf'href="{re.escape(href)}(?:\?[^"]*)?"', text) is not None,
+              f"{name}: missing stylesheet {href}")
 
     nav_links = re.findall(r'<a class="nav-link" href="([^"]+)"', text)
     check(len(nav_links) == 4,
@@ -136,6 +139,45 @@ if target:
               f"does not contain - the menu would not open")
         check(f'aria-controls="{menu_id}"' in text,
               f"{name}: the toggler's aria-controls does not name #{menu_id}")
+
+# Every local CSS/JS URL carries ?v=<CACHE_VERSION>, in the pages and in the
+# Service Worker's precache list alike.
+#
+# This is the guard for a bug that shipped: css/style.css changed content under
+# the same filename while rules were deleted from the pages' inline <style>.
+# Two caches then serve the old file - the SW's STATIC_CACHE (cache-first, 30
+# days) and Cloudflare's edge (7 days) - so returning visitors get new HTML with
+# old CSS. A query string is a fresh cache key for both, and CACHE_VERSION is
+# the one knob that moves it. Without this check the knob is merely documented,
+# and the README already documented it the time it was forgotten.
+sw = (REPO / "sw.js").read_text(encoding="utf-8")
+declared = one(r"const CACHE_VERSION = 'v([^']+)'", sw)
+check(bool(declared), "sw.js no longer declares CACHE_VERSION")
+
+if declared:
+    stamp = f"?v={declared}"
+    for name, text in pages.items():
+        stale = [m.group(0) for m in
+                 re.finditer(r'(?:href|src)="(?:css|js)/[^"]+', text)
+                 if not m.group(0).endswith(stamp)]
+        check(not stale,
+              f"{name}: {len(stale)} local asset URL(s) not stamped {stamp} "
+              f"- bump CACHE_VERSION in sw.js and restamp: {stale[:2]}")
+
+    # The footer shows the same value, which is the only reason it is worth
+    # showing: it tells a visitor which assets they actually received, rather
+    # than an abstract release number this site does not have. A version
+    # string that can drift is worse than none.
+    for name, text in pages.items():
+        shown = one(r'<a class="footer-version"[^>]*>(v[^<]+)</a>', text)
+        check(shown == f"v{declared}",
+              f"{name}: footer shows {shown}, sw.js declares v{declared}")
+
+    unversioned = re.findall(r"'(/(?:css|js)/[^']+)'", sw)
+    check(not unversioned,
+          f"sw.js precaches unversioned URLs {unversioned}: the pages request "
+          f"them with {stamp}, so these entries are stored under a key nothing "
+          f"reads and the precache is wasted")
 
 if failures:
     for message in failures:

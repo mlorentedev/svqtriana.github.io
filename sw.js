@@ -1,5 +1,11 @@
 // SVQ Triana Service Worker - Efficient Caching Strategy
-const CACHE_VERSION = 'v2.4';
+const CACHE_VERSION = 'v2.5';
+// Stamped onto every local CSS/JS URL, in the HTML and in PRECACHE_URLS below.
+// A query string is a fresh cache key for the Service Worker AND for Cloudflare
+// (cache_level 'aggressive' keys on it), so bumping CACHE_VERSION is the single
+// knob that invalidates a changed stylesheet everywhere. scripts/check_pages.py
+// fails if the pages and this constant ever disagree.
+const ASSET_VERSION = CACHE_VERSION.replace(/^v/, '');
 const STATIC_CACHE = `svq-triana-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `svq-triana-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `svq-triana-images-${CACHE_VERSION}`;
@@ -21,11 +27,11 @@ const PRECACHE_URLS = [
   '/media',
   '/encuentro',
   '/nosotros',
-  '/css/fonts.css',
-  '/css/style.css',
-  '/css/bootstrap.css',
-  '/css/responsive.css',
-  '/js/performance.js',
+  `/css/fonts.css?v=${ASSET_VERSION}`,
+  `/css/style.css?v=${ASSET_VERSION}`,
+  `/css/bootstrap.css?v=${ASSET_VERSION}`,
+  `/css/responsive.css?v=${ASSET_VERSION}`,
+  `/js/performance.js?v=${ASSET_VERSION}`,
   '/fonts/GlacialIndifference-Regular.woff2',
   '/fonts/GlacialIndifference-Bold.woff2',
   '/images/webp/logo_192.webp',
