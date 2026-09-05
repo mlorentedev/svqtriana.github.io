@@ -1,0 +1,79 @@
+name: review
+
+# Fails when the reviewer said it could not review, and nothing else says
+# otherwise. See issue #19: four PRs merged within minutes of a CodeRabbit
+# "review limit reached" notice, each carrying a green `CodeRabbit: SUCCESS`
+# status and zero reviews. A status that goes green when the check did not run
+# is worse than no status, because it reads as an answer.
+#
+# This does not forbid merging unreviewed. It forbids doing so silently: the
+# job goes red, and the way to clear it is to say so in a comment.
+
+on:
+  pull_request:
+  # So the job can be re-run by the events that would change its answer: the
+  # review arriving late (which is what happened on #15, 6m25s after merge),
+  # or a human posting the disclosure.
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  attested:
+    # issue_comment fires for issues too, which have no head sha to check.
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: A rate-limit notice is not a review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number || github.event.issue.number }}
+        run: |
+          set -euo pipefail
+
+          head=$(gh api "repos/$REPO/pulls/$PR" --jq '.head.sha')
+          echo "head sha: $head"
+
+          # Tell a review from a notice about a review by CONTENT, never by
+          # author: a review names files, lines or claims; a notice talks about
+          # the review itself. Same reasoning applies to any reviewer, which is
+          # why the pattern is about the message and not about who sent it.
+          notice=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | test("(?i)review limit reached|used all (your )?free .{0,20}reviews|couldn.t start this review"))] | length')
+
+          # Piped to jq rather than using --jq: `gh api` takes a single jq
+          # expression and has no --arg, so the head sha has to be bound here.
+          reviews=$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate \
+            | jq --arg h "$head" '[.[] | select(.commit_id == $h and (.state == "APPROVED" or .state == "CHANGES_REQUESTED" or (.state == "COMMENTED" and (.body // "") != "")))] | length')
+
+          inline=$(gh api "repos/$REPO/pulls/$PR/comments" --paginate \
+            | jq --arg h "$head" '[.[] | select(.commit_id == $h)] | length')
+
+          # The escape hatch, and it is deliberately a sentence someone has to
+          # write. "Merged unreviewed, reviewer quota exhausted" is a
+          # disclosure; saying nothing is a claim of review that never
+          # happened.
+          disclosed=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | test("(?i)^#+ *Review triage"))] | length')
+
+          echo "rate-limit notices: $notice"
+          echo "reviews on head:    $reviews"
+          echo "inline comments:    $inline"
+          echo "## Review triage:   $disclosed"
+
+          if [ "$notice" -gt 0 ] && [ "$reviews" -eq 0 ] && [ "$inline" -eq 0 ] && [ "$disclosed" -eq 0 ]; then
+            echo
+            echo "::error::This PR carries a notice that the review could not run, and no"
+            echo "::error::review exists on $head. Merging is allowed; merging silently is not."
+            echo "::error::Post a '## Review triage' comment saying so, then re-run this job."
+            exit 1
+          fi
+
+          echo
+          echo "ok: either a review exists on this head sha, or the absence of one is disclosed"
