@@ -23,7 +23,11 @@ class PagesHandler(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path: str) -> str:
         resolved = Path(super().translate_path(path))
         # /nosotros -> nosotros.html, the GitHub Pages "pretty URL" fallback.
-        if not resolved.exists() and not resolved.suffix:
+        # Only without a trailing slash: Pages answers /productos with 200 and
+        # /productos/ with 404, and a server more permissive than production
+        # would let a broken link pass a local check.
+        if (not resolved.exists() and not resolved.suffix
+                and not path.rstrip("?").endswith("/")):
             candidate = resolved.with_suffix(".html")
             if candidate.is_file():
                 return str(candidate)

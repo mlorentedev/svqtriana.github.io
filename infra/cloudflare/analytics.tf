@@ -46,8 +46,16 @@ variable "manage_web_analytics" {
 resource "cloudflare_web_analytics_site" "site" {
   count = var.manage_web_analytics ? 1 : 0
 
-  account_id   = var.account_id
-  host         = var.zone_name
+  account_id = var.account_id
+
+  # zone_tag, NOT host. The provider schema is explicit: host is "the hostname
+  # to use for gray-clouded sites", while auto_install injects the snippet "for
+  # orange-clouded sites". This zone is orange-clouded - the beacon is being
+  # injected today - so an imported site carries zone_tag with host null.
+  # Declaring host alongside auto_install would make the first plan after an
+  # import propose setting host and clearing zone_tag, reconfiguring a working
+  # auto-injecting site into a gray-clouded one that cannot inject at all.
+  zone_tag     = var.zone_id
   auto_install = true
 }
 
