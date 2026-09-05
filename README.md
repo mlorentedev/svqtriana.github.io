@@ -80,9 +80,11 @@ Things that look like mistakes and are not, or look fine and are not.
   v3.4.1, which toggles the v3 class `in` while the v4 CSS hides via
   `.collapse:not(.show)` — the mobile menu was dead on every page for exactly
   that reason. Nothing in the site uses a Bootstrap JS component now.
-- **`.htaccess` does nothing.** GitHub Pages does not run Apache. Response
-  headers come from `infra/cloudflare/`. The file is kept only until that is
-  applied, then it should go.
+- **Response headers come from Cloudflare, not from this repository.** GitHub
+  Pages cannot send them. They are defined in `infra/cloudflare/` and applied
+  with Terraform. There used to be an `.htaccess` here setting them; it never
+  did anything, because Pages does not run Apache, and it was deleted once the
+  Cloudflare rules went live.
 
 ## Where the decisions are written down
 

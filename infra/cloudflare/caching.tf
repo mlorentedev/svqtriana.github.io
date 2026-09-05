@@ -1,6 +1,6 @@
 # Cache lifetimes at the edge.
 #
-# This is where the .htaccess Expires block was trying to go. GitHub Pages sends
+# This is where the deleted .htaccess Expires block was trying to go. Pages sends
 # Cache-Control: max-age=600 for everything, which is right for HTML and wasteful
 # for fingerprint-free assets that change a few times a year.
 #

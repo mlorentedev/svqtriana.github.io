@@ -1,10 +1,9 @@
 # Security response headers.
 #
-# The repository has an .htaccess that sets all of these. It has never once
-# taken effect: GitHub Pages does not run Apache and cannot send custom
-# response headers at all, so the only place these can come from is the CDN in
-# front of the origin. securityheaders.com grades response headers, which is why
-# it has been reporting nothing.
+# The repository carried an .htaccess setting all of these for a year, and not
+# one line ever took effect: GitHub Pages does not run Apache and cannot send
+# custom response headers at all, so the only place these can come from is the
+# CDN in front of the origin. That file was deleted once these rules went live.
 #
 # A <meta http-equiv> tag is not a substitute. It works for Content-Security-
 # Policy only, and not for frame-ancestors; X-Frame-Options, HSTS and

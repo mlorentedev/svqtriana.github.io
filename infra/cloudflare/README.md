@@ -6,10 +6,10 @@ dashboard. Change the code, run a plan, apply.
 ## Why this directory exists at all
 
 The site is hosted on GitHub Pages, which serves static files and **cannot send
-custom response headers**. The repository has carried an `.htaccess` since 2025
-that sets a Content-Security-Policy, HSTS, `X-Frame-Options` and the rest. None
-of it has ever taken effect — GitHub Pages does not run Apache, so the file is
-inert. That is why <https://securityheaders.com/?q=https%3A%2F%2Fsvqtriana.com>
+custom response headers**. The repository carried an `.htaccess` from 2025 to
+2026-09-05 setting a Content-Security-Policy, HSTS, `X-Frame-Options` and the
+rest. None of it ever took effect — GitHub Pages does not run Apache, so the
+file was inert. It was deleted once these rules were applied and verified. That is why <https://securityheaders.com/?q=https%3A%2F%2Fsvqtriana.com>
 has been reporting a bare response, and why issue #2 could not be fixed inside
 the repository.
 
@@ -28,7 +28,7 @@ x-github-request-id: ...    <- origin is GitHub Pages
 | File | What it sets |
 |---|---|
 | `headers.tf` | The security response headers, derived from what the pages actually load. |
-| `caching.tf` | Edge and browser cache lifetimes. This is what the `.htaccess` `Expires` block was reaching for. |
+| `caching.tf` | Edge and browser cache lifetimes. This is what the deleted `.htaccess` `Expires` block was reaching for. |
 | `analytics.tf` | Cloudflare Web Analytics, injected at the edge. |
 
 ## Running it
@@ -143,8 +143,8 @@ confirm there are no `Refused to load` messages — the slider, the Google Maps
 embed on `/encuentro` and the analytics beacon are the parts most likely to trip
 it.
 
-## Once this is applied
+## Applied
 
-Delete `.htaccess` from the repository root. Leaving it there implies a set of
-protections that the host has never applied, which is worse than having none:
-the next person to read it will believe the site is covered.
+Applied 2026-09-05: `Plan: 2 to add, 0 to change, 0 to destroy`. Verified live
+with the curl above, and by loading every page against the CSP with the console
+open. `.htaccess` was deleted in the same change.

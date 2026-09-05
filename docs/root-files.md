@@ -31,9 +31,11 @@ them, no matter what `llms.txt` says.
 GitHub Pages serves static files and **cannot set response headers**. Two
 consequences the repository has already tripped over:
 
-- `.htaccess` is inert here. It is an Apache file and GitHub Pages does not run
-  Apache, so every `Header set` line in it has never taken effect. Response
-  headers have to come from the CDN in front of the origin.
+- Response headers have to come from the CDN in front of the origin. An
+  `.htaccess` lived here for a year setting a CSP, HSTS and `X-Frame-Options`,
+  and not one line ever took effect — it is an Apache file and Pages does not
+  run Apache. It was deleted on 2026-09-05, once `infra/cloudflare/` was
+  applied and the headers were verified live.
 - Paths are **case-sensitive**, unlike a local macOS or Windows checkout. A file
   that resolves locally can 404 in production purely on capitalisation.
 
