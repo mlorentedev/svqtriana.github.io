@@ -188,8 +188,37 @@
   </head>
   
 <body>
-  <!-- header section will be loaded by deferred script -->
-  <!-- end header section -->
+  <div class="hero_area">
+    <header class="header_section" id="home">
+      <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg custom_nav-container pt-3">
+          <a class="navbar-brand" href="/">
+            <img src="images/webp/logo_192.webp" alt="PS SVQ Triana Logo" width="128" height="128">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abrir el menú">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+              <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/#home">INICIO</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nosotros">NUESTRA HISTORIA</a></li>
+                <li class="nav-item"><a class="nav-link" href="/productos">MATERIAL</a></li>
+                <li class="nav-item"><a class="nav-link" href="/media">GALERÍA</a></li>
+                <li class="nav-item">
+                  <div class="social">
+                    <a href="https://www.instagram.com/ps_svqtriana/" class="fa fa-instagram" aria-label="Seguir en Instagram" target="_blank" rel="noopener noreferrer"></a>
+                    <a href="https://www.facebook.com/PS-SVQ-Triana-110014627020914" class="fa fa-facebook" aria-label="Seguir en Facebook" target="_blank" rel="noopener noreferrer"></a>
+                    <a href="https://twitter.com/ps_svqtriana1" class="fa fa-twitter" aria-label="Seguir en Twitter" target="_blank" rel="noopener noreferrer"></a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+  </div>
 
   <!-- brand section -->
   <section class="brand_section layout_padding2" id="products">
@@ -332,8 +361,37 @@
   </section>
   <!-- end brand section -->
 
-  <!-- footer section will be loaded by deferred script -->
-  <!-- end footer section -->
+  <footer class="container-fluid footer_section" id="contact" style="padding: 8px 15px;">
+    <div class="container">
+      <h2 class="custom_heading_2" style="margin-bottom: 8px;">Contacto</h2>
+      <div class="info_items">
+        <a href="https://twitter.com/ps_svqtriana1" target="_blank" rel="noopener noreferrer" aria-label="Contactar por Twitter">
+          <div class="item">
+            <div class="img-box box-1" role="img" aria-label="Icono de Twitter"></div>
+            <div class="detail-box"><p>@PS_SVQTRIANA1</p></div>
+          </div>
+        </a>
+        <a href="https://www.instagram.com/ps_svqtriana/" target="_blank" rel="noopener noreferrer" aria-label="Contactar por Instagram">
+          <div class="item">
+            <div class="img-box box-2" role="img" aria-label="Icono de Instagram"></div>
+            <div class="detail-box"><p>@PS_SVQTRIANA</p></div>
+          </div>
+        </a>
+        <a href="mailto:svqtriana@gmail.com?subject=[WEB]" aria-label="Enviar email">
+          <div class="item">
+            <div class="img-box box-3" role="img" aria-label="Icono de email"></div>
+            <div class="detail-box"><p>svqtriana@gmail.com</p></div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <p style="margin-top: 8px; margin-bottom: 0;">
+      &copy; <span id="footer-year">2026</span> PS SVQ Triana - Todos los derechos reservados<br>
+      <small class="footer-credit">Desarrollado por
+        <a href="https://github.com/mlorentedev" target="_blank" rel="noopener noreferrer">@mlorentedev</a>
+      </small>
+    </p>
+  </footer>
 
   <!-- Load all JavaScript at the end for better performance -->
   <!-- Critical scripts loaded immediately -->
@@ -356,8 +414,6 @@
   </script>
   
   <!-- Load non-critical scripts asynchronously -->
-  <script src="js/header.js" defer></script>
-  <script src="js/footer.js" defer></script>
   <script src="js/performance.js" defer></script>
   
   <!-- External libraries loaded after page content -->
@@ -368,48 +424,57 @@
   <script src="js/jquery.bxslider.js" defer></script>
 
   <script defer>
-    // Wait for DOM and jQuery to be ready
-    document.addEventListener('DOMContentLoaded', function() {
-      // Ensure jQuery and bxSlider are loaded before initializing
+    // bxSlider measures the wrapper once, at init, and writes that width onto
+    // every slide. The stylesheets load asynchronously (media="print" until
+    // onload), so on DOMContentLoaded the card is still unstyled and the
+    // measurement is wrong - slides came out 555px wide inside a 529px viewport,
+    // shifted left with the card background showing at the edge. Wait for
+    // window load, when the CSS has applied and the layout is final.
+    (function () {
+      var sliders = [];
+
       function initSliders() {
-        if (typeof jQuery !== 'undefined' && jQuery.fn.bxSlider) {
-          jQuery(document).ready(function($) {
-      // Initialize each slider separately to ensure they all work
-      $('.bxslider').each(function() {
-        var slider = $(this).bxSlider({
-          mode: 'fade',           // Use fade transition
-          auto: true,             // Enable auto sliding
-          autoStart: true,        // Start automatically
-          autoControls: false,    // No play/pause button
-          stopAutoOnClick: false, // Continue auto play after clicking
-          pager: true,            // Show pagination dots
-          controls: false,        // No prev/next arrows
-          speed: 800,               // Transition speed in ms
-          pause: 2500,            // Time between slides in ms
-          adaptiveHeight: false,  // Keep consistent height
-          responsive: true,       // Be responsive
-          touchEnabled: true,     // Enable touch swipe
-          infiniteLoop: true,     // Loop continuously
-          preloadImages: 'all',   // Load all images before starting
-          easing: 'ease-in-out',  // Smooth transition effect
-          onSliderLoad: function(currentIndex) {
-            // Make sure the slider container is visible
-            $(this).closest('.product-image').css('opacity', '1');
-          }
-        });
-      });
-      
-      // Set initial opacity to prevent flash
-      $('.product-image').css('opacity', '0');
-      $('.product-image').animate({'opacity': '1'}, 300);
-          });
-        } else {
-          // Retry after a short delay if libraries aren't loaded yet
-          setTimeout(initSliders, 100);
+        if (typeof jQuery === 'undefined' || !jQuery.fn.bxSlider) {
+          return setTimeout(initSliders, 100);
         }
+        jQuery('.bxslider').each(function () {
+          sliders.push(jQuery(this).bxSlider({
+            mode: 'fade',
+            auto: true,
+            autoStart: true,
+            autoControls: false,
+            stopAutoOnClick: false,
+            pager: true,
+            controls: false,
+            speed: 800,
+            pause: 2500,
+            adaptiveHeight: false,
+            responsive: true,
+            touchEnabled: true,
+            infiniteLoop: true,
+            preloadImages: 'all',
+            easing: 'ease-in-out'
+          }));
+        });
       }
-      initSliders();
-    });
+
+      // A late webfont or image can still change the card width after load, and
+      // bxSlider only re-measures on resize. Re-measure once things settle.
+      function reload() {
+        sliders.forEach(function (s) {
+          if (s && typeof s.reloadSlider === 'function') s.reloadSlider();
+        });
+      }
+
+      if (document.readyState === 'complete') {
+        initSliders();
+      } else {
+        window.addEventListener('load', initSliders);
+      }
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () { setTimeout(reload, 50); });
+      }
+    })();
   </script>
   
   <!-- Service Worker Registration -->

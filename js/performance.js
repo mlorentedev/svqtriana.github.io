@@ -98,3 +98,9 @@
     
     init();
 })();
+// Keep the footer year current without shipping the whole footer in JS. The
+// markup carries a correct year already, so this is a refresh, not a build step.
+(function () {
+    const el = document.getElementById('footer-year');
+    if (el) el.textContent = new Date().getFullYear();
+})();
