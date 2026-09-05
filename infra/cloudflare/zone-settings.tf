@@ -67,3 +67,35 @@ resource "cloudflare_zone_setting" "min_tls_version" {
 #   this project's token deliberately does not carry. It is a dashboard
 #   setting: Security > Bots > Bot Fight Mode. If a CSP violation for an
 #   inline script ever appears in production, check this first.
+
+# JavaScript Detections, off.
+#
+# This is the setting that was injecting an inline script into every HTML
+# response. Turning off Bot Fight Mode in the dashboard does NOT turn it off -
+# a documented Cloudflare behaviour with no dashboard toggle of its own on the
+# Free plan. The API is explicit about the two being separate:
+#
+#   fight_mode = False      <- Bot Fight Mode, switched off in the dashboard
+#   enable_js  = True       <- JavaScript Detections, still on
+#
+# It cost three things, all measured here:
+#
+#   - it broke the CSP. The injected script carries a per-request ray id
+#     (window.__CF$cv$params = {r:'...', t:'...'}), so no hash and no nonce can
+#     ever allow it; the only alternative was 'unsafe-inline' in script-src.
+#   - it stripped the ETag from every HTML response it touched. GitHub Pages
+#     sends one; the proxied response had none, and it came back the moment the
+#     injection stopped.
+#   - it added Total Blocking Time, the metric this site had just got to 0 ms.
+#
+# What it bought: a JavaScript signal for bot scoring, on a static public site
+# with no login, no accounts and nothing to protect. Injection was
+# unconditional - measured for a bare curl, for Googlebot and for a browser
+# alike, and on the 404 page as well - so it was not even discriminating
+# between visitors.
+resource "cloudflare_bot_management" "zone" {
+  zone_id = var.zone_id
+
+  enable_js  = false
+  fight_mode = false
+}
