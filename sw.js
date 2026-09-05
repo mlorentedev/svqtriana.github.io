@@ -1,5 +1,5 @@
 // SVQ Triana Service Worker - Efficient Caching Strategy
-const CACHE_VERSION = 'v2.2';
+const CACHE_VERSION = 'v2.3';
 const STATIC_CACHE = `svq-triana-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `svq-triana-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `svq-triana-images-${CACHE_VERSION}`;
@@ -93,15 +93,19 @@ self.addEventListener('install', (event) => {
   
   event.waitUntil((async () => {
     try {
-      const cache = await caches.open(STATIC_CACHE);
-      
-      // Precache critical resources
+      // Precache into the cache each URL will be LOOKED UP in. Everything went
+      // into STATIC_CACHE before, while handleRequest routes pages to DYNAMIC,
+      // fonts to FONT and images to IMAGE - so 11 of these 17 entries were
+      // written somewhere nothing ever reads, including all five pages. The
+      // offline fallback therefore never had a page to serve.
       for (const url of PRECACHE_URLS) {
         try {
           const response = await fetch(url);
           if (response.ok) {
+            const target = getCacheNameForRequest(new Request(url, { method: 'GET' }));
+            const cache = await caches.open(target.name);
             await cache.put(url, addTimestampHeader(response));
-            console.log(`[SW] Precached: ${url}`);
+            console.log(`[SW] Precached: ${url} -> ${target.name}`);
           }
         } catch (error) {
           console.warn(`[SW] Failed to precache ${url}:`, error);
