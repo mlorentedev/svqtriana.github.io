@@ -78,7 +78,38 @@ permissions on the `svqtriana.com` zone, then store it with
 - Zone → Zone Settings → Edit
 - Zone → Cache Rules → Edit
 - Zone → Config Rules / Transform Rules → Edit
-- Account → Account Analytics → Edit *(only for `analytics.tf`)*
+- Account → Account Settings → Read **and** Write *(only for `analytics.tf`; this is what the v5 provider's `cloudflare_web_analytics_site` actually checks, not the Analytics permission the dashboard suggests)*
+
+## If Web Analytics is already registered
+
+Cloudflare shows two different things under "Analytics", and only one of them
+needs anything from this repository:
+
+- **Zone Analytics** — requests, bandwidth, threats. Measured by the proxy
+  itself, always on for a proxied zone, no beacon involved. This is almost
+  certainly what is already visible.
+- **Web Analytics** — page views, visits, referrers, Core Web Vitals. Measured
+  in the browser, and it needs the beacon. **Already enabled here**, with
+  Cloudflare injecting the beacon at the edge.
+
+**Check it with a browser User-Agent.** Cloudflare does not inject the beacon
+for a default `curl` request, so the obvious check reports it missing on a site
+where it is working:
+
+```sh
+curl -s  https://svqtriana.com/ | grep -c cloudflareinsights          # 0
+curl -sA 'Mozilla/5.0 ... Chrome/131.0' https://svqtriana.com/ \
+  | grep -o 'cloudflareinsights[^"]*'                                 # present
+```
+
+If `svqtriana.com` already appears under the *Web Analytics* tab, do not apply
+`analytics.tf` blind: it would create a second site entry. Import the existing
+one first:
+
+```sh
+dotf secrets run --only CLOUDFLARE_API_TOKEN -- \
+  terraform import cloudflare_web_analytics_site.site '<account_id>/<site_tag>'
+```
 
 ## Two decisions left open on purpose
 

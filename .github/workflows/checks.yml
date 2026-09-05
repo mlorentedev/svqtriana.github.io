@@ -1,0 +1,101 @@
+name: checks
+
+# These exist because of two regressions that shipped in review and were caught
+# by a human reading a diff, not by anything automatic: a stylesheet silently
+# dropped from one page, and a page losing its <title> uniqueness. Every check
+# below is one that would have failed on those.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# This workflow runs pull-request code. Grant it nothing it does not need, and
+# do not leave the token in the checkout's git config where that code can read
+# it - actions/checkout persists it by default.
+permissions:
+  contents: read
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Every route resolves the way GitHub Pages resolves it
+        run: |
+          python3 scripts/serve.py 8000 &
+          for i in $(seq 1 20); do
+            curl -sf -o /dev/null http://localhost:8000/ && break
+            sleep 0.5
+          done
+          fail=0
+          for path in "" nosotros productos media encuentro \
+                      robots.txt sitemap.xml ads.txt llms.txt sw.js; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8000/$path")
+            printf '%-16s %s\n' "/$path" "$code"
+            [ "$code" = "200" ] || fail=1
+          done
+          # ads.txt must be lowercase: GitHub Pages is case-sensitive and this
+          # returned 404 in production for a year while /Ads.txt returned 200.
+          test -f ads.txt || { echo "ads.txt must exist in lowercase"; fail=1; }
+          exit $fail
+
+      - name: Every referenced asset exists
+        run: |
+          fail=0
+          {
+            grep -rhoE '(src|href)="(images|css|js|fonts)/[^"]+"' ./*.html \
+              | sed -E 's/.*="([^"]+)"/\1/'
+            # The optional quote matters: css/fonts.css writes
+            # url('../fonts/...woff2'), and a pattern demanding a literal
+            # `url(../` skipped both webfonts entirely - they could have been
+            # deleted with this check green.
+            grep -rhoE "url\(['\"]?\.\./[^)]+\)" css/*.css \
+              | sed -E "s|url\(['\"]?\.\./([^)]+)\)|\1|" | tr -d "'\""
+          } | sort -u | while read -r f; do
+            [ -f "$f" ] || { echo "missing asset: $f"; exit 1; }
+          done || fail=1
+          exit $fail
+
+      - name: Each page keeps its own title, canonical and stylesheets
+        run: python3 scripts/check_pages.py
+
+      - name: Structured data parses
+        run: |
+          python3 - <<'PY'
+          import json, re, sys
+          from pathlib import Path
+          bad = 0
+          for page in Path('.').glob('*.html'):
+              for block in re.findall(
+                      r'<script type="application/ld\+json">(.*?)</script>',
+                      page.read_text(encoding='utf-8'), re.S):
+                  try:
+                      data = json.loads(block)
+                  except json.JSONDecodeError as exc:
+                      print(f"{page.name}: invalid JSON-LD: {exc}")
+                      bad = 1
+                      continue
+                  if '@context' not in data or '@type' not in data:
+                      print(f"{page.name}: JSON-LD missing @context or @type")
+                      bad = 1
+          sys.exit(bad)
+          PY
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform -chdir=infra/cloudflare init -backend=false
+      - run: terraform -chdir=infra/cloudflare validate
+      - run: terraform -chdir=infra/cloudflare fmt -check -recursive
