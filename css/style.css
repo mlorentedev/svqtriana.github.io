@@ -520,29 +520,33 @@ a:focus {
 
 .brand_img-box.item-1_video,
 .video-preview.item-1_video {
-  background-image: url(../images/video1.PNG);
+  background-image: url(../images/webp/video1.webp);
 }
 .brand_img-box.item-2_video,
 .video-preview.item-2_video {
-  background-image: url(../images/video2.PNG);
+  background-image: url(../images/webp/video2.webp);
 }
 .brand_img-box.item-3_video,
 .video-preview.item-3_video {
-  background-image: url(../images/video3.PNG);
+  background-image: url(../images/webp/video3.webp);
 }
 .brand_img-box.item-4_video,
 .video-preview.item-4_video {
-  background-image: url(../images/video4.PNG);
+  background-image: url(../images/webp/video4.webp);
 }
 .brand_img-box.item-5_video,
 .video-preview.item-5_video {
-  background-image: url(../images/video5.PNG);
+  background-image: url(../images/webp/video5.webp);
+}
+.brand_img-box.item-6_video,
+.video-preview.item-6_video {
+  background-image: url(../images/webp/video6.webp);
 }
 .brand_img-box.item-1 {
   background-image: url(../images/webp/vaso_vacio.webp);
 }
 .brand_img-box.item-2 {
-  background-image: url(../images/pulsera.PNG);
+  background-image: url(../images/webp/pulsera.webp);
 }
 .brand_img-box.item-3 {
   background-image: url(../images/webp/bandera.webp);
@@ -1144,10 +1148,23 @@ img {
 }
 
 .video-content {
-  padding: 20px;
+  padding: 18px 20px 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  text-align: center;
+  flex: 1;
+}
+
+.video-season {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #df0606;
 }
 
 .video-title {

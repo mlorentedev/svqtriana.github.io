@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="es">
 
-  <head xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+  <head>
     <!-- Basic -->
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Cache-Control" content="no-cache, max-age=0"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
-    <meta name="robots" content="ALL">
+    <meta name="robots" content="index, follow">
     <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Site Metas -->
-    <meta name="keywords" content="Sevilla, Triana, SFC, futbol, peña, SVQ." />
     <meta name="description" content="Galería de vídeos de PS SVQ Triana: spots promocionales, pregones, desplazamientos y momentos especiales de nuestra peña sevillista." />
     <meta name="author" content="SVQ Triana" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <!-- Site sharing-->
-    <meta property="og:url"                content="https://svqtriana.com/" />
+    <meta property="og:url"                content="https://svqtriana.com/media" />
     <meta property="og:title"              content="Galería de Vídeos - PS SVQ Triana" />
     <meta property="og:description"        content="Vídeos de PS SVQ Triana: spots, pregones y momentos especiales de nuestra peña sevillista de Triana." />
-    <meta property="og:image"              content="https://svqtriana.com/images/webp/logo_192.webp" /> <!-- invalid, but expected -->
-    <meta property="og:image:width"        content="1200"/>
-    <meta property="og:image:height"       content="630"/>
-    <link property="image" type="image/webp" href="https://svqtriana.com/images/webp/logo_192.webp" /> <!-- valid -->
+    <meta property="og:image"              content="https://svqtriana.com/images/cartel-27.jpg" />
+    <meta property="og:image:width"        content="1131"/>
+    <meta property="og:image:height"       content="1600"/>
+    <meta property="og:image:alt"          content="Cartel oficial de la temporada 2026/2027 de PS SVQ Triana" />
+    <meta property="og:type"               content="website" />
+    <meta property="og:site_name"          content="PS SVQ Triana" />
+    <meta property="og:locale"             content="es_ES" />
 
   <!-- Google AdSense Account -->
   <meta name="google-adsense-account" content="ca-pub-5217718596352992" />
 
   <!--Tab icon-->
   <link rel="icon" type="image/webp" href="images/webp/logo_192.webp" sizes="16x16">
-  <title>SVQ TRIANA - Peña Sevillista</title>
+  <title>Galería de vídeos | PS SVQ Triana</title>
+  <link rel="canonical" href="https://svqtriana.com/media" />
   
   <!-- Resource hints for performance -->
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
@@ -73,14 +73,17 @@
     .brand_heading{text-align:center;margin-bottom:30px}
     .custom_heading_2{color:#fff;text-transform:none;font-weight:bold;font-size:40px;text-align:center}
     .brand_item-container{padding:0 15px}
-    .video-card{background:#fff;border-radius:8px;overflow:hidden;margin:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);height:100%}
-    .video-thumbnail{position:relative;height:200px;overflow:hidden}
-    .video-preview{width:100%;height:100%;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center}
-    .play-button{width:60px;height:60px;background:rgba(223,6,6,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
-    .video-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;text-decoration:none}
-    .video-content{padding:15px}
-    .video-title{color:#252525;font-size:16px;font-weight:bold;margin:0}
-    .highlight{color:#df0606}
+    /* These must match css/style.css. When they did not, the gallery painted as
+       white cards with dark text and then flipped to dark cards with white text
+       once the async stylesheet landed. */
+    .video-card{background:linear-gradient(135deg,rgba(40,40,40,0.95),rgba(60,60,60,0.9));border:1px solid rgba(255,255,255,0.1);border-radius:15px;overflow:hidden;box-shadow:0 8px 25px rgba(0,0,0,0.3);height:100%;display:flex;flex-direction:column}
+    .video-thumbnail{position:relative;height:200px;overflow:hidden;background-color:#1c1c1c}
+    .video-preview{width:100%;height:100%;background-size:cover;background-position:center;position:relative}
+    .play-button{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;background:rgba(223,6,6,0.9);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+    .video-overlay{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;text-decoration:none;opacity:0}
+    .video-content{padding:18px 20px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;flex:1}
+    .video-title{color:#fff;font-size:1.3rem;font-weight:bold;text-transform:uppercase;line-height:1.3;margin:0}
+    .video-season{margin:0;font-size:14px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#df0606}
     
     /* Critical responsive styles */
     @media (max-width:768px){
@@ -97,29 +100,36 @@
   </style>
   
   <!-- Load web fonts asynchronously -->
-  <link rel="preconnect" href="/fonts" crossorigin>
   
-  <!-- Load non-critical CSS asynchronously -->
-  <script>
-    // CSS loading utility
-    !function(e){"use strict";var t=function(t,n,r){function o(e){return i.body?e():void setTimeout(function(){o(e)})}function l(){d.addEventListener&&d.removeEventListener("load",l),d.media=r||"all"}var i=e.document,d=i.createElement("link");if(n)d.id=n;d.rel="stylesheet",d.href=t,d.media="only x",o(function(){i.head.appendChild(d)}),setTimeout(function(){d.addEventListener?d.addEventListener("load",l):d.attachEvent&&d.attachEvent("onload",l)});setTimeout(l,3e3)};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
-    // Load CSS files
-    loadCSS("css/fonts.css");
-    loadCSS("css/style.css");
-    loadCSS("css/bootstrap.css");
-    loadCSS("css/responsive.css");
-    loadCSS("https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap");
-    loadCSS("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
-  </script>
-  
+  <!-- Non-blocking CSS. media="print" keeps these off the critical path; the
+       onload handler promotes them once they arrive. Order is the cascade
+       order, so keep it. Static tags (rather than the old JS loadCSS shim)
+       let the preload scanner find them and let the CDN link carry SRI. -->
+  <link rel="stylesheet" href="css/fonts.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/bootstrap.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/responsive.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css"
+        integrity="sha384-pb48TpU6xuBnw0Hg/AajWKCHyZggk38ZS2dxscTTCYzSRY99E7l55q0Q0Ht79UEx"
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+
   <!-- Fallback for browsers without JS -->
   <noscript>
     <link href="css/fonts.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@400;500&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+          crossorigin="anonymous" referrerpolicy="no-referrer" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css"
+          integrity="sha384-pb48TpU6xuBnw0Hg/AajWKCHyZggk38ZS2dxscTTCYzSRY99E7l55q0Q0Ht79UEx"
+          crossorigin="anonymous" referrerpolicy="no-referrer" rel="stylesheet">
   </noscript>
   
   <!-- PWA Manifest -->
@@ -128,6 +138,124 @@
   <!-- Additional SEO Meta Tags -->
   <meta name="theme-color" content="#df0606">
   <meta name="msapplication-TileColor" content="#df0606">
+  <!-- Structured Data: the gallery in a form crawlers can read -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Galería de vídeos de PS SVQ Triana",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "VideoObject",
+          "name": "El Sevilla siempre será su gente - Temporada 26/27",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: El Sevilla siempre será su gente (Temporada 26/27).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video6.webp",
+          "uploadDate": "2026",
+          "contentUrl": "https://www.youtube.com/watch?v=Nz1E1GyG1EA",
+          "embedUrl": "https://www.youtube.com/embed/Nz1E1GyG1EA",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "VideoObject",
+          "name": "Cita con nuestra herencia - Temporada 21/22",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: Cita con nuestra herencia (Temporada 21/22).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video5.webp",
+          "uploadDate": "2021",
+          "contentUrl": "https://www.youtube.com/watch?v=NZbk3zVNMaY",
+          "embedUrl": "https://www.youtube.com/embed/NZbk3zVNMaY",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "VideoObject",
+          "name": "La brújula de mis sentidos - Temporada 20/21",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: La brújula de mis sentidos (Temporada 20/21).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video4.webp",
+          "uploadDate": "2020",
+          "contentUrl": "https://www.youtube.com/watch?v=gyamGKXwkMc",
+          "embedUrl": "https://www.youtube.com/embed/gyamGKXwkMc",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "VideoObject",
+          "name": "Desplazamientos - Temporada 19/20",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: Desplazamientos (Temporada 19/20).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video3.webp",
+          "uploadDate": "2019",
+          "contentUrl": "https://www.youtube.com/watch?v=BQ16EOFLZEM",
+          "embedUrl": "https://www.youtube.com/embed/BQ16EOFLZEM",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "VideoObject",
+          "name": "Ya estamos aquí - Temporada 19/20",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: Ya estamos aquí (Temporada 19/20).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video1.webp",
+          "uploadDate": "2019",
+          "contentUrl": "https://www.youtube.com/watch?v=0v1XvikTbIo",
+          "embedUrl": "https://www.youtube.com/embed/0v1XvikTbIo",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "item": {
+          "@type": "VideoObject",
+          "name": "I Pregón - Diciembre de 2019",
+          "description": "Vídeo de la peña sevillista PS SVQ Triana: I Pregón (Diciembre de 2019).",
+          "thumbnailUrl": "https://svqtriana.com/images/webp/video2.webp",
+          "uploadDate": "2019",
+          "contentUrl": "https://www.youtube.com/watch?v=C85CSoQkVy8",
+          "embedUrl": "https://www.youtube.com/embed/C85CSoQkVy8",
+          "publisher": {
+            "@type": "Organization",
+            "name": "PS SVQ Triana",
+            "url": "https://svqtriana.com"
+          }
+        }
+      }
+    ]
+  }
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-86XPZWP474"></script>
   <script>
@@ -147,101 +275,131 @@
   <section class="brand_section layout_padding2" id="products">
     <div class="container">
       <div class="brand_heading">
-        <h3 class="custom_heading_2">
+        <h1 class="custom_heading_2">
           GALERÍA
-        </h3>
+        </h1>
       </div>
     </div>
     <div class="container-fluid">
       <div class="row brand_item-container justify-content-center">
         <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="video-card">
+          <article class="video-card">
             <div class="video-thumbnail">
-              <div class="video-preview item-1_video">
-                <div class="play-button">
+              <div class="video-preview item-6_video">
+                <div class="play-button" aria-hidden="true">
                   <i class="fa fa-play"></i>
                 </div>
               </div>
-              <a href="https://youtu.be/0v1XvikTbIo" target="_blank" rel="noopener noreferrer" class="video-overlay">
+              <a href="https://youtu.be/Nz1E1GyG1EA" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «El Sevilla siempre será su gente» (Temporada 26/27) en YouTube">
                 <span class="watch-text">Ver</span>
               </a>
             </div>
             <div class="video-content">
-              <h5 class="video-title">SPOT PS SVQ Triana <span class="highlight">19/20</span></h5>
+              <h2 class="video-title">El Sevilla siempre será su gente</h2>
+              <p class="video-season">Temporada 26/27</p>
             </div>
-          </div>
+          </article>
         </div>
-        
+
         <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="video-card">
-            <div class="video-thumbnail">
-              <div class="video-preview item-2_video">
-                <div class="play-button">
-                  <i class="fa fa-play"></i>
-                </div>
-              </div>
-              <a href="https://youtu.be/C85CSoQkVy8" target="_blank" rel="noopener noreferrer" class="video-overlay">
-                <span class="watch-text">Ver</span>
-              </a>
-            </div>
-            <div class="video-content">
-              <h5 class="video-title">I Pregón PS SVQ Triana <span class="highlight">2019</span></h5>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="video-card">
-            <div class="video-thumbnail">
-              <div class="video-preview item-3_video">
-                <div class="play-button">
-                  <i class="fa fa-play"></i>
-                </div>
-              </div>
-              <a href="https://youtu.be/BQ16EOFLZEM" target="_blank" rel="noopener noreferrer" class="video-overlay">
-                <span class="watch-text">Ver</span>
-              </a>
-            </div>
-            <div class="video-content">
-              <h5 class="video-title">Desplazamientos <span class="highlight">19/20</span></h5>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="video-card">
-            <div class="video-thumbnail">
-              <div class="video-preview item-4_video">
-                <div class="play-button">
-                  <i class="fa fa-play"></i>
-                </div>
-              </div>
-              <a href="https://youtu.be/gyamGKXwkMc" target="_blank" rel="noopener noreferrer" class="video-overlay">
-                <span class="watch-text">Ver</span>
-              </a>
-            </div>
-            <div class="video-content">
-              <h5 class="video-title">SPOT PS SVQ Triana <span class="highlight">20/21</span></h5>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-12 col-md-6 col-lg-4 mb-4">
-          <div class="video-card">
+          <article class="video-card">
             <div class="video-thumbnail">
               <div class="video-preview item-5_video">
-                <div class="play-button">
+                <div class="play-button" aria-hidden="true">
                   <i class="fa fa-play"></i>
                 </div>
               </div>
-              <a href="https://youtu.be/NZbk3zVNMaY" target="_blank" rel="noopener noreferrer" class="video-overlay">
+              <a href="https://youtu.be/NZbk3zVNMaY" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «Cita con nuestra herencia» (Temporada 21/22) en YouTube">
                 <span class="watch-text">Ver</span>
               </a>
             </div>
             <div class="video-content">
-              <h5 class="video-title">SPOT PS SVQ Triana <span class="highlight">21/22</span></h5>
+              <h2 class="video-title">Cita con nuestra herencia</h2>
+              <p class="video-season">Temporada 21/22</p>
             </div>
-          </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <div class="video-preview item-4_video">
+                <div class="play-button" aria-hidden="true">
+                  <i class="fa fa-play"></i>
+                </div>
+              </div>
+              <a href="https://youtu.be/gyamGKXwkMc" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «La brújula de mis sentidos» (Temporada 20/21) en YouTube">
+                <span class="watch-text">Ver</span>
+              </a>
+            </div>
+            <div class="video-content">
+              <h2 class="video-title">La brújula de mis sentidos</h2>
+              <p class="video-season">Temporada 20/21</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <div class="video-preview item-3_video">
+                <div class="play-button" aria-hidden="true">
+                  <i class="fa fa-play"></i>
+                </div>
+              </div>
+              <a href="https://youtu.be/BQ16EOFLZEM" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «Desplazamientos» (Temporada 19/20) en YouTube">
+                <span class="watch-text">Ver</span>
+              </a>
+            </div>
+            <div class="video-content">
+              <h2 class="video-title">Desplazamientos</h2>
+              <p class="video-season">Temporada 19/20</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <div class="video-preview item-1_video">
+                <div class="play-button" aria-hidden="true">
+                  <i class="fa fa-play"></i>
+                </div>
+              </div>
+              <a href="https://youtu.be/0v1XvikTbIo" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «Ya estamos aquí» (Temporada 19/20) en YouTube">
+                <span class="watch-text">Ver</span>
+              </a>
+            </div>
+            <div class="video-content">
+              <h2 class="video-title">Ya estamos aquí</h2>
+              <p class="video-season">Temporada 19/20</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+          <article class="video-card">
+            <div class="video-thumbnail">
+              <div class="video-preview item-2_video">
+                <div class="play-button" aria-hidden="true">
+                  <i class="fa fa-play"></i>
+                </div>
+              </div>
+              <a href="https://youtu.be/C85CSoQkVy8" target="_blank" rel="noopener noreferrer"
+                 class="video-overlay" aria-label="Ver «I Pregón» (Diciembre de 2019) en YouTube">
+                <span class="watch-text">Ver</span>
+              </a>
+            </div>
+            <div class="video-content">
+              <h2 class="video-title">I Pregón</h2>
+              <p class="video-season">Diciembre de 2019</p>
+            </div>
+          </article>
         </div>
       </div>
     </div>
@@ -277,7 +435,9 @@
   <script src="js/performance.js" defer></script>
   
   <!-- External libraries loaded after page content -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous" defer></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+          integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="js/bootstrap.min.js" defer></script>
 
 </body>

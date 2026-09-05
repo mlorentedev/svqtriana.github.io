@@ -1,18 +1,15 @@
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
 
-  <head xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+  <head>
   <!-- Basic -->
   <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta http-equiv="Cache-Control" content="public, max-age=3600"/>
   <meta name="robots" content="index, follow">
-  <meta name="referrer" content="no-referrer-when-downgrade">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- Mobile Metas -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Site Metas -->
-  <meta name="keywords" content="Sevilla, Triana, SFC, futbol, peña, SVQ." />
-  <meta name="description" content="Peña sevillista fundada en 2019 en el barrio de Triana, Sevilla." />
+  <meta name="description" content="Peña sevillista fundada el 27 de julio de 2019 en el barrio de Triana, Sevilla. Abierta la renovación y las nuevas altas de la temporada 26/27." />
   <meta name="author" content="SVQ Triana" />
   <!-- Site sharing-->
   <meta property="og:type"               content="website" />
@@ -38,7 +35,7 @@
     
   <!--Tab icon-->
   <link rel="icon" type="image/webp" href="images/webp/logo_192.webp" sizes="16x16">
-  <title>SVQ TRIANA - Peña Sevillista</title>
+  <title>PS SVQ Triana | Peña sevillista de Triana, Sevilla</title>
   
   <!-- Resource hints for performance -->
   <link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin>
@@ -112,28 +109,28 @@
     }
   </style>
   
-  <!-- Load web fonts asynchronously -->
-  <link rel="preconnect" href="/fonts" crossorigin>
-  
-  <!-- Load non-critical CSS asynchronously with polyfill -->
-  <script>
-    // CSS loading utility for better browser support
-    !function(e){"use strict";var t=function(t,n,r){function o(e){return i.body?e():void setTimeout(function(){o(e)})}function l(){d.addEventListener&&d.removeEventListener("load",l),d.media=r||"all"}var i=e.document,d=i.createElement("link");if(n)d.id=n;d.rel="stylesheet",d.href=t,d.media="only x",o(function(){i.head.appendChild(d)}),setTimeout(function(){d.addEventListener?d.addEventListener("load",l):d.attachEvent&&d.attachEvent("onload",l)});setTimeout(l,3e3)};"undefined"!=typeof exports?exports.loadCSS=t:e.loadCSS=t}("undefined"!=typeof global?global:this);
-    // Load CSS files
-    loadCSS("css/fonts.css");
-    loadCSS("css/style.css");
-    loadCSS("css/bootstrap.css");
-    loadCSS("css/responsive.css");
-    loadCSS("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
-  </script>
-  
+  <!-- Non-blocking CSS. media="print" keeps these off the critical path; the
+       onload handler promotes them once they arrive. Order is the cascade
+       order, so keep it. Static tags (rather than the old JS loadCSS shim)
+       let the preload scanner find them and let the CDN link carry SRI. -->
+  <link rel="stylesheet" href="css/fonts.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/bootstrap.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/responsive.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous" referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'">
+
   <!-- Fallback for browsers without JS -->
   <noscript>
     <link href="css/fonts.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+          crossorigin="anonymous" referrerpolicy="no-referrer" rel="stylesheet">
   </noscript>
 
   <!-- PWA Manifest -->
