@@ -22,10 +22,15 @@ locals {
   content_security_policy = join("; ", [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://code.jquery.com https://cdnjs.cloudflare.com https://www.googletagmanager.com https://static.cloudflareinsights.com",
-    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https://www.google-analytics.com",
-    "connect-src 'self' https://www.google-analytics.com https://cloudflareinsights.com",
+    "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com",
+    # cdnjs is not optional here: Font Awesome's stylesheet pulls
+    # fonts/fontawesome-webfont.woff2 from the same origin it was served from.
+    # Omit it and every icon on the site - the nav's social links and the six
+    # play buttons - disappears the moment this policy goes live.
+    "font-src 'self' https://cdnjs.cloudflare.com",
+    # GA4 does not report to one fixed host; it picks a regional endpoint.
+    "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
+    "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com",
     "frame-src https://www.google.com https://www.youtube.com",
     "frame-ancestors 'self'",
     "form-action 'self' https://docs.google.com",

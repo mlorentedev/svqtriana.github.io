@@ -762,10 +762,11 @@ a:focus {
 .footer_section {
   background-color: #242424;
   padding: 10px;
-  font-family: "Dosis", sans-serif;
+  font-family: "GlacialIndifferenceRegular", "Arial", "Helvetica", sans-serif;
   font-weight: 500;
 }
 
+.footer_section h2,
 .footer_section h3 {
   color: #fdfbfb;
   margin: 3px 0 8px 0;
@@ -860,7 +861,8 @@ img {
     font-size: 13px;
   }
   
-  .footer_section h3 {
+  .footer_section h2,
+.footer_section h3 {
     margin: 2px 0 6px 0;
     font-size: 1.1rem;
   }
