@@ -126,6 +126,18 @@ profile, which for a peña's website is the more proportionate choice and drops
 the cookie-banner question entirely. Running both is the only option with no
 upside — pick one.
 
+## Order matters: apply after the site deploys, not before
+
+The CSP describes what the *pages* load, so tightening it before the matching
+pages are live breaks the site. This has already been demonstrated once:
+`script-src` lost `'unsafe-inline'` while the deployed pages still carried three
+inline `<script>` blocks, which would have stopped the service worker
+registering and the product slider initialising.
+
+So: merge the code, wait for the Pages deployment to finish, and only then
+apply. If a change must go the other way round - a page starting to load
+something new - widen the policy first, deploy, then narrow it again.
+
 ## Verifying an apply
 
 Check the consequence, not the config:

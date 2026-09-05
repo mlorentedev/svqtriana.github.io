@@ -11,8 +11,11 @@
 
 locals {
   # Derived from what the pages actually load, not from a template:
-  #   - inline <script> and <style> blocks on every page (critical CSS, the
-  #     gtag bootstrap, the slider init), hence 'unsafe-inline'
+  #   - NO inline <script> at all any more, so script-src carries no
+  #     'unsafe-inline'. Adding one back would be silently blocked - put it in
+  #     a file under js/ instead.
+  #   - inline style="" attributes remain in the footer markup, so style-src
+  #     still needs 'unsafe-inline'. Removing those attributes would let it go.
   #   - jQuery from code.jquery.com, the only remaining third-party script,
   #     and only on /productos
   #   - the Cloudflare Web Analytics beacon, injected by Cloudflare itself
@@ -20,7 +23,7 @@ locals {
   #   - the membership form posts to docs.google.com
   content_security_policy = join("; ", [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://code.jquery.com https://static.cloudflareinsights.com",
+    "script-src 'self' https://code.jquery.com https://static.cloudflareinsights.com",
     "style-src 'self' 'unsafe-inline'",
     # No cdnjs anywhere: Font Awesome and Owl Carousel are gone. The icons are
     # inline SVG and the only webfont is self-hosted, so nothing loads a font

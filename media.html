@@ -376,25 +376,6 @@
     </p>
   </footer>
 
-  <!-- Load all JavaScript at the end for better performance -->
-  <!-- Critical scripts loaded immediately -->
-  <script>
-    // Inline critical performance optimizations
-    document.documentElement.classList.add('font-loading');
-    
-    // Font loading optimization
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      });
-    } else {
-      setTimeout(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      }, 3000);
-    }
-  </script>
   
   <!-- Load non-critical scripts asynchronously -->
   <script src="js/performance.js" defer></script>

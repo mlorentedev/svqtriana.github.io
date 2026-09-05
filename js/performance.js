@@ -134,3 +134,16 @@
         }
     });
 })();
+
+// Service worker registration.
+//
+// Moved out of an inline <script> so the Content-Security-Policy can drop
+// 'unsafe-inline' from script-src. It also fixes an inconsistency: four pages
+// registered the worker and media.html did not, for no stated reason.
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function () { console.log('SW registered'); })
+            .catch(function (err) { console.log('SW registration failed', err); });
+    });
+}

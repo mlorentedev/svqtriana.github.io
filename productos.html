@@ -285,25 +285,6 @@
     </p>
   </footer>
 
-  <!-- Load all JavaScript at the end for better performance -->
-  <!-- Critical scripts loaded immediately -->
-  <script>
-    // Inline critical performance optimizations
-    document.documentElement.classList.add('font-loading');
-    
-    // Font loading optimization
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      });
-    } else {
-      setTimeout(() => {
-        document.documentElement.classList.remove('font-loading');
-        document.documentElement.classList.add('font-loaded');
-      }, 3000);
-    }
-  </script>
   
   <!-- Load non-critical scripts asynchronously -->
   <script src="js/performance.js" defer></script>
@@ -314,70 +295,8 @@
           crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
   <script src="js/jquery.bxslider.js" defer></script>
 
-  <script defer>
-    // bxSlider measures the wrapper once, at init, and writes that width onto
-    // every slide. It used to run while the stylesheets were still loading
-    // asynchronously, so it measured an unstyled card and produced 555px slides
-    // inside a 529px viewport. The CSS is render-blocking now, so that specific
-    // race is gone - but images still settle after DOMContentLoaded, so this
-    // waits for window load, when the layout is final.
-    (function () {
-      var sliders = [];
-
-      function initSliders() {
-        if (typeof jQuery === 'undefined' || !jQuery.fn.bxSlider) {
-          return setTimeout(initSliders, 100);
-        }
-        jQuery('.bxslider').each(function () {
-          sliders.push(jQuery(this).bxSlider({
-            mode: 'fade',
-            auto: true,
-            autoStart: true,
-            autoControls: false,
-            stopAutoOnClick: false,
-            pager: true,
-            controls: false,
-            speed: 800,
-            pause: 2500,
-            adaptiveHeight: false,
-            responsive: true,
-            touchEnabled: true,
-            infiniteLoop: true,
-            preloadImages: 'all',
-            easing: 'ease-in-out'
-          }));
-        });
-      }
-
-      // A late webfont or image can still change the card width after load, and
-      // bxSlider only re-measures on resize. Re-measure once things settle.
-      function reload() {
-        sliders.forEach(function (s) {
-          if (s && typeof s.reloadSlider === 'function') s.reloadSlider();
-        });
-      }
-
-      if (document.readyState === 'complete') {
-        initSliders();
-      } else {
-        window.addEventListener('load', initSliders);
-      }
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function () { setTimeout(reload, 50); });
-      }
-    })();
-  </script>
+  <script src="js/slider.js" defer></script>
   
-  <!-- Service Worker Registration -->
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('SW registered'))
-        .catch(err => console.log('SW registration failed'));
-    });
-  }
-  </script>
 </body>
 
 </html>
