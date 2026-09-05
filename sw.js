@@ -1,5 +1,5 @@
 // SVQ Triana Service Worker - Efficient Caching Strategy
-const CACHE_VERSION = 'v2.5';
+const CACHE_VERSION = 'v20260905';
 // Stamped onto every local CSS/JS URL, in the HTML and in PRECACHE_URLS below.
 // A query string is a fresh cache key for the Service Worker AND for Cloudflare
 // (cache_level 'aggressive' keys on it), so bumping CACHE_VERSION is the single

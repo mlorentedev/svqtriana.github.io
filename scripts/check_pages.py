@@ -180,6 +180,23 @@ if declared:
         check(spoken == f"v{declared}",
               f"{name}: footer aria-label says {spoken}, sw.js declares v{declared}")
 
+    # The version is a deploy date, and the CHANGELOG's newest heading names
+    # the same one. Without this the two drift the first time someone bumps
+    # without writing an entry, and a changelog that lags the site is worse
+    # than none: it reports a state that is no longer true.
+    check(re.fullmatch(r"\d{8}(\.\d+)?", declared) is not None,
+          f"sw.js declares v{declared}, which is not a deploy date "
+          f"(expected vYYYYMMDD or vYYYYMMDD.N)")
+
+    # re.M directly rather than one(), which anchors with re.S only - `^## v`
+    # would then match the start of the file and nothing else.
+    changelog = (REPO / "CHANGELOG.md").read_text(encoding="utf-8")
+    heading = re.search(r"^## v(\S+)", changelog, re.M)
+    newest = heading.group(1) if heading else None
+    check(newest == declared,
+          f"CHANGELOG.md's newest entry is v{newest}, sw.js declares "
+          f"v{declared}: write the entry, or the changelog lags the site")
+
     # Every css/js entry in PRECACHE_URLS, whichever way it is quoted.
     #
     # The first version of this matched single quotes only, and the same commit
