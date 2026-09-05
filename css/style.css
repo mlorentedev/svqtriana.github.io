@@ -205,17 +205,6 @@ a:focus {
   color: #fafcfd;
 }
 
-.custom_nav-container .nav_search-btn {
-  background-image: url(../images/webp/search-icon.webp);
-  background-size: 22px;
-  background-repeat: no-repeat;
-  background-position-y: 7px;
-  width: 35px;
-  height: 35px;
-  padding: 0;
-  border: none;
-}
-
 .nav-link:hover {
   color: #df0606 !important;
   opacity: 1;
@@ -562,15 +551,6 @@ a:focus {
 }
 .brand_img-box.item-7 {
   background-image: url(../images/webp/camiseta_oficial.webp);
-}
-.brand_img-box.item-8 {
-  background-image: url(../images/webp/camiseta_destino.webp);
-}
-.brand_img-box.item-9 {
-  background-image: url(../images/webp/camiseta_leyenda.webp);
-}
-.brand_img-box.item-10 {
-  background-image: url(../images/webp/camiseta_origen.webp);
 }
 .brand_img-box.item-11 {
   background-image: url(../images/webp/pegatinas.webp);
