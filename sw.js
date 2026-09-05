@@ -17,11 +17,10 @@ const CACHE_LIFETIMES = {
 // Resources to precache for offline functionality
 const PRECACHE_URLS = [
   '/',
-  '/index.html',
-  '/productos.html',
-  '/media.html',
-  '/encuentro.html',
-  '/nosotros.html',
+  '/productos',
+  '/media',
+  '/encuentro',
+  '/nosotros',
   '/css/fonts.css',
   '/css/style.css',
   '/css/bootstrap.css',
@@ -183,7 +182,9 @@ async function handleRequest(request) {
       console.log(`[SW] Serving from cache: ${url.pathname}`);
       
       // Background update for HTML pages
-      if (cacheInfo.name === DYNAMIC_CACHE && url.pathname.endsWith('.html')) {
+      // Pages are extensionless now, so test the routing decision rather than
+      // the suffix - endsWith('.html') stopped matching any real page URL.
+      if (cacheInfo.name === DYNAMIC_CACHE) {
         updateCacheInBackground(request, cache);
       }
       
@@ -198,6 +199,7 @@ async function handleRequest(request) {
       // Cache the response
       const responseToCache = addTimestampHeader(networkResponse.clone());
       await cache.put(request, responseToCache);
+      await trimCache(cache);
       console.log(`[SW] Cached: ${url.pathname}`);
     }
     
@@ -260,31 +262,20 @@ async function updateCacheInBackground(request, cache) {
   }
 }
 
-// Handle cache cleanup on quota exceeded
-self.addEventListener('quotaexceeded', () => {
-  console.warn('[SW] Storage quota exceeded, cleaning up old caches');
-  cleanupOldCaches();
-});
+// There is no 'quotaexceeded' event on ServiceWorkerGlobalScope, so the old
+// listener here never fired. Trim on the write path instead, where a quota
+// failure actually surfaces.
+const CACHE_ENTRY_LIMIT = 60;
 
-async function cleanupOldCaches() {
-  try {
-    const caches = [DYNAMIC_CACHE, IMAGE_CACHE];
-    
-    for (const cacheName of caches) {
-      const cache = await caches.open(cacheName);
-      const requests = await cache.keys();
-      
-      // Remove oldest 20% of entries
-      const toDelete = Math.floor(requests.length * 0.2);
-      for (let i = 0; i < toDelete; i++) {
-        await cache.delete(requests[i]);
-      }
-    }
-    
-    console.log('[SW] Cache cleanup completed');
-  } catch (error) {
-    console.error('[SW] Cache cleanup failed:', error);
+async function trimCache(cache, limit = CACHE_ENTRY_LIMIT) {
+  const requests = await cache.keys();
+  if (requests.length <= limit) return;
+
+  // Cache.keys() returns insertion order, so the head is the oldest.
+  for (const request of requests.slice(0, requests.length - limit)) {
+    await cache.delete(request);
   }
+  console.log(`[SW] Trimmed cache to ${limit} entries`);
 }
 
 // Message handling for cache control

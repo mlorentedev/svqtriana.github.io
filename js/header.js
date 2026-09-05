@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Brand link
     const brandLink = document.createElement('a');
     brandLink.className = 'navbar-brand';
-    brandLink.href = 'index.html';
+    brandLink.href = '/';
     
     const brandImg = document.createElement('img');
     brandImg.src = 'images/webp/logo_192.webp';
@@ -51,10 +51,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Navigation items - secure creation
     const navItems = [
-        { href: 'index.html#home', text: 'INICIO' },
-        { href: 'nosotros.html', text: 'NUESTRA HISTORIA' },
-        { href: 'productos.html', text: 'MATERIAL' },
-        { href: 'media.html', text: 'GALERÍA' }
+        { href: '/#home', text: 'INICIO' },
+        { href: '/nosotros', text: 'NUESTRA HISTORIA' },
+        { href: '/productos', text: 'MATERIAL' },
+        { href: '/media', text: 'GALERÍA' }
     ];
     
     navItems.forEach(item => {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const socialLinks = [
         { href: 'https://www.instagram.com/ps_svqtriana/', class: 'fa fa-instagram', label: 'Seguir en Instagram' },
         { href: 'https://www.facebook.com/PS-SVQ-Triana-110014627020914', class: 'fa fa-facebook', label: 'Seguir en Facebook' },
-        { href: 'https://twitter.com/ps_svqtriana', class: 'fa fa-twitter', label: 'Seguir en Twitter' }
+        { href: 'https://twitter.com/ps_svqtriana1', class: 'fa fa-twitter', label: 'Seguir en Twitter' }
     ];
     
     socialLinks.forEach(social => {
