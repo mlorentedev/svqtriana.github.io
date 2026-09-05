@@ -164,6 +164,15 @@ if declared:
               f"{name}: {len(stale)} local asset URL(s) not stamped {stamp} "
               f"- bump CACHE_VERSION in sw.js and restamp: {stale[:2]}")
 
+    # The footer shows the same value, which is the only reason it is worth
+    # showing: it tells a visitor which assets they actually received, rather
+    # than an abstract release number this site does not have. A version
+    # string that can drift is worse than none.
+    for name, text in pages.items():
+        shown = one(r'<a class="footer-version"[^>]*>(v[^<]+)</a>', text)
+        check(shown == f"v{declared}",
+              f"{name}: footer shows {shown}, sw.js declares v{declared}")
+
     unversioned = re.findall(r"'(/(?:css|js)/[^']+)'", sw)
     check(not unversioned,
           f"sw.js precaches unversioned URLs {unversioned}: the pages request "

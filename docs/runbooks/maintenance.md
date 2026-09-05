@@ -50,12 +50,13 @@ The recurring job. Once a year, around July.
    bump members who visited recently keep seeing last season's poster.
 
    ```sh
-   # every css/ and js/ URL in the five pages, plus sw.js's own precache list
-   sed -i 's/?v=2\.5/?v=2.6/g' index.html nosotros.html productos.html media.html encuentro.html
+   scripts/bump-version.py        # v2.5 -> v2.6, everywhere it appears
    ```
 
-   `scripts/check_pages.py` fails while `sw.js` and the pages disagree, so a
-   half-done bump cannot reach `main`.
+   It moves four things that must agree: `CACHE_VERSION`, the `?v=` on every
+   `css/` and `js/` URL, the footer stamp, and its `aria-label`.
+   `scripts/check_pages.py` fails while any of them disagree, so a half-done
+   bump cannot reach `main`.
 
 6. **`lastmod` in `sitemap.xml`.**
 
@@ -86,7 +87,7 @@ The recurring job. Once a year, around July.
    carries the video's own name as `<h2 class="video-title">` and the season as
    `<p class="video-season">`.
 
-5. Bump `CACHE_VERSION` and restamp the `?v=`, as in Job 1 step 5.
+5. `scripts/bump-version.py`, as in Job 1 step 5.
 
 ## Job 3: prices or products change
 
