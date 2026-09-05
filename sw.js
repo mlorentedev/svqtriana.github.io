@@ -25,8 +25,6 @@ const PRECACHE_URLS = [
   '/css/style.css',
   '/css/bootstrap.css',
   '/css/responsive.css',
-  '/js/header.js',
-  '/js/footer.js',
   '/js/performance.js',
   '/js/bootstrap.min.js',
   '/fonts/GlacialIndifference-Regular.woff2',
