@@ -22,11 +22,11 @@ every link in the nav and makes the site look broken when it is not.
 |---|---|
 | `*.html` | The five pages. Each is standalone: its own `<head>`, its own inlined critical CSS, and a copy of the shared header and footer. |
 | `css/` | `style.css` is the real stylesheet, hand-edited. There is no SASS build. |
-| `js/` | `performance.js` (nav toggle, footer year) and bxSlider, which only `/productos` loads. No Bootstrap JS — see *Traps*. |
+| `js/` | `performance.js` (nav toggle, footer year), and bxSlider plus `slider.js`, which only `/productos` loads. No Bootstrap JS — see *Traps*. |
 | `images/` | Masters. `images/webp/` holds the optimised copies the site actually serves. |
 | `infra/cloudflare/` | Response headers, cache rules and analytics, as Terraform. |
-| `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`, `bump-version.py`. |
-| `docs/` | Runbooks and the notes explaining decisions that look odd. |
+| `scripts/` | `serve.py`, `to-webp.py`, `check_pages.py`, `bump-version.py`; `prune-bootstrap.py` and `compare-render.py` for the rare re-prune (runbook Job 4). |
+| `docs/` | Runbooks, the notes explaining decisions that look odd, and `docs/lessons/`: what broke, why, and what now catches it. |
 | `CHANGELOG.md` | What changed on each deploy. The footer version links here. |
 
 ## The seasonal job
@@ -111,6 +111,7 @@ Things that look like mistakes and are not, or look fine and are not.
 ## Where the decisions are written down
 
 - [`docs/root-files.md`](docs/root-files.md) — why the root is not tidier
+- [`docs/lessons/_index.md`](docs/lessons/_index.md) — what broke, the mechanism, and what now catches it
 - [`docs/runbooks/maintenance.md`](docs/runbooks/maintenance.md) — the recurring jobs
 - [`docs/runbooks/dns.md`](docs/runbooks/dns.md) — the request path, and what is safe to publish
 - [`infra/cloudflare/README.md`](infra/cloudflare/README.md) — why the headers live at the edge

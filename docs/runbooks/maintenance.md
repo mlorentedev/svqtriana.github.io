@@ -174,17 +174,16 @@ contact details. If that grep ever returns 0 again, that regression is back.
   are in the `alt` text and `llms.txt`, but not as visible page text, so Google
   cannot show them and a screen reader gets them only via the alt. Adding them
   as HTML was offered and declined; worth revisiting.
-- **jQuery and Bootstrap load on all five pages** to power one mobile menu
-  toggle. Only `/productos` genuinely needs jQuery, for bxSlider. Replacing the
-  collapse with a few lines of vanilla JS would drop ~90KB sitewide.
 - **`js/performance.js` is mostly dead.** `lazyLoadImages` finds no
   `img[data-src]`, `loadDeferredCSS` matches nothing, and `preloadCriticalResources`
-  runs too late to preload anything. Only the footer-year line still does work.
-- **The service worker precaches into the wrong cache.** `install` puts pages,
-  fonts and images into `STATIC_CACHE`, but `handleRequest` looks them up in
-  `DYNAMIC`/`FONT`/`IMAGE`, so the precache never gets used and the offline
-  fallback has no page to serve.
-- **`css/style.css` has dead rules** referencing four images that do not exist.
-  Harmless — nothing matches those selectors — but confusing.
+  runs too late to preload anything. Only the footer-year line and the nav
+  toggle still do work.
 - **No templating.** Five copies of the header and footer, kept honest by
   `check_pages.py`. If the site grows past five pages, that trade stops paying.
+
+Resolved since this list was written, and kept here so nobody re-opens them:
+the service worker now precaches into the cache each URL is read from; the
+four `style.css` rules pointing at missing images were deleted; jQuery loads
+only on `/productos`, for bxSlider, and no page loads Bootstrap's JavaScript.
+See [`../lessons/_index.md`](../lessons/_index.md) for what each of those
+taught.

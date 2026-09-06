@@ -30,6 +30,7 @@ x-github-request-id: ...    <- origin is GitHub Pages
 | `headers.tf` | The security response headers, derived from what the pages actually load. |
 | `caching.tf` | Edge and browser cache lifetimes. This is what the deleted `.htaccess` `Expires` block was reaching for. |
 | `analytics.tf` | Cloudflare Web Analytics, injected at the edge. |
+| `zone-settings.tf` | Zone settings with a reason to differ from Cloudflare's defaults: the TLS floor, and Bot Fight Mode / JavaScript Detections held off. Read its comments before touching anything in the dashboard. |
 
 ## Running it
 
@@ -60,19 +61,13 @@ dotf secrets run --only CLOUDFLARE_API_TOKEN -- sh -c \
   | python3 -m json.tool
 ```
 
-## Before the first apply
+## Minting the token
 
-**The token in the secrets store is not valid.** Verified 2026-09-04:
-
-```
-$ ...tokens/verify
-success: False
-error 1000 - Invalid API Token
-```
-
-Mint a new one in the Cloudflare dashboard (My Profile → API Tokens) with these
-permissions on the `svqtriana.com` zone, then store it with
-`dotf secrets set CLOUDFLARE_API_TOKEN`:
+The token found in the secrets store on 2026-09-04 was invalid (`error 1000 -
+Invalid API Token` from `/user/tokens/verify`) and was replaced before the first
+apply. If that happens again, mint a new one in the Cloudflare dashboard (My
+Profile → API Tokens) with these permissions on the `svqtriana.com` zone, then
+store it with `dotf secrets set CLOUDFLARE_API_TOKEN`:
 
 - Zone → Zone → Read
 - Zone → Zone Settings → Edit
@@ -111,7 +106,7 @@ dotf secrets run --only CLOUDFLARE_API_TOKEN -- \
   terraform import cloudflare_web_analytics_site.site '<account_id>/<site_tag>'
 ```
 
-## Two decisions left open on purpose
+## One decision left open on purpose, and one closed
 
 **HSTS is off** (`enable_hsts = false`). It is the one setting here that is hard
 to walk back: once a browser has seen the header it refuses plain HTTP for the
@@ -120,11 +115,21 @@ every visitor to return. The apex and `www` both serve HTTPS today, so turning
 it on is safe — but it should be a deliberate flip, not a side effect of the
 first apply. Preload stays off regardless; that list lives in the browsers.
 
-**Web Analytics overlaps Google Analytics.** Both count the same visits. The
-difference is that Cloudflare's sets no cookies and builds no cross-site
-profile, which for a peña's website is the more proportionate choice and drops
-the cookie-banner question entirely. Running both is the only option with no
-upside — pick one.
+**Web Analytics is the only analytics.** Google Analytics was removed on
+2026-09-05. Both counted the same visits, and GA4 cost 168K per visit, the
+second-heaviest resource on the page. The decisive argument was cookies: GA4
+sets them and this site ships no consent banner, so the configuration was out
+of step with what the GDPR and the LSSI require. Cloudflare's beacon sets none,
+is injected at the edge, and costs the page nothing, which removes the
+obligation rather than papering over it. Removing the tag stops collection; the
+existing GA data stays in its property under its own retention policy.
+
+**Bot Fight Mode and JavaScript Detections are off, and the dashboard cannot
+keep them that way.** Turning Bot Fight Mode off in the UI leaves JavaScript
+Detections on, and on the Free plan it has no control of its own. It injects an
+inline script with a per-request ray id on every HTML response, which no CSP
+hash or nonce can allow. `zone-settings.tf` declares it off and explains why;
+`edge-drift.yml` fails if an inline script ever reappears in production.
 
 ## Order matters: apply after the site deploys, not before
 
