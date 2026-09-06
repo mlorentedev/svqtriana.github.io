@@ -128,7 +128,10 @@ existing GA data stays in its property under its own retention policy.
 keep them that way.** Turning Bot Fight Mode off in the UI leaves JavaScript
 Detections on, and on the Free plan it has no control of its own. It injects an
 inline script with a per-request ray id on every HTML response, which no CSP
-hash or nonce can allow. `zone-settings.tf` declares it off and explains why;
+hash can allow. Cloudflare will copy a nonce from a nonce-based CSP into that
+script, but a nonce only means something if it changes per request, and a
+static site behind a static header from `headers.tf` cannot mint one.
+`zone-settings.tf` declares it off and explains why;
 `edge-drift.yml` fails if an inline script ever reappears in production.
 
 ## Order matters: apply after the site deploys, not before

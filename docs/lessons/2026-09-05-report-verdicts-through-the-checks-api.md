@@ -21,9 +21,12 @@ notice arrives. Every later symptom traced back to that:
   kind of instruction that fails.
 
 **Create the check run explicitly against the PR head sha, and let the job
-always exit 0** (#27). `POST /repos/{repo}/check-runs` with the same name every
-time means any trigger can update the verdict, `issue_comment` included, so the
-notice arriving and the disclosure being written both re-report by themselves.
+always exit 0** (#27). `POST /repos/{repo}/check-runs` creates a new run each
+time rather than updating one, and GitHub shows a PR the newest run of a given
+name (the list endpoint defaults to `filter=latest`), so any trigger can
+re-answer, `issue_comment` included: the notice arriving and the disclosure
+being written both re-report by themselves. #28 carried two `attested` runs on
+one head sha and showed one.
 Concurrency is keyed on the PR number so a stale older run cannot overwrite a
 newer verdict.
 
