@@ -16,4 +16,5 @@ many things it looked at cannot tell you it looked at none.
 
 This generalises past regexes: any check with a discovery step and an
 assertion step can pass because discovery returned nothing. Assert the
-discovery. `scripts/check_pages.py` does this for every list it scans.
+discovery. The precache check in `scripts/check_pages.py` is the one that does;
+the nav-link and `<h1>` checks assert exact counts, which amounts to the same.

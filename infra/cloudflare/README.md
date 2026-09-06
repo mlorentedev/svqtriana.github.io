@@ -106,7 +106,7 @@ dotf secrets run --only CLOUDFLARE_API_TOKEN -- \
   terraform import cloudflare_web_analytics_site.site '<account_id>/<site_tag>'
 ```
 
-## One decision left open on purpose, and one closed
+## Decisions: one left open on purpose, two closed
 
 **HSTS is off** (`enable_hsts = false`). It is the one setting here that is hard
 to walk back: once a browser has seen the header it refuses plain HTTP for the
