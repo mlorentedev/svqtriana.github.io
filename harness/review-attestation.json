@@ -1,0 +1,77 @@
+{
+  "$comment": [
+    "Reviewer registry for this repository — a port of dotfiles/harness/review-attestation.json,",
+    "trimmed to the reviewers that measurably act here. Precedent for a per-repo port: kubelab,",
+    "hive, web and ts-bridge each carry their own copy; the SSOT of the SHAPE stays in dotfiles.",
+    "",
+    "Why the port was needed: this file did not exist, so `dotf pr triage-queue` could not answer",
+    "at all — `read reviewer registry: open harness/review-attestation.json: no such file or",
+    "directory`. Its exit status is 1 both when triage is pending AND when the question cannot be",
+    "computed, precisely so an unanswerable queue is never mistaken for a clear one.",
+    "",
+    "This repository ALSO carries .github/workflows/review-attested.yml, an older gate that predates",
+    "this file (#20, #23, #27). It publishes an `attested` check run and reads NOTHING from here: it",
+    "matches the rate-limit notice by regex, counts formal reviews and inline comments on the head sha",
+    "through the pulls API, and clears on a `## Review triage` comment. The two agree on the triage",
+    "heading (this file's `triage.marker`, the workflow's `^#+ *Review triage` regex) and that is the",
+    "only coupling. They answer different questions: `attested` asks 'was a declined review disclosed',",
+    "the queue asks 'is there reviewer output newer than the last disposition'. A reviewer that posts",
+    "through the comments API (PR-Agent, below) is visible to the queue and invisible to `attested`.",
+    "",
+    "review_markers ARE MEASURED HERE, NOT COPIED. Measured 2026-09-06 over every non-trivial PR in",
+    "the history, #14..#28 (twelve PRs; #19, #24, #26 are issues). What CodeRabbit emits here, by PR:",
+    "  ## Walkthrough                          -> #15 #23 #27 #28   (a review ran; the attesting marker)",
+    "  No actionable comments were generated   -> #28               (clean run; the dotfiles marker",
+    "                                                                  DOES appear here, unlike ts-bridge)",
+    "  ## Review limit reached                 -> #14 #16 #17 #18 #20 #21 #22 #25 #27",
+    "                                             (every one also carries 'rate limited by coderabbit.ai')",
+    "  ## Review skipped                       -> none observed here",
+    "#27 carries BOTH: the first push drew the limit notice, a later push drew a walkthrough. That is",
+    "the case #19 was filed about and the reason `attested` re-reports on every comment.",
+    "",
+    "Decline rate: 9 of 12 PRs drew the quota notice on at least one push (75 %). Formal reviews with",
+    "'Actionable comments posted' exist on #15 #23 #27 #28 only. This is the measurement behind porting",
+    "pr-agent.yml alongside this file.",
+    "",
+    "Note the asymmetry that survives this: a CodeRabbit run that files ONLY a formal review with no",
+    "walkthrough comment still reads as 'no reviewer output yet'. That is a property of the tool, which",
+    "scans comments, and it is why pr-stewardship still asks a human to read the diff."
+  ],
+  "reviewers": [
+    {
+      "login": "coderabbitai",
+      "declined_markers": [
+        "## Review limit reached",
+        "rate limited by coderabbit.ai",
+        "## Review skipped"
+      ],
+      "review_markers": [
+        "## Walkthrough",
+        "No actionable comments were generated in the recent review"
+      ],
+      "advisory": true,
+      "why": "ADVISORY, same disposition as the dotfiles, kubelab and ts-bridge registries: its REVIEW attests, its DECLINE does not refuse. CodeRabbit's quota is a third party's billing state rather than a property of the change, and in this repo the decline is the normal case: 9 of the 12 measured PRs drew 'Review limit reached', so a decline that REFUSED would make the gate red more often than green and teach everyone to ignore it. An advisory decline yields `pending`, the honest answer. `## Review skipped` has not been observed here; it is retained because it is a decline shape CodeRabbit emits on the sibling repos and a decline marker that never matches cannot produce a false 'clear' (only an unmatched REVIEW marker can). LOGINS MATCH WITH TRAILING '[bot]' STRIPPED AND CASE FOLDED: REST reports coderabbitai[bot], GraphQL reports coderabbitai."
+    },
+    {
+      "login": "github-actions",
+      "declined_markers": [],
+      "review_markers": [
+        "## PR Reviewer Guide"
+      ],
+      "why": "PR-Agent (see .github/workflows/pr-agent.yml) runs under GITHUB_TOKEN and publishes through the COMMENTS api, so its reviews never enter reviews[] and a classifier that looked only at reviews would read every PR-Agent-reviewed PR as unattested. The marker is the `review` command's own heading. `## PR Code Suggestions` is deliberately NOT here — suggestions are not a review, which is also why auto_improve is off on the automatic path. MARKER PROVENANCE: verified in the sibling ports (kubelab has 215 PR comments carrying '## PR Reviewer Guide' posted by github-actions[bot], dotfiles 172). It has NEVER been observed in this repository: the workflow lands in the same PR as this file and NAN_API_KEY is not set yet, so this entry is a declaration of intent. The first green run of pr-agent.yml here is the verification. Until then the queue treats PR-Agent as a reviewer that has not spoken, which is `pending`, not `clear`. Note that review-attested.yml does NOT count this marker: a PR reviewed only by PR-Agent while CodeRabbit is rate-limited still needs a `## Review triage` comment to turn `attested` green."
+    }
+  ],
+  "triage": {
+    "marker": "## Review triage",
+    "why": "The heading the pr-review-triage skill records its dispositions under, matched at line start. Declared once here and read back by `dotf pr triage-queue`; review-attested.yml matches the same heading by regex (`^#+ *Review triage`), so a change here must be mirrored there. It is posted even when there was nothing to dispose of: 'CI green, no review findings' is a disposition, and leaving it unwritten is indistinguishable from nobody having looked. Measured here: #15 #22 #25 #27 #28 carry one."
+  },
+  "escape": {
+    "label": "merged-unreviewed",
+    "section": "## Unreviewed merge rationale",
+    "why": "Both are required, never one. Proceeding on an unreviewed PR is allowed; proceeding SILENTLY is not. The label plus the section is what forces the disclosure into the durable record instead of a chat message. The label does not exist in this repository yet (labels checked 2026-09-06: only GitHub's defaults); it is created by hand the first time it is needed, which is also the first time anyone has to decide to use it."
+  },
+  "exempt": {
+    "signatures": [],
+    "$comment": "No signature is exempt. This repository has no release-please: versions are CalVer stamped by scripts/bump-version.py into the five pages and CHANGELOG.md, in a commit a human writes, so every PR is a change someone authored and every one is reviewed. Declaring an exemption here without a measured diff signature would be an author rule in disguise."
+  }
+}

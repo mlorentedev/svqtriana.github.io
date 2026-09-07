@@ -1,0 +1,121 @@
+# PR-Agent (The-PR-Agent/pr-agent, MIT) on NaN cluster inference.
+#
+# Why this repo needs a second reviewer, measured rather than assumed (2026-09-06,
+# the twelve PRs #14..#28):
+#
+#   real CodeRabbit review (`## Walkthrough`)    4   (#15 #23 #27 #28)
+#   quota decline (`Review limit reached`)       9   (#27 drew both, on different pushes)
+#
+# CodeRabbit is not a check-run in this repository and there is no branch protection,
+# so a declined review leaves no trace in CI beyond the `attested` check run that
+# review-attested.yml publishes. Three PRs in four here get no machine review. That is
+# the queue this removes: a reviewer whose capacity is ours rather than a vendor's.
+#
+# Ported from mlorentedev/ts-bridge (`.pr_agent.toml`), itself from dotfiles TOOL-013
+# #786 via kubelab TOOL-021 #1140. Numbers, paths and the ignore list below are
+# re-derived for this repo; the model-chain reasoning is inherited and cited by issue
+# so it can be checked at source.
+
+[config]
+# `openai/` selects LiteLLM's OpenAI-compatible transport; the endpoint is NaN's, set
+# as OPENAI__API_BASE in the workflow. Nothing here talks to OpenAI.
+#
+# mimo-v2.5 leads and deepseek-v4-flash follows because the order is the only one that
+# can fail loudly. deepseek's characteristic failure is a 200 with an empty body — it
+# spends the output budget on the reasoning chain and never writes an answer — which
+# raises no exception, so LiteLLM never consults a fallback behind it. kubelab measured
+# that shape on run 32440498259 (#1205). mimo fails by saturation (429), which DOES raise.
+#
+# This is not a quality ranking. harness/reviewer-pool.json says of mimo, in its own
+# words, that no ranking against deepseek was established; both are reasoning-class by
+# profile and both are admitted there, which is the line this file draws. The excluded
+# models stay excluded by name: qwen3.6/gemma4 are the latency tier, and a reviewer that
+# PASSes cheaply converts a gate into a green checkmark.
+model = "openai/mimo-v2.5"
+
+# ONE fallback, and lane separation is why it is deepseek rather than a sibling of the
+# primary. NaN's limit is PER MODEL (kubelab #1107/#1203), so the second bucket is a
+# real fallback and not a re-name of the same wall.
+fallback_models = ["openai/deepseek-v4-flash"]
+
+# `model_weak` deliberately absent: `auto_describe` is off so it would do nothing, and
+# the model upstream defaults it to is the one the pool rejects here.
+
+# NaN ids are not in LiteLLM's registry, so the budget must be stated or LiteLLM
+# assumes a small default and truncates the diff silently.
+custom_model_max_tokens = 200000
+max_model_tokens = 200000
+
+response_language = "en-US"
+
+# README.md is the only context file that exists here. No AGENTS.md, no CLAUDE.md
+# (both checked 2026-09-06), so naming either would hand the reviewer a source it
+# cannot read. The README's *Traps* section is the part that matters.
+repo_context_files = ["README.md"]
+
+[pr_reviewer]
+require_score_review = false
+require_tests_review = false   # there is no test suite; checks.yml IS the test suite, see below
+require_security_review = true
+persistent_comment = true
+final_update_message = false
+
+# No "compliance sweep" preamble: asked for on every review and delivered once in
+# sixteen at dotfiles (#1072). An instruction ignored 94 % of the time is a comment,
+# not a control.
+extra_instructions = """
+This is a static site: five hand-written HTML pages, no build step, no framework,
+served by GitHub Pages through Cloudflare. CI (checks.yml) already verifies that every
+route resolves, every referenced asset exists, each page keeps its own title, canonical
+and stylesheets, JSON-LD parses, and the Terraform under infra/cloudflare validates and
+is formatted. A daily job (edge-drift.yml) diffs what production serves against the
+repository. Do not restate what those report.
+
+Spend the budget on what those checks cannot see:
+
+- the five pages are standalone and each carries its own copy of the shared header,
+  footer and critical CSS. A change made to one page and not the other four is the
+  most common defect here; say which pages a hunk should have touched.
+- the site ships NO inline scripts and the CSP forbids them; an inline `<script>` or an
+  `onclick=` attribute in a diff is a regression, not a style choice.
+- CSS and JS URLs carry a `?v=` cache-busting stamp. A stylesheet edit without a new
+  stamp reaches no returning visitor (measured on #15).
+- infra/cloudflare/ is production: a header, cache rule or zone setting there takes
+  effect on apply, and the README in that folder records which toggles the dashboard
+  cannot undo (#22). Read a Terraform change for its live consequence.
+- a check that cannot fail the way its comment claims. Two regressions shipped through
+  review here before checks.yml existed; a guard that would have gone green on them is
+  the thing to flag.
+- anything that puts a credential in a transcript, a log line, an argv or the process
+  table, including in documentation examples.
+
+Grade each finding REAL, THEORETICAL or SPECULATIVE and say which. REAL needs a concrete
+trace: file and line, failing input, or a command and its output. Write in English.
+Conventional Commits and no AI attribution are enforced here, so do not propose commit
+messages that carry either.
+"""
+
+[pr_code_suggestions]
+# Present on purpose. Omitting this block is how upstream shipped the tool with its
+# stated function disabled: the default `dual_publishing_score_threshold` is -1, which
+# never publishes inline. 7 is upstream's own medium boundary.
+dual_publishing_score_threshold = 7
+suggestions_score_threshold = 5
+publish_output_no_suggestions = false
+
+[ignore]
+# Applied BEFORE the model call. This repo keeps no credential material in-tree (the
+# only secrets live in GitHub's own store), so this list is about spend and signal:
+#   - images/ and fonts/ are binaries;
+#   - css/bootstrap.css is the output of scripts/prune-bootstrap.py and
+#     js/jquery.bxslider.js is vendored — machine or third-party text, reviewed at
+#     source, not here;
+#   - the Terraform lockfile is resolved hashes a human already reviewed in the PR
+#     that bumped it.
+glob = [
+  "images/**",
+  "fonts/**",
+  "css/bootstrap.css",
+  "js/jquery.bxslider.js",
+  "infra/cloudflare/.terraform.lock.hcl",
+]
