@@ -14,9 +14,11 @@ Re-running the identical job against the identical commit passed.
 
 The workflow's own header explained the push trigger as catching the opposite
 mistake — editing one of these files and never deploying it. That is a real
-mistake, and this trigger could not detect it, because the only way to edit and
-not deploy is to edit outside `main`, and the only push that fires here is the
-one that deploys.
+mistake, and this trigger could not detect it. Editing and not deploying means
+either editing outside `main`, which never fires this trigger, or merging to
+`main` and having the deploy fail, which does fire it — but fires it *before*
+the deploy has had the chance to fail, so the comparison is against the previous
+deployment either way.
 
 ## Mechanism
 
@@ -47,6 +49,11 @@ green if the deploy had been faster, which is not the same as being correct.
 - Checkout uses `github.event.workflow_run.head_sha`, not `github.ref`, so a
   second merge landing mid-run cannot make the check diff a newer tree against
   an older deployment.
+- A `concurrency` group with `cancel-in-progress: true` pairs with that: two
+  deploys inside one run's lifetime would otherwise queue two runs, and the
+  older one would diff its own tree against a production the newer one already
+  replaced — the same false positive in the opposite direction. The newest
+  deploy cancels the rest.
 - The same run also failed `checks` on `terraform`, for an unrelated reason:
   `github.com` returned 504 three times inside the 30-second retry window and
   recovered a minute later. That loop now backs off exponentially over roughly
