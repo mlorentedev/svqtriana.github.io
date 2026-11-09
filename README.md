@@ -130,6 +130,7 @@ Things that look like mistakes and are not, or that look harmless and are not.
 
 ## Where the decisions live
 
+- [`docs/adr/`](docs/adr/) — the architectural decisions. Start with [`adr-001`](docs/adr/adr-001-github-pages-origin-cloudflare-in-front.md): why GitHub Pages serves the site and Cloudflare sits in front of it.
 - [`docs/root-files.md`](docs/root-files.md) — why certain files live in `public/` and why `sw.js` is still there.
 - [`docs/lessons/_index.md`](docs/lessons/_index.md) — what broke, the mechanism, and what catches it now.
 - [`docs/runbooks/maintenance.md`](docs/runbooks/maintenance.md) — the recurring work.
