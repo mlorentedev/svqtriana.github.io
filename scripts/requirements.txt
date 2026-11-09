@@ -1,2 +1,0 @@
-# scripts/to-webp.py
-Pillow>=10.0

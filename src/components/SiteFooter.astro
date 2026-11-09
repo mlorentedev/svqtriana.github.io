@@ -1,0 +1,130 @@
+---
+import Icon from './Icon.astro';
+import SocialLinks from './SocialLinks.astro';
+import AzulejoPattern from './deco/AzulejoPattern.astro';
+import PuenteDivider from './deco/PuenteDivider.astro';
+import { nav, site, socials } from '../data/site';
+import { siteVersion } from '../data/version';
+
+const year = new Date().getFullYear();
+const emailHref = `mailto:${site.email}?subject=${encodeURIComponent(site.emailSubject)}`;
+---
+
+<footer id="contact" class="relative overflow-hidden bg-noche-950 text-cal-50">
+  <AzulejoPattern class="pointer-events-none absolute inset-0 h-full w-full text-cal-50/[0.05]" />
+  <div class="franjas relative h-1.5 w-full" aria-hidden="true"></div>
+  <PuenteDivider class="relative block h-16 w-full text-albero-400/40" />
+
+  <div class="site-container relative pb-10 pt-14">
+    <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.2fr_1fr_0.8fr]">
+      <div class="md:col-span-2 lg:col-span-1">
+        <a href="/" class="inline-flex items-center gap-4">
+          <img
+            src="/images/webp/logo_192.webp"
+            alt=""
+            width="72"
+            height="72"
+            class="h-[72px] w-[72px]"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="leading-none">
+            <span class="block font-display text-3xl tracking-tight">SVQ Triana</span>
+            <span class="mt-1.5 block text-[0.65rem] font-bold uppercase tracking-[0.24em] text-albero-400">
+              Peña Sevillista
+            </span>
+            <span class="sr-only"> - Inicio</span>
+          </span>
+        </a>
+        <p class="mt-6 max-w-xs text-sm leading-relaxed text-cal-50/70">
+          Peña sevillista fundada el 27 de julio de 2019 en el barrio de Triana, Sevilla.
+        </p>
+        <p class="kicker mt-8 text-albero-400">Redes</p>
+        <SocialLinks class="mt-4" />
+      </div>
+
+      <div>
+        <h2 class="font-display text-3xl tracking-tight">Contacto</h2>
+        <ul class="mt-6 space-y-4">
+          <li>
+            <a
+              href={socials.x.url}
+              class="inline-flex items-center gap-3 text-cal-50/85 transition-colors hover:text-albero-400"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Contactar por X: @PS_SVQTRIANA1"
+            >
+              <Icon name="x" size={20} />
+              <span>{socials.x.handle}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href={socials.instagram.url}
+              class="inline-flex items-center gap-3 text-cal-50/85 transition-colors hover:text-albero-400"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Contactar por Instagram: @PS_SVQTRIANA"
+            >
+              <Icon name="instagram" size={20} />
+              <span>{socials.instagram.handle}</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href={emailHref}
+              class="inline-flex items-center gap-3 text-cal-50/85 transition-colors hover:text-albero-400"
+              aria-label="Enviar email a svqtriana@gmail.com"
+            >
+              <Icon name="mail" size={20} />
+              <span>{site.email}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <nav aria-label="Secciones">
+        <h2 class="font-display text-3xl tracking-tight">Secciones</h2>
+        <ul class="mt-6 space-y-3">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-xs font-bold uppercase tracking-[0.16em] text-cal-50/85 transition-colors hover:text-albero-400"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="mt-14 flex flex-col gap-2 border-t border-white/10 pt-6 text-sm text-cal-50/70 sm:flex-row sm:items-center sm:justify-between">
+      <p>© {year} PS SVQ Triana - Todos los derechos reservados</p>
+      <p>
+        <span>Desarrollado por</span>{' '}
+        <a
+          href={site.developer.url}
+          class="underline decoration-white/30 underline-offset-4 transition-colors hover:text-albero-400"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {site.developer.name}
+        </a>
+        <span class="mx-1" aria-hidden="true">·</span>
+        <a
+          href={site.changelogUrl}
+          class="footer-version underline decoration-white/30 underline-offset-4 transition-colors hover:text-albero-400"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Versión ${siteVersion} - ver qué cambió en esta versión`}
+        >
+          {siteVersion}
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

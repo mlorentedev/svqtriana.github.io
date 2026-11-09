@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { productos } from '../data/productos';
+import { productsSchema } from '../data/schema';
+
+const title = 'Material oficial | PS SVQ Triana';
+const description =
+  'Material oficial de PS SVQ Triana: banderas, bufandas, pulseras y pegatinas. Peña sevillista de Triana con precios especiales para socios.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/productos"
+  jsonLd={productsSchema}
+>
+  <PageHeader kicker="Peña Sevillista" intro="Pídelo por Instagram o email. No hay carrito ni pago online.">
+    MATERIAL
+  </PageHeader>
+
+  <section class="py-16 sm:py-20">
+    <div class="site-container">
+      <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        {productos.map((producto) => <ProductCard producto={producto} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

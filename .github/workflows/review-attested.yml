@@ -78,8 +78,16 @@ jobs:
           reviews=$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate \
             | jq --arg h "$head" '[.[] | select(.commit_id == $h and (.state == "APPROVED" or .state == "CHANGES_REQUESTED" or (.state == "COMMENTED" and (.body // "") != "")))] | length')
 
+          # Matched on original_commit_id, NOT commit_id. GitHub rewrites
+          # commit_id on an inline comment to the newest commit where the
+          # commented lines still apply, so a comment written against an older
+          # head starts carrying the new head's sha and would attest a push
+          # nobody read (#30, observed on #28). original_commit_id keeps the sha
+          # it was written against, which is the only one that answers the
+          # question. The review object's commit_id is immutable, so the query
+          # above needs no such change.
           inline=$(gh api "repos/$REPO/pulls/$PR/comments" --paginate \
-            | jq --arg h "$head" '[.[] | select(.commit_id == $h)] | length')
+            | jq --arg h "$head" '[.[] | select(.original_commit_id == $h)] | length')
 
           # The escape hatch, and it is deliberately a sentence someone has to
           # write. "Merged unreviewed, reviewer quota exhausted" is a
@@ -113,29 +121,42 @@ jobs:
           # The check run is created against the PR head sha explicitly, which
           # is what lets an issue_comment run update it. Same name every time,
           # so the newest result is the one the PR shows.
-          # Failing loudly rather than under set -e. A fork pull request gets a
-          # read-only GITHUB_TOKEN whatever `checks: write` says, so this POST
-          # would 403 and the job would die with a stack of gh output and no
-          # explanation - a gate that vanishes rather than reports.
           #
-          # This repository has no forks; every PR is a branch on it. The fix
-          # for a repository that does have them is NOT pull_request_target,
-          # which runs with a write token in the base repository's context and
-          # is the trigger every hardening guide warns about. It would trade a
-          # real risk for a hypothetical one. Detect and say so instead.
-          if ! gh api -X POST "repos/$REPO/check-runs" \
-                 -f name=attested \
-                 -f head_sha="$head" \
-                 -f status=completed \
-                 -f conclusion="$conclusion" \
-                 -f output[title]="$title" \
-                 -f output[summary]="$summary" \
-                 --jq '"reported \(.conclusion) as check run \(.id)"'; then
-            echo "::error::Could not publish the 'attested' check run. If this PR"
-            echo "::error::comes from a fork, GITHUB_TOKEN is read-only regardless"
-            echo "::error::of the permissions block, and the verdict was: $conclusion"
+          # Failing loudly rather than under set -e. A pull request from a fork
+          # gets a read-only GITHUB_TOKEN whatever `checks: write` says, so this
+          # POST returns 403 and the job would otherwise die with a stack of gh
+          # output and no explanation - a gate that vanishes rather than reports.
+          # That is the case for #35, which comes from a fork.
+          #
+          # The fix is NOT pull_request_target, which runs with a write token in
+          # the base repository's context and is the trigger every hardening
+          # guide warns about: it would trade a real risk for a hypothetical one.
+          #
+          # So the fork case is detected and reported instead. The verdict goes
+          # out as a warning annotation and the job exits 0, because a check that
+          # can never go green on a fork PR is the "status that means nothing"
+          # this workflow exists to remove - the mirror image of the bug in #19.
+          # The gate is therefore advisory on forks and enforcing everywhere else.
+          if ! out=$(gh api -X POST "repos/$REPO/check-runs" \
+                       -f name=attested \
+                       -f head_sha="$head" \
+                       -f status=completed \
+                       -f conclusion="$conclusion" \
+                       -f output[title]="$title" \
+                       -f output[summary]="$summary" \
+                       --jq '"reported \(.conclusion) as check run \(.id)"' 2>&1); then
+            if printf '%s' "$out" | grep -qE '403|Resource not accessible'; then
+              echo "::warning::Cannot publish the 'attested' check run: this token is read-only, which is what a fork PR gets."
+              echo "::warning::Verdict that could not be reported: $conclusion - $title"
+              echo "$out"
+              exit 0
+            fi
+            echo "$out"
+            echo "::error::Could not publish the 'attested' check run, and not for a read-only token."
+            echo "::error::Verdict: $conclusion - $title"
             exit 1
           fi
+          echo "$out"
 
           # Always 0. The check run above is the verdict; this job's own status
           # would pin the answer to the moment its trigger fired, which is the

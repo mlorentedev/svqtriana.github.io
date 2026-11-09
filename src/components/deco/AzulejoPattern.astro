@@ -1,0 +1,28 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+
+// Module counter: the build generates a unique id per instance.
+let instances = 0;
+const id = `azulejo-${++instances}-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<svg class={className} aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id={id} width="88" height="88" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="currentColor" stroke-width="1.4">
+        <!-- Eight-pointed flower: two squares rotated 45° plus a centre. -->
+        <rect x="20" y="20" width="48" height="48" />
+        <rect x="20" y="20" width="48" height="48" transform="rotate(45 44 44)" />
+        <circle cx="44" cy="44" r="7" />
+        <!-- Corner interlace. -->
+        <path d="M0 0l14 14M88 0L74 14M0 88l14-14M88 88L74 74" />
+        <path d="M44 0v8M44 80v8M0 44h8M80 44h8" />
+      </g>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill={`url(#${id})`} />
+</svg>

@@ -1,0 +1,51 @@
+---
+import Icon from './Icon.astro';
+import SocialLinks from './SocialLinks.astro';
+import { nav } from '../data/site';
+import { isNavActive } from '../lib/nav-active';
+
+const pathname = Astro.url.pathname;
+---
+
+<details class="group relative shrink-0 lg:hidden" data-mobile-nav>
+  <summary
+    class="inline-flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-[var(--radius-azulejo)] border border-white/20 text-cal-50 transition-colors hover:border-albero-400 hover:text-albero-400 [&::-webkit-details-marker]:hidden"
+  >
+    <Icon name="menu" size={24} class="group-open:hidden" />
+    <Icon name="close" size={24} class="hidden group-open:block" />
+    <span class="sr-only group-open:hidden">Abrir el menú</span>
+    <span class="hidden sr-only group-open:inline">Cerrar el menú</span>
+  </summary>
+
+  <div
+    class="absolute right-0 top-[calc(100%+0.75rem)] z-50 w-[min(22rem,calc(100vw-2.5rem))] overflow-hidden rounded-[var(--radius-azulejo)] border border-white/10 bg-noche-950 shadow-2xl"
+  >
+    <div class="p-5">
+    <nav aria-label="Menú móvil">
+      <ul class="flex flex-col divide-y divide-white/10">
+        {
+          nav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="group/link flex items-center justify-between gap-3 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-cal-50 transition-colors hover:text-albero-400 aria-[current=page]:text-albero-400"
+                aria-current={isNavActive(pathname, item.href) ? 'page' : undefined}
+              >
+                {item.label}
+                <Icon
+                  name="arrow-right"
+                  size={16}
+                  class="text-albero-400/70 transition-transform group-hover/link:translate-x-1"
+                />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="mt-5 border-t border-white/10 pt-5">
+      <SocialLinks />
+    </div>
+    </div>
+  </div>
+</details>

@@ -1,0 +1,18 @@
+- **Atomic PRs, ~300 LOC hard cap** (excluding tests, generated files, lockfiles,
+  fonts, vendored classes). One logical change per PR; "while I was here I also…" means
+  split.
+- **The cap counts EXECUTABLE lines**; data, schemas and comment blocks are excluded,
+  but declare the breakdown when added lines exceed the cap. Excluded is not "cheap to
+  review": a registry where one wrong entry silently grants or denies deserves more
+  care.
+- **When the cap collides with a functional unit,** first hunt for a seam where every
+  intermediate merge is functional (never merge uncalled code in an intermediate PR).
+  With none, ship one over-cap PR with the overage **declared** in its description: real
+  figure, code split from docstrings, the rejected seam, any spec corrected. A cap
+  exceeded quietly is the failure.
+- A proposal, never a bypass of the review gate or the over-cap escalation: surface it,
+  never ship it silently.
+- **Oversized lockfile diffs:** never read them visually.
+  `git diff <lockfile> | grep -E '^[+-]version = '` must show only intended bumps;
+  compare `grep -oE 'sha256:[a-f0-9]{64}' | sort -u` of both revisions with `comm`, and
+  investigate any delta before committing.

@@ -1,18 +1,20 @@
 name: checks
 
-# These exist because of two regressions that shipped in review and were caught
-# by a human reading a diff, not by anything automatic: a stylesheet silently
-# dropped from one page, and a page losing its <title> uniqueness. Every check
-# below is one that would have failed on those.
-
+# Every check exists because of a real regression in the previous site:
+# duplicate titles, canonicals with .html, navigation injected by JS, ads.txt in
+# uppercase, a version that did not match the CHANGELOG, inline scripts blocked
+# by the CSP, or referenced assets that did not exist.
+#
+# Re-enabled on pull_request and push to main: the checks are the only thing that
+# runs tests on a contribution, and while this was dispatch-only a pull request
+# could merge with nothing but the attested-review gate looking at it (#29).
+# Read-only permissions, so it is safe on a fork PR as well.
 on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
-# This workflow runs pull-request code. Grant it nothing it does not need, and
-# do not leave the token in the checkout's git config where that code can read
-# it - actions/checkout persists it by default.
 permissions:
   contents: read
 
@@ -24,80 +26,112 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          python-version: "3.12"
+          node-version: 24
+          cache: npm
 
-      - name: Every route resolves the way GitHub Pages resolves it
-        run: |
-          python3 scripts/serve.py 8000 &
-          for i in $(seq 1 20); do
-            curl -sf -o /dev/null http://localhost:8000/ && break
-            sleep 0.5
-          done
-          fail=0
-          for path in "" nosotros productos media encuentro \
-                      robots.txt sitemap.xml ads.txt llms.txt sw.js; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8000/$path")
-            printf '%-16s %s\n' "/$path" "$code"
-            [ "$code" = "200" ] || fail=1
-          done
-          # ads.txt must be lowercase: GitHub Pages is case-sensitive and this
-          # returned 404 in production for a year while /Ads.txt returned 200.
-          test -f ads.txt || { echo "ads.txt must exist in lowercase"; fail=1; }
-          exit $fail
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm run check:dist
 
-      - name: Every referenced asset exists
-        run: |
-          fail=0
-          {
-            grep -rhoE '(src|href)="(images|css|js|fonts)/[^"]+"' ./*.html \
-              | sed -E 's/.*="([^"]+)"/\1/'
-            # The optional quote matters: css/fonts.css writes
-            # url('../fonts/...woff2'), and a pattern demanding a literal
-            # `url(../` skipped both webfonts entirely - they could have been
-            # deleted with this check green.
-            grep -rhoE "url\(['\"]?\.\./[^)]+\)" css/*.css \
-              | sed -E "s|url\(['\"]?\.\./([^)]+)\)|\1|" | tr -d "'\""
-            # Strip the ?v= cache-busting stamp: it is part of the URL, never
-            # part of the filename on disk.
-          } | sed -E 's/\?.*$//' | sort -u | while read -r f; do
-            [ -f "$f" ] || { echo "missing asset: $f"; exit 1; }
-          done || fail=1
-          exit $fail
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
 
-      - name: Each page keeps its own title, canonical and stylesheets
-        run: python3 scripts/check_pages.py
+      - name: Accessibility, mobile menu and routes
+        run: npm run test:e2e
 
-      - name: Structured data parses
-        run: |
-          python3 - <<'PY'
-          import json, re, sys
-          from pathlib import Path
-          bad = 0
-          for page in Path('.').glob('*.html'):
-              for block in re.findall(
-                      r'<script type="application/ld\+json">(.*?)</script>',
-                      page.read_text(encoding='utf-8'), re.S):
-                  try:
-                      data = json.loads(block)
-                  except json.JSONDecodeError as exc:
-                      print(f"{page.name}: invalid JSON-LD: {exc}")
-                      bad = 1
-                      continue
-                  if '@context' not in data or '@type' not in data:
-                      print(f"{page.name}: JSON-LD missing @context or @type")
-                      bad = 1
-          sys.exit(bad)
-          PY
-
-  terraform:
+  guards:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+
+      # The harness registries are the contract that pr-agent.yml and
+      # review-attested.yml are graded against. Drift between the JSON and the
+      # workflow YAML is silent at runtime, so it has to fail here.
+      - name: Harness registries agree with the workflows
+        run: node scripts/check-harness.mjs
+
+      - name: Every lesson is indexed
+        run: bash scripts/check-lessons.sh
+
+      - name: Actions are pinned to a commit SHA
+        run: bash scripts/check-actions-pinned.sh
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:lighthouse
+
+      # A failing gate has to leave evidence behind. This job asserted 0.78 for
+      # `/` in run 42568386710 and the report died with the runner, so the only
+      # way to find out which audit cost the points was to rebuild it locally.
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          retention-days: 7
+
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/cloudflare
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
       - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
-      - run: terraform -chdir=infra/cloudflare init -backend=false
-      - run: terraform -chdir=infra/cloudflare validate
-      - run: terraform -chdir=infra/cloudflare fmt -check -recursive
+        with:
+          terraform_wrapper: false
+
+      # No backend and no credentials: validate checks the configuration, it
+      # does not talk to Cloudflare. The apply stays a human act.
+      - run: terraform fmt -check -recursive
+
+      # The provider is fetched from the GitHub releases proxy, which hands out
+      # 504s often enough to fail this job on its own (run 42568386710). Cache
+      # the binary so only a lock-file change ever reaches the network, and
+      # retry the cold path instead of failing a PR on someone else's outage.
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ${{ github.workspace }}/.terraform-plugin-cache
+          key: terraform-providers-${{ hashFiles('infra/cloudflare/.terraform.lock.hcl') }}
+
+      - name: terraform init
+        env:
+          TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform-plugin-cache
+        run: |
+          mkdir -p "$TF_PLUGIN_CACHE_DIR"
+          attempt=0
+          until terraform init -backend=false; do
+            attempt=$((attempt + 1))
+            if [ "$attempt" -ge 3 ]; then
+              echo "terraform init failed after $attempt attempts" >&2
+              exit 1
+            fi
+            echo "terraform init failed (attempt $attempt/3); retrying in 15s" >&2
+            sleep 15
+          done
+
+      - run: terraform validate

@@ -35,7 +35,25 @@
     "",
     "Note the asymmetry that survives this: a CodeRabbit run that files ONLY a formal review with no",
     "walkthrough comment still reads as 'no reviewer output yet'. That is a property of the tool, which",
-    "scans comments, and it is why pr-stewardship still asks a human to read the diff."
+    "scans comments, and it is why pr-stewardship still asks a human to read the diff.",
+    "",
+    "REBASED ON THE SSOT, November 2026. This is a port, so the SHAPE and the mechanism prose follow",
+    "dotfiles/harness/review-attestation.json; the marker VALUES stay local, because they were measured",
+    "here and the SSOT's were measured somewhere else. Three things were adopted and one was refused:",
+    "  adopted   `triage.standing` — who may write the disposition record, which the SSOT added because",
+    "            a triage comment is what takes a PR out of the queue, so a marker from any commenter",
+    "            would clear the step a merge is held to. The set matches pr-agent.yml exactly, which",
+    "            is what makes it a statement about this repo rather than a copy.",
+    "  adopted   `classification` — the machine-readable severity line, which the SSOT added because a",
+    "            gradation buried in prose cannot be read back. It is only real if .pr_agent.toml asks",
+    "            for the exact line, so both changed together.",
+    "  adopted   the `## Incremental PR Reviewer Guide` marker, a second heading PR-Agent emits.",
+    "  refused   `exempt.signatures` for release-please. That signature names versions.conf, a file",
+    "            that does not exist here, and this repo has no release-please: versions are CalVer",
+    "            stamped from CHANGELOG.md by a human commit. Copying it would add an exemption that",
+    "            can never legitimately fire, which is an author rule in disguise.",
+    "scripts/check-harness.sh asserts the two couplings that can silently rot: the trusted-association",
+    "set against pr-agent.yml, and the classification contract against .pr_agent.toml."
   ],
   "reviewers": [
     {
@@ -56,14 +74,23 @@
       "login": "github-actions",
       "declined_markers": [],
       "review_markers": [
-        "## PR Reviewer Guide"
+        "## PR Reviewer Guide",
+        "## Incremental PR Reviewer Guide"
       ],
-      "why": "PR-Agent (see .github/workflows/pr-agent.yml) runs under GITHUB_TOKEN and publishes through the COMMENTS api, so its reviews never enter reviews[] and a classifier that looked only at reviews would read every PR-Agent-reviewed PR as unattested. The marker is the `review` command's own heading. `## PR Code Suggestions` is deliberately NOT here — suggestions are not a review, which is also why auto_improve is off on the automatic path. MARKER PROVENANCE: verified in the sibling ports (kubelab has 215 PR comments carrying '## PR Reviewer Guide' posted by github-actions[bot], dotfiles 172). It has NEVER been observed in this repository: the workflow lands in the same PR as this file and NAN_API_KEY is not set yet, so this entry is a declaration of intent. The first green run of pr-agent.yml here is the verification. Until then the queue treats PR-Agent as a reviewer that has not spoken, which is `pending`, not `clear`. Note that review-attested.yml does NOT count this marker: a PR reviewed only by PR-Agent while CodeRabbit is rate-limited still needs a `## Review triage` comment to turn `attested` green."
+      "why": "PR-Agent (see .github/workflows/pr-agent.yml) runs under GITHUB_TOKEN and publishes through the COMMENTS api, so its reviews never enter reviews[] and a classifier that looked only at reviews would read every PR-Agent-reviewed PR as unattested. The markers are the `review` command's own headings: the full Guide, and the incremental Guide a later push emits. `## PR Code Suggestions` is deliberately NOT here — suggestions are not a review, which is also why auto_improve is off on the automatic path. MARKER PROVENANCE: verified in the sibling ports (kubelab has 215 PR comments carrying '## PR Reviewer Guide' posted by github-actions[bot], dotfiles 172); the incremental heading is the SSOT's, adopted with this rebase. Neither has been observed in this repository: the workflow landed in the same PR as this file, so this entry is still partly a declaration of intent. Until the first Guide lands the queue treats PR-Agent as a reviewer that has not spoken, which is `pending`, not `clear` — the honest answer, and the reason a missing marker is safe: only an unmatched REVIEW marker can produce a false 'clear'. Note that review-attested.yml does NOT count these markers: a PR reviewed only by PR-Agent while CodeRabbit is rate-limited still needs a `## Review triage` comment to turn `attested` green."
     }
   ],
   "triage": {
     "marker": "## Review triage",
+    "standing": ["OWNER", "MEMBER", "COLLABORATOR"],
+    "standing_why": "Who may write the record. A triage comment is what takes a PR out of `dotf pr triage-queue`, so a marker from any commenter would clear the disposition step a merge is held to. These are GitHub author_association values, and the same set .github/workflows/pr-agent.yml trusts before it will run a slash command from a comment — a public repository runs `issue_comment` in the base repo context with secrets available, so the two gates answer the same question and must not drift. scripts/check-harness.sh fails if they do.",
     "why": "The heading the pr-review-triage skill records its dispositions under, matched at line start. Declared once here and read back by `dotf pr triage-queue`; review-attested.yml matches the same heading by regex (`^#+ *Review triage`), so a change here must be mirrored there. It is posted even when there was nothing to dispose of: 'CI green, no review findings' is a disposition, and leaving it unwritten is indistinguishable from nobody having looked. Measured here: #15 #22 #25 #27 #28 carry one."
+  },
+  "classification": {
+    "prefix": "Class: ",
+    "classes": ["REAL", "THEORETICAL", "SPECULATIVE"],
+    "reviewers": ["github-actions"],
+    "why": "A finding's class is read from a whole line equal to prefix + class, never parsed out of prose: the SSOT measured PR-Agent writing the gradation as a header suffix, as the first word of the body, and sometimes not at all. A finding with no such line, or with two that disagree, is unclassified and goes to a human. `.pr_agent.toml` asks for exactly these lines in `extra_instructions`, and scripts/check-harness.sh fails if the two drift apart. `reviewers` names who is asked for the line: PR-Agent (github-actions) only, because CodeRabbit writes its own severity format and every one of its findings would read as unclassified. Naming the class is not a severity claim — REAL means a concrete trace was given, not that the finding is important."
   },
   "escape": {
     "label": "merged-unreviewed",
@@ -72,6 +99,6 @@
   },
   "exempt": {
     "signatures": [],
-    "$comment": "No signature is exempt. This repository has no release-please: versions are CalVer stamped by scripts/bump-version.py into the five pages and CHANGELOG.md, in a commit a human writes, so every PR is a change someone authored and every one is reviewed. Declaring an exemption here without a measured diff signature would be an author rule in disguise."
+    "$comment": "No signature is exempt, and the mechanism is still declared because an empty list and an undefined one are different statements. Matching is by DIFF SIGNATURE — every changed file must appear in `files`, and the match is SET EQUALITY in both directions: one extra file and the exemption stops applying, one declared file not touched and it stops applying just as surely. Never by author or branch, because neither is something the change carries. This repository has no release-please: versions are CalVer stamped into the footer by src/data/version.ts from the first `## vYYYYMMDD` heading in CHANGELOG.md, in a commit a human writes, so every PR is a change someone authored and every one is reviewed. The SSOT's release-please signature is deliberately not ported — it names versions.conf, which does not exist here, so it could never fire. Declaring an exemption without a measured diff signature would be an author rule in disguise."
   }
 }

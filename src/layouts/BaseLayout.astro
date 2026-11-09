@@ -1,0 +1,62 @@
+---
+import '@fontsource-variable/fraunces';
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import JsonLd from '../components/JsonLd.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  ogImage,
+  ogImageAlt,
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" dir="ltr">
+  <head>
+    <Seo
+      title={title}
+      description={description}
+      canonicalPath={canonicalPath}
+      ogImage={ogImage}
+      ogImageAlt={ogImageAlt}
+      noindex={noindex}
+    />
+    {jsonLd && <JsonLd data={jsonLd} />}
+  </head>
+
+  <body class="min-h-screen bg-cal-50">
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[var(--radius-azulejo)] focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-noche-950 focus:shadow-lg"
+    >
+      Saltar al contenido
+    </a>
+
+    <SiteHeader />
+    <main id="contenido">
+      <slot />
+    </main>
+    <SiteFooter />
+
+    <script>
+      import '../scripts/nav.ts';
+    </script>
+  </body>
+</html>

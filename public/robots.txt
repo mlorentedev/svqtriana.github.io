@@ -1,0 +1,10 @@
+# Every crawler is welcome, including the assistants that fetch pages in order
+# to quote them. The site is static and serves no personal data, so there is
+# nothing here worth disallowing.
+User-agent: *
+Allow: /
+
+Sitemap: https://svqtriana.com/sitemap.xml
+
+# Plain-text summary written for language models, generated at build time.
+# See https://svqtriana.com/llms.txt

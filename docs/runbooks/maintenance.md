@@ -1,189 +1,152 @@
 # Maintaining svqtriana.com
 
-Orientation for whoever — human or agent — picks this up next. The site is
-static and changes a handful of times a year; most of what follows is about not
-breaking things that are already working.
+Guidance for whoever — person or agent — picks this up next. The site is static
+and changes a few times a year; almost everything below is about not breaking
+what already works.
 
-## Start here
+## Getting started
 
 ```sh
-scripts/serve.py 8000     # NOT python3 -m http.server, see README Traps
-scripts/check_pages.py    # what CI will check
+npm ci
+npm run dev        # http://localhost:4321
 ```
 
-Read [`README.md`](../../README.md) first, especially the *Traps* section. Two of
-those traps have already caused live bugs.
+And before opening a PR:
+
+```sh
+npm run verify
+```
+
+Read [`README.md`](../../README.md), especially the *Traps* section. Several
+have already caused production bugs.
 
 ---
 
-## Job 1: the new season poster
+## Task 1: the new season's poster
 
 The recurring job. Once a year, around July.
 
-1. **Drop the master in `images/`** as `cartel-NN.jpg`, where `NN` is the second
-   year of the season (`cartel-27.jpg` for 2026/27).
+1. **Save the master** as `src/assets/carteles/cartel-NN.jpg`, where `NN` are
+   the last two digits of the season (`cartel-28.jpg` for 2027/28).
 
-2. **Convert it:**
-   ```sh
-   scripts/to-webp.py images/cartel-28.jpg
-   ```
-   Expect around 150-200K out. The script refuses if two masters would produce
-   the same `.webp`.
+2. **Copy the same JPEG** to `public/images/cartel-NN.jpg`. Linking the master
+   in `src/` does not work: `public/` is what gets served unprocessed and the OG
+   image has to be a JPEG with an absolute URL.
 
-3. **Update `index.html`** — all five places:
-   - the `<h1>`: `TEMPORADA 27/28`
-   - the `<img src>` and its `alt`, and the `width`/`height` to the new
-     dimensions (the converter prints them)
-   - `<link rel="preload" as="image">` in the head
-   - `og:image` and `twitter:image` — **point these at the `.jpg`, not the
-     `.webp`.** WhatsApp and Facebook scrapers handle WebP inconsistently, and
-     this is the image people share.
-   - `og:image:width` / `og:image:height` to the JPEG's real dimensions
-   - the `image` field in the `SportsClub` JSON-LD
+3. **Edit `src/data/temporada.ts`**:
+   - the poster's `import`,
+   - `etiqueta` (`'27/28'`) and `etiquetaLarga` (`'2027/2028'`),
+   - `precios`, if they change,
+   - `formularioUrl`, if it changes.
 
-4. **If the membership prices changed**, update them in the `alt` text. They are
-   currently only in the poster's pixels, which is deliberate — see *Open
-   questions*.
+4. **Edit `src/data/cartel.ts`**:
+   - `cartelOg` → `/images/cartel-28.jpg`,
+   - `cartelOgSize` → the real dimensions of the JPEG,
+   - `cartelAlt` → season and prices of the new poster.
 
-5. **Bump `CACHE_VERSION` in `sw.js`, and restamp the `?v=`.** Not optional.
-   HTML is cached for a day and images for a week, cache-first, so without the
-   bump members who visited recently keep seeing last season's poster.
+   That file feeds `og:image`, `twitter:image` and the JSON-LD `image`.
+   `site.ts` already reads it from there: nothing else needs touching.
 
-   ```sh
-   scripts/bump-version.py        # stamps today's date, everywhere it appears
-   ```
+5. **Write the `CHANGELOG.md` entry**, with `## vYYYYMMDD` as the first entry in
+   the file. That is the version the footer will show on the next deploy:
+   `deploy.yml` reads it from there and `check:dist` fails if they disagree.
 
-   The version is the deploy date, `vYYYYMMDD`, with `.N` for a second deploy
-   the same day. The script moves four things that must agree: `CACHE_VERSION`,
-   the `?v=` on every `css/` and `js/` URL, the footer stamp and its
-   `aria-label`.
+6. **Check**: `npm run build && npm run check:dist`, and open the home page in a
+   browser to see the poster and the prices.
 
-6. **Write the `CHANGELOG.md` entry.** The script deliberately does not: a
-   generated "various fixes" would defeat the point. `check_pages.py` fails
-   while the newest heading and `CACHE_VERSION` disagree.
+7. **PR → CI → merge.** There is no version script and no `?v=`: assets carry a
+   hash in the filename and the HTML is cached briefly.
 
-7. **`lastmod` in `sitemap.xml`.**
+8. Optional, after the deploy: delete the previous poster from
+   `public/images/`. Nothing references it any more.
 
-8. Check it: `scripts/serve.py 8000`, then `scripts/check_pages.py`.
+## Task 2: a new video
 
-## Job 2: a new video
+1. **Real title**, not retyped:
 
-1. Get the real title — do not retype it:
    ```sh
    curl -s "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=VIDEO_ID&format=json" \
      | python3 -m json.tool
    ```
 
-2. Take the thumbnail from YouTube and trim its padding. `maxresdefault.jpg`
-   usually exists; fall back to `sddefault` then `hqdefault`. YouTube pads
-   stills into 16:9 with black bars, and `background-size: cover` would show
-   them:
-   ```sh
-   curl -sfL -o images/video7.jpg "https://i.ytimg.com/vi/VIDEO_ID/maxresdefault.jpg"
-   # crop the bars, then:
-   scripts/to-webp.py images/video7.jpg
-   ```
+2. **Thumbnail**: download `maxresdefault.jpg` (or `sddefault`, or
+   `hqdefault`), crop the black bars and save it as
+   `src/assets/videos/videoNN.jpg`.
 
-3. Add `.video-preview.item-7_video` to `css/style.css` alongside the others.
+3. **Add the entry at the top of `src/data/videos.ts`**, with
+   `destacado: true` and removing it from the previous one. The featured card on
+   the home page, the first one on `/media` and the JSON-LD all come from there.
 
-4. Add the card to `media.html` — **first**, newest at the top — and add a
-   matching `VideoObject` to the `ItemList` JSON-LD in the same file. The card
-   carries the video's own name as `<h2 class="video-title">` and the season as
-   `<p class="video-season">`.
+4. **Check**: `npm run verify`.
 
-5. `scripts/bump-version.py`, as in Job 1 step 5.
+Nothing is embedded: every card links to `https://youtu.be/<id>`. If an embed
+were ever wanted, `frame-src` would have to be opened in
+`infra/cloudflare/headers.tf` and a consent banner added.
 
-## Job 3: prices or products change
+## Task 3: prices or products
 
-`productos.html` holds the prices twice: in the visible card markup and in the
-`hasOfferCatalog` JSON-LD in the head. **Change both**, or search engines will
-advertise a price the page does not show.
+Everything lives in `src/data/productos.ts` and `src/data/temporada.ts`. The
+HTML, the JSON-LD (`hasOfferCatalog`) and `llms.txt` are generated from there,
+so there is no second copy that can drift.
 
-## Job 4: re-pruning css/bootstrap.css
+`npm run verify` checks that the JSON-LD still lists the 4 products and that the
+assets exist.
 
-Only needed if a page starts using a Bootstrap class it did not use before —
-the pruned stylesheet no longer contains that rule.
+## Task 4: changing the Cloudflare configuration
 
-**`scripts/prune-bootstrap.py` reads the file it rewrites**, so running it
-again prunes the already-pruned copy and restores nothing. Always start from
-the complete stylesheet in git history:
+Headers, cache and analytics live in [`infra/cloudflare/`](../../infra/cloudflare/README.md).
+Change the code, run `plan`, apply; the dashboard is never touched.
 
-```sh
-git show f12cc73:css/bootstrap.css > css/bootstrap.css
-scripts/prune-bootstrap.py --write
-```
+Two things that bite if skipped:
 
-Then prove nothing moved, which is the only check that means anything here:
+- **Web Analytics is already active.** Applying `analytics.tf` as a creation
+  would register a duplicate site. It has to be imported first; that is why it
+  sits behind `manage_web_analytics`.
+- **A CSP can break the site**, unlike the other headers, which merely stop
+  protecting. After applying, open every page with the console open and look for
+  `Refused to load`. The likely culprit is the analytics beacon.
 
-```sh
-git show f12cc73:css/bootstrap.css > /tmp/bootstrap-original.css
-scripts/compare-render.py /tmp/bootstrap-original.css
-```
-
-It renders all five pages at five widths under both stylesheets and compares
-the computed style and box of every element — 3613 of them. Expect
-`no computed-style or box differences`; it reports 644 when a single used rule
-goes missing, so a pass is worth something.
-
-## Job 5: changing the Cloudflare configuration
-
-Applied 2026-09-05. See [`infra/cloudflare/README.md`](../../infra/cloudflare/README.md).
-Change the code, then plan and apply — never click it in the dashboard.
-
-Two things there that will bite if skipped:
-
-- **Web Analytics is already enabled.** Applying `analytics.tf` as a create
-  would register a duplicate site. Import first. It is gated behind
-  `manage_web_analytics`, defaulting to false, for exactly this reason.
-- **A CSP can break the site**, unlike the other headers, which merely fail to
-  protect it. After applying, open every page with the console open and look for
-  `Refused to load`. The likeliest casualties are the Google Maps embed on
-  `/encuentro` and the product slider.
-
-`.htaccess` was deleted in the same change; it never did anything here.
+Remember the order: the HTML that satisfies the policy is deployed first,
+Terraform is applied afterwards. Never the other way round.
 
 ---
 
 ## How to check you have not broken it
 
 ```sh
-scripts/check_pages.py       # titles, canonicals, nav, header/footer drift
+npm run verify
 ```
 
-Then, with `scripts/serve.py` running:
+That chains type checks, build, `dist/` invariants and Playwright. To look only
+at the static invariants:
 
 ```sh
-# every route resolves
-for p in "" nosotros productos media encuentro; do
-  echo "/$p $(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/$p)"
-done
-
-# the nav is in the served HTML, not built by JavaScript
-curl -s http://localhost:8000/ | grep -c 'nav-link'   # expect 4
+npm run build && npm run check:dist
 ```
 
-That last one matters more than it looks. The nav used to be built by
-`document.createElement`, so the raw HTML contained no internal links at all.
-Google renders JavaScript and saw it; the AI crawlers that increasingly answer
-"where do I find X" mostly do not, and saw a page with no navigation and no
-contact details. If that grep ever returns 0 again, that regression is back.
+And to see the site as GitHub Pages sees it (no redirects, with `/nosotros` →
+`nosotros.html` and a real 404):
 
-## Open questions someone should decide
+```sh
+node scripts/serve-dist.mjs 4321
+```
 
-- **The membership prices exist only as pixels** inside the poster image. They
-  are in the `alt` text and `llms.txt`, but not as visible page text, so Google
-  cannot show them and a screen reader gets them only via the alt. Adding them
-  as HTML was offered and declined; worth revisiting.
-- **`js/performance.js` is mostly dead.** `lazyLoadImages` finds no
-  `img[data-src]`, `loadDeferredCSS` matches nothing, and `preloadCriticalResources`
-  runs too late to preload anything. Only the footer-year line and the nav
-  toggle still do work.
-- **No templating.** Five copies of the header and footer, kept honest by
-  `check_pages.py`. If the site grows past five pages, that trade stops paying.
+Manual checks no script covers well:
 
-Resolved since this list was written, and kept here so nobody re-opens them:
-the service worker now precaches into the cache each URL is read from; the
-four `style.css` rules pointing at missing images were deleted; jQuery loads
-only on `/productos`, for bxSlider, and no page loads Bootstrap's JavaScript.
-See [`../lessons/_index.md`](../lessons/_index.md) for what each of those
-taught.
+- Open `/` on a real phone: there must be no CSP errors in the console.
+- Open a page with the mobile menu and close it with Escape and with an outside
+  click.
+- Check the result of `npm run test:lighthouse` if you touched images, fonts or
+  block order.
+
+## Open questions
+
+- **Prices are HTML text now**, not poster pixels: they live in `temporada.ts`
+  and are visible on the home page. The duplication with the printed poster
+  still exists, but the HTML is the source of truth for Google and screen
+  readers.
+- **The service worker kill-switch** can be deleted from ~May 2027. Not before:
+  see [`../root-files.md`](../root-files.md).
+- **`src/assets/productos/pulsera.webp`** is the master `pulsera.jpg` was
+  generated from (see `scripts/convert-pulsera.mjs`). The build serves the JPEG
+  because WebP as a `<Picture>` fallback weighed more than the original.

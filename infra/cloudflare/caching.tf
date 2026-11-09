@@ -1,12 +1,12 @@
 # Cache lifetimes at the edge.
 #
-# This is where the deleted .htaccess Expires block was trying to go. Pages sends
-# Cache-Control: max-age=600 for everything, which is right for HTML and wasteful
-# for fingerprint-free assets that change a few times a year.
+# GitHub Pages sends Cache-Control: max-age=600 for everything, which is right
+# for HTML and wasteful for hashed assets.
 #
-# Note the asymmetry: images and fonts are cached hard because a stale one is
-# harmless, while HTML stays short because that is how a new poster reaches
-# members the day it goes up.
+# Note the asymmetry: fingerprinted assets are cached hard because a stale one
+# can never be requested - the filename changes with the content - while HTML
+# stays short because that is how a new poster reaches members the day it goes
+# up.
 resource "cloudflare_ruleset" "cache_settings" {
   zone_id = var.zone_id
   name    = "Cache settings"
@@ -14,6 +14,32 @@ resource "cloudflare_ruleset" "cache_settings" {
   phase   = "http_request_cache_settings"
 
   rules = [
+    {
+      # Astro writes every generated CSS, JS, font and image under /_astro/
+      # with a content hash in the filename. A year plus a changing name is
+      # what `Cache-Control: immutable` would express; the Cache Rules API has
+      # no immutable flag, but the hash makes the effect identical.
+      #
+      # This rule must stay first: cache rules run in order and the first match
+      # wins, so a later extension rule must not shadow it.
+      ref         = "cache_astro_fingerprinted"
+      description = "Hashed assets under /_astro/ never change in place"
+      expression  = "(starts_with(http.request.uri.path, \"/_astro/\"))"
+      action      = "set_cache_settings"
+      enabled     = true
+
+      action_parameters = {
+        cache = true
+        edge_ttl = {
+          mode    = "override_origin"
+          default = 31536000 # 1 year
+        }
+        browser_ttl = {
+          mode    = "override_origin"
+          default = 31536000
+        }
+      }
+    },
     {
       ref         = "cache_fonts_long"
       description = "Fonts never change without a new filename"
@@ -36,7 +62,7 @@ resource "cloudflare_ruleset" "cache_settings" {
     {
       ref         = "cache_images_long"
       description = "Images change by filename, not in place"
-      expression  = "(http.request.uri.path.extension in {\"webp\" \"jpg\" \"jpeg\" \"png\" \"gif\" \"svg\" \"ico\"})"
+      expression  = "(http.request.uri.path.extension in {\"webp\" \"avif\" \"jpg\" \"jpeg\" \"png\" \"gif\" \"svg\" \"ico\"})"
       action      = "set_cache_settings"
       enabled     = true
 
@@ -53,27 +79,8 @@ resource "cloudflare_ruleset" "cache_settings" {
       }
     },
     {
-      ref         = "cache_static_assets"
-      description = "CSS and JS: long at the edge, shorter in the browser, since these have no fingerprint in the filename and a purge only reaches the edge"
-      expression  = "(http.request.uri.path.extension in {\"css\" \"js\"})"
-      action      = "set_cache_settings"
-      enabled     = true
-
-      action_parameters = {
-        cache = true
-        edge_ttl = {
-          mode    = "override_origin"
-          default = 604800 # 7 days
-        }
-        browser_ttl = {
-          mode    = "override_origin"
-          default = 86400 # 1 day
-        }
-      }
-    },
-    {
       ref         = "no_cache_service_worker"
-      description = "sw.js decides what every other asset's freshness means, so it must never be the stale one"
+      description = "sw.js is the kill-switch for the old worker, so it must never be the stale file"
       expression  = "(http.request.uri.path eq \"/sw.js\")"
       action      = "set_cache_settings"
       enabled     = true

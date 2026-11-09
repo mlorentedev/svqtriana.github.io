@@ -1,0 +1,72 @@
+---
+import Icon from './Icon.astro';
+import ProductGallery from './ProductGallery.astro';
+import { site, socials } from '../data/site';
+import type { Product } from '../data/productos';
+
+interface Props {
+  producto: Product;
+}
+
+const { producto } = Astro.props;
+const emailHref = `mailto:${site.email}?subject=${encodeURIComponent(`[WEB] Pedido: ${producto.nombre}`)}`;
+---
+
+<article
+  class="group flex h-full flex-col overflow-hidden rounded-[var(--radius-azulejo)] border border-noche-950/10 bg-white shadow-[0_18px_40px_-28px_rgb(26_20_20/0.5)] transition-shadow hover:shadow-[0_24px_50px_-26px_rgb(26_20_20/0.55)]"
+>
+  <ProductGallery images={producto.imagenes} nombre={producto.nombre} />
+
+  <div class="flex flex-1 flex-col p-5 sm:p-6">
+    <h2 class="text-balance font-display text-2xl leading-tight text-noche-950">{producto.nombre}</h2>
+
+    {
+      producto.lote && (
+        <p class="mt-2 text-sm text-noche-950/70">
+          <span class="font-bold">Lote:</span> {producto.lote}
+        </p>
+      )
+    }
+
+    <div class="mt-5">
+      {
+        producto.precio.tipo === 'doble' ? (
+          <dl class="grid grid-cols-2 divide-x divide-noche-950/10 rounded-[var(--radius-azulejo)] bg-cal-50 py-3 ring-1 ring-noche-950/5">
+            <div class="px-3.5">
+              <dt class="whitespace-nowrap text-[0.68rem] font-bold uppercase tracking-[0.1em] text-sevilla-700">Socio</dt>
+              <dd class="mt-1 font-display text-3xl leading-none">{producto.precio.socio}€</dd>
+            </div>
+            <div class="px-3.5">
+              <dt class="whitespace-nowrap text-[0.68rem] font-bold uppercase tracking-[0.1em] text-noche-950/65">No socio</dt>
+              <dd class="mt-1 font-display text-3xl leading-none">{producto.precio.noSocio}€</dd>
+            </div>
+          </dl>
+        ) : (
+          <p class="font-display text-4xl leading-none">{producto.precio.valor}€</p>
+        )
+      }
+    </div>
+
+    <p class="mt-5 text-sm text-noche-950/70">Pídelo por Instagram o email</p>
+
+    <div class="mt-auto flex items-center gap-3 pt-4">
+      <a
+        href={socials.instagram.url}
+        class="inline-flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-azulejo)] bg-sevilla-500 px-5 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-sevilla-700"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Pídelo: ${producto.nombre} por Instagram (abre en una pestaña nueva)`}
+      >
+        Pídelo
+        <Icon name="external" size={16} />
+      </a>
+      <a
+        href={emailHref}
+        class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-azulejo)] border border-noche-950/15 text-noche-950 transition-colors hover:border-sevilla-500 hover:text-sevilla-700"
+        aria-label={`Pedir ${producto.nombre} por email`}
+      >
+        <Icon name="mail" size={18} />
+      </a>
+    </div>
+  </div>
+</article>

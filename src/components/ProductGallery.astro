@@ -1,0 +1,69 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { ProductImage } from '../data/productos';
+
+interface Props {
+  images: ProductImage[];
+  nombre: string;
+}
+
+const { images, nombre } = Astro.props;
+
+let instances = 0;
+const id = `galeria-${++instances}-${Math.random().toString(36).slice(2, 7)}`;
+const multiple = images.length > 1;
+---
+
+<div class="relative bg-cal-100 bg-[radial-gradient(circle_at_center,#fff,transparent_70%)]">
+  <div
+    id={id}
+    data-gallery
+    class="flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    role="group"
+    aria-label={`Fotos de ${nombre}`}
+    tabindex={multiple ? '0' : undefined}
+  >
+    {
+      images.map((image) => (
+        <figure class="w-full shrink-0 snap-center p-5 sm:p-6">
+          <Picture
+            src={image.src}
+            alt={image.alt}
+            formats={['avif', 'webp']}
+            widths={[360, 540, 720]}
+            sizes="(min-width: 1280px) 16rem, (min-width: 640px) 45vw, 90vw"
+            loading="lazy"
+            decoding="async"
+            class="aspect-square h-full w-full object-contain drop-shadow-[0_10px_18px_rgb(26_20_20/0.18)]"
+          />
+        </figure>
+      ))
+    }
+  </div>
+
+  {
+    multiple && (
+      <div class="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-2">
+        <button
+          type="button"
+          data-gallery-prev
+          data-gallery-target={id}
+          class="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-noche-950/80 text-white shadow-md transition-colors hover:bg-sevilla-500 focus-visible:bg-sevilla-500"
+          aria-label={`Foto anterior de ${nombre}`}
+        >
+          <Icon name="chevron-left" size={20} />
+        </button>
+        <button
+          type="button"
+          data-gallery-next
+          data-gallery-target={id}
+          class="pointer-events-auto inline-flex h-10 w-10 items-center justify-center rounded-full bg-noche-950/80 text-white shadow-md transition-colors hover:bg-sevilla-500 focus-visible:bg-sevilla-500"
+          aria-label={`Foto siguiente de ${nombre}`}
+        >
+          <Icon name="chevron-right" size={20} />
+        </button>
+      </div>
+    )
+  }
+</div>

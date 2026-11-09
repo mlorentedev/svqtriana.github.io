@@ -1,0 +1,89 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { youtubeWatchUrl, type Video } from '../data/videos';
+
+interface Props {
+  video: Video;
+  destacado?: boolean;
+}
+
+const { video, destacado = false } = Astro.props;
+const href = youtubeWatchUrl(video.youtubeId);
+---
+
+<article
+  class:list={[
+    'group overflow-hidden rounded-[var(--radius-azulejo)] shadow-[0_18px_40px_-28px_rgb(26_20_20/0.55)]',
+    destacado
+      ? 'bg-noche-950 text-cal-50 sm:col-span-2 lg:row-span-2'
+      : 'border border-noche-950/10 bg-white',
+  ]}
+>
+  <a href={href} class="relative flex h-full flex-col" target="_blank" rel="noopener noreferrer">
+    <div
+      class:list={[
+        'relative overflow-hidden bg-noche-950',
+        destacado ? 'aspect-[4/3] sm:aspect-video lg:aspect-auto lg:flex-1' : 'aspect-video',
+      ]}
+    >
+      <Picture
+        src={video.miniatura}
+        alt=""
+        formats={['avif', 'webp']}
+        widths={destacado ? [540, 720, 1080] : [360, 540, 720]}
+        sizes={destacado ? '(min-width: 1024px) 48rem, 100vw' : '(min-width: 1024px) 22rem, (min-width: 640px) 50vw, 100vw'}
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+      />
+      <div
+        class:list={[
+          'absolute inset-0 bg-gradient-to-t',
+          destacado ? 'from-noche-950 via-noche-950/40 to-noche-950/0' : 'from-noche-950/70 via-noche-950/10 to-transparent',
+        ]}
+      >
+      </div>
+      <span class="absolute inset-0 grid place-items-center">
+        <span
+          class:list={[
+            'grid place-items-center rounded-full bg-sevilla-500 text-white shadow-[0_0_0_8px_rgb(223_6_6/0.25)] transition-transform duration-300 group-hover:scale-110',
+            destacado ? 'h-20 w-20' : 'h-14 w-14',
+          ]}
+        >
+          <Icon name="play" size={destacado ? 34 : 26} class="translate-x-0.5" />
+        </span>
+      </span>
+      {
+        !destacado && (
+          <span class="absolute bottom-3 left-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-white">
+            Ver en YouTube
+            <Icon name="external" size={14} />
+            <span class="sr-only"> (abre en una pestaña nueva)</span>
+          </span>
+        )
+      }
+    </div>
+
+    {
+      destacado ? (
+        <div class="relative -mt-24 p-6 sm:p-8">
+          <p class="kicker text-albero-400">{video.temporada}</p>
+          <h2 class="mt-3 max-w-xl text-balance font-display text-3xl leading-tight sm:text-5xl">
+            {video.titulo}
+          </h2>
+          <span class="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-cal-50 transition-colors group-hover:text-albero-400">
+            Ver en YouTube
+            <Icon name="external" size={14} />
+            <span class="sr-only"> (abre en una pestaña nueva)</span>
+          </span>
+        </div>
+      ) : (
+        <div class="p-5">
+          <h2 class="font-display text-2xl leading-tight text-noche-950">{video.titulo}</h2>
+          <p class="mt-1 text-sm text-noche-950/70">{video.temporada}</p>
+        </div>
+      )
+    }
+  </a>
+</article>

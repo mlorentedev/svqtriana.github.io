@@ -44,10 +44,31 @@ fallback_models = ["openai/deepseek-v4-flash"]
 # `model_weak` deliberately absent: `auto_describe` is off so it would do nothing, and
 # the model upstream defaults it to is the one the pool rejects here.
 
-# NaN ids are not in LiteLLM's registry, so the budget must be stated or LiteLLM
-# assumes a small default and truncates the diff silently.
+# Two ceilings, deliberately different. Confusing them is what broke run 42562380120
+# on PR #35 (2026-11-09), so they are now stated apart and guarded by
+# scripts/check-harness.mjs.
+#
+# `custom_model_max_tokens` is LiteLLM's per-model CAPACITY. NaN ids are not in its
+# registry, so this must be stated or LiteLLM assumes a small default and truncates the
+# diff silently. It describes the model, so it stays at the model's capacity.
 custom_model_max_tokens = 200000
-max_model_tokens = 200000
+
+# `max_model_tokens` is PR-Agent's PROMPT budget — the guardrail that decides how much
+# diff is actually sent, and it must sit BELOW the capacity above or it never fires. It
+# was 200000, i.e. above every diff this repo produces, so it was inert: the PR #35 log
+# read `Tokens: 97390, total tokens under limit: 200000, returning full diff`, a
+# 97k-token prompt went out whole, and both models in the chain were killed at
+# `ai_timeout`. 32000 is upstream's default and is the point of the setting: a diff over
+# it is CLIPPED (upstream's `large_patch_policy` is "clip"), so an oversized PR gets a
+# partial review instead of eight minutes and no review at all.
+max_model_tokens = 32000
+
+# Upstream default is 120s, and 120s is not enough for a reasoning-class model even on a
+# clipped prompt: run 42562380120 lost four consecutive calls at 120.1-120.7s. This has
+# to be read together with `max_model_tokens` above and with `timeout-minutes` in
+# .github/workflows/pr-agent.yml — the handler retries each model once, so the worst case
+# is 2 models x 2 attempts x ai_timeout and that must fit inside the job budget.
+ai_timeout = 300
 
 response_language = "en-US"
 
@@ -67,22 +88,27 @@ final_update_message = false
 # sixteen at dotfiles (#1072). An instruction ignored 94 % of the time is a comment,
 # not a control.
 extra_instructions = """
-This is a static site: five hand-written HTML pages, no build step, no framework,
-served by GitHub Pages through Cloudflare. CI (checks.yml) already verifies that every
-route resolves, every referenced asset exists, each page keeps its own title, canonical
-and stylesheets, JSON-LD parses, and the Terraform under infra/cloudflare validates and
-is formatted. A daily job (edge-drift.yml) diffs what production serves against the
-repository. Do not restate what those report.
+This is a static site built by Astro: four routes plus a 404, no client framework, no
+runtime, served by GitHub Pages through Cloudflare. CI (checks.yml) already verifies that
+every route resolves, every referenced asset exists, each page keeps its own title,
+canonical and stylesheets, JSON-LD parses, no inline script or inline style survives into
+the output, and the Terraform under infra/cloudflare validates and is formatted. A daily
+job (edge-drift.yml) diffs what production serves against the repository. Do not restate
+what those report.
 
 Spend the budget on what those checks cannot see:
 
-- the five pages are standalone and each carries its own copy of the shared header,
-  footer and critical CSS. A change made to one page and not the other four is the
-  most common defect here; say which pages a hunk should have touched.
-- the site ships NO inline scripts and the CSP forbids them; an inline `<script>` or an
-  `onclick=` attribute in a diff is a regression, not a style choice.
-- CSS and JS URLs carry a `?v=` cache-busting stamp. A stylesheet edit without a new
-  stamp reaches no returning visitor (measured on #15).
+- the routes are rendered from shared components and one layout, so the copy-paste
+  divergence that used to be the most common defect here is gone. What replaces it is a
+  change made to one route's frontmatter or to src/data/ and not to the others that read
+  it; say which routes a hunk should have touched.
+- the site ships NO inline scripts and the CSP forbids them; an inline `<script>`, an
+  `onclick=` attribute, or a `set:html` of anything authored rather than generated is a
+  regression, not a style choice.
+- assets are content-hashed by Astro into `_astro/`, so a stale cache is not a concern.
+  What is: `astro.config.mjs` deliberately sets `inlineStylesheets: 'never'` and
+  `assetsInlineLimit: 0`, because an inlined style block would need a CSP hash the
+  moment anything else changed. A build option that reintroduces inlining is a CSP bug.
 - infra/cloudflare/ is production: a header, cache rule or zone setting there takes
   effect on apply, and the README in that folder records which toggles the dashboard
   cannot undo (#22). Read a Terraform change for its live consequence.
@@ -92,8 +118,13 @@ Spend the budget on what those checks cannot see:
 - anything that puts a credential in a transcript, a log line, an argv or the process
   table, including in documentation examples.
 
-Grade each finding REAL, THEORETICAL or SPECULATIVE and say which. REAL needs a concrete
-trace: file and line, failing input, or a command and its output. Write in English.
+Grade each finding REAL, THEORETICAL or SPECULATIVE, and put the grade on its own line
+exactly as `Class: REAL`, `Class: THEORETICAL` or `Class: SPECULATIVE` — one line per
+finding, never a suffix on a heading and never the first word of the paragraph. That
+line is what harness/review-attestation.json reads back and it reads nothing else; a
+grade written as prose leaves the finding unclassified. REAL needs a concrete trace:
+file and line, failing input, or a command and its output. If you cannot place a
+finding, leave it unclassified rather than guessing. Write in English.
 Conventional Commits and no AI attribution are enforced here, so do not propose commit
 messages that carry either.
 """
@@ -109,16 +140,16 @@ publish_output_no_suggestions = false
 [ignore]
 # Applied BEFORE the model call. This repo keeps no credential material in-tree (the
 # only secrets live in GitHub's own store), so this list is about spend and signal:
-#   - images/ and fonts/ are binaries;
-#   - css/bootstrap.css is the output of scripts/prune-bootstrap.py and
-#     js/jquery.bxslider.js is vendored — machine or third-party text, reviewed at
-#     source, not here;
+#   - public/images/ and public/fonts/ are binaries;
+#   - src/assets/ is the same problem one level down: the cartel, product and video
+#     stills are the bulk of the tree by bytes and none of them are reviewable text.
+#     Naming the directories is deliberate - a glob on "*.jpg" would also catch a
+#     diff that only swaps one, which is exactly the change worth reading;
 #   - the Terraform lockfile is resolved hashes a human already reviewed in the PR
 #     that bumped it.
 glob = [
-  "images/**",
-  "fonts/**",
-  "css/bootstrap.css",
-  "js/jquery.bxslider.js",
+  "public/images/**",
+  "public/fonts/**",
+  "src/assets/**",
   "infra/cloudflare/.terraform.lock.hcl",
 ]

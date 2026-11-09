@@ -1,0 +1,69 @@
+---
+import { Picture } from 'astro:assets';
+import CtaButton from './CtaButton.astro';
+import AzulejoPattern from './deco/AzulejoPattern.astro';
+import PuenteDivider from './deco/PuenteDivider.astro';
+import RioWave from './deco/RioWave.astro';
+import { temporada } from '../data/temporada';
+---
+
+<section id="home" class="relative isolate overflow-hidden bg-noche-950 text-cal-50">
+  <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-cal-50/[0.06]" />
+  <div
+    class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_72%,rgb(168_5_10/0.4),transparent_40%)] lg:bg-[radial-gradient(circle_at_80%_45%,rgb(168_5_10/0.45),transparent_40%)]"
+  >
+  </div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-noche-950"></div>
+
+  <div
+    class="site-container grid grid-cols-[minmax(0,1fr)] items-center gap-12 pb-10 pt-12 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:pb-14 lg:pt-20"
+  >
+    <!--
+      Mobile: a query container, the title is measured against the column width
+      and never overflows. Desktop: no containment, the column takes the title's
+      width (7rem on large screens), as in the original design.
+    -->
+    <div class="@container min-w-0 lg:min-w-auto lg:[container-type:normal]">
+      <p class="kicker text-albero-400">Peña Sevillista · Triana · Desde 2019</p>
+      <h1 class="mt-6 font-display text-[min(15cqw,7rem)] lg:text-[min(7rem,calc((min(100vw,72rem)-4rem)*0.103))] leading-[0.85] tracking-tight">
+        TEMPORADA{' '}
+        <span class="mt-1 block text-sevilla-500 [text-shadow:0_2px_0_rgb(0_0_0/0.25)]">
+          {temporada.etiqueta}
+        </span>
+      </h1>
+      <p class="mt-7 max-w-xl text-lg leading-relaxed text-cal-50/85 sm:text-xl">
+        Abierta la renovación y las nuevas altas de la temporada {temporada.etiqueta}.
+      </p>
+      <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <CtaButton href={temporada.formularioUrl} external icon="external" class="shadow-lg shadow-sevilla-700/30">
+          Hazte socio
+        </CtaButton>
+        <CtaButton href="#precios" variant="outline-dark" icon="arrow-right">Ver precios</CtaButton>
+      </div>
+    </div>
+
+    <div class="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-[26rem]">
+      <!-- Azulejo frame, offset behind the poster. -->
+      <div
+        class="absolute -inset-3 rotate-[2.5deg] rounded-[var(--radius-azulejo)] border-2 border-albero-400/50 sm:-inset-4"
+        aria-hidden="true"
+      >
+      </div>
+      <Picture
+        src={temporada.cartel}
+        alt={temporada.cartelAlt}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 1080]}
+        sizes="(min-width: 1024px) 26rem, (min-width: 640px) 28rem, 92vw"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="relative h-auto w-full -rotate-1 rounded-[var(--radius-azulejo)] shadow-[0_30px_60px_-20px_rgb(0_0_0/0.8)] ring-1 ring-white/10 transition-transform duration-500 hover:rotate-0"
+      />
+    </div>
+  </div>
+
+  <!-- The Triana bridge over the Guadalquivir. -->
+  <PuenteDivider class="block h-12 w-full text-albero-400/45" scale={0.75} />
+  <RioWave class="block h-6 w-full text-azulejo-700" />
+</section>

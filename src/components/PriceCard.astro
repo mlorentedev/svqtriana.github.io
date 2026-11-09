@@ -1,0 +1,41 @@
+---
+import AzulejoPattern from './deco/AzulejoPattern.astro';
+
+interface Props {
+  etiqueta: string;
+  base: number;
+  conCamiseta: number;
+  destacado?: boolean;
+}
+
+const { etiqueta, base, conCamiseta, destacado = false } = Astro.props;
+---
+
+<article
+  class:list={[
+    'relative isolate flex flex-col overflow-hidden rounded-[var(--radius-azulejo)] p-7 shadow-[0_18px_40px_-24px_rgb(26_20_20/0.5)]',
+    destacado ? 'bg-sevilla-500 text-white' : 'border border-noche-950/10 bg-white text-noche-950',
+  ]}
+>
+  {destacado && <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-white/[0.08]" />}
+
+  <p
+    class:list={[
+      'text-xs font-bold uppercase tracking-[0.2em]',
+      destacado ? 'text-white' : 'text-sevilla-700',
+    ]}
+  >
+    {etiqueta}
+  </p>
+  <p class="mt-4 font-display text-7xl leading-none tracking-tight">
+    {base}<span class="ml-1 align-top text-3xl">€</span>
+  </p>
+  <p
+    class:list={[
+      'mt-6 border-t pt-4 text-sm',
+      destacado ? 'border-white/30 text-white' : 'border-noche-950/10 text-noche-950/75',
+    ]}
+  >
+    <strong class="font-bold">{conCamiseta} €</strong> con camiseta
+  </p>
+</article>

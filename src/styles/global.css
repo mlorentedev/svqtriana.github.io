@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Glacial Indifference";
+  src: url("/fonts/GlacialIndifference-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Glacial Indifference";
+  src: url("/fonts/GlacialIndifference-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Marca */
+  --color-sevilla-500: #df0606;
+  --color-sevilla-700: #a8050a;
+  /* Triana */
+  --color-cal-50: #faf6ee;
+  --color-cal-100: #f3ecdd;
+  --color-noche-950: #1a1414;
+  --color-noche-800: #242424;
+  --color-albero-400: #d4a73a;
+  --color-azulejo-700: #1f4e8c;
+
+  --font-sans: "Glacial Indifference", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+
+  --radius-azulejo: 0.25rem;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cal-50 text-noche-950 font-sans antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-albero-400);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--color-albero-400);
+    color: var(--color-noche-950);
+  }
+}
+
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  /* Kicker with the albero line in front. */
+  .kicker {
+    @apply inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em];
+  }
+  .kicker::before {
+    content: "";
+    width: 1.75rem;
+    height: 2px;
+    background: currentColor;
+    flex: none;
+  }
+
+  /* Franjas rojiblancas del escudo del Sevilla FC. */
+  .franjas {
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--color-sevilla-500) 0 14px,
+      #fff 14px 28px
+    );
+  }
+
+  /* Album photo: white frame and a slight tilt. */
+  .polaroid {
+    @apply bg-white p-2 pb-3 shadow-[0_10px_30px_-12px_rgb(26_20_20/0.45)] ring-1 ring-noche-950/5 transition-transform duration-300 sm:p-3 sm:pb-4;
+  }
+  .polaroid:nth-child(odd) {
+    rotate: -1deg;
+  }
+  .polaroid:nth-child(even) {
+    rotate: 1.2deg;
+  }
+  .polaroid:hover {
+    rotate: 0deg;
+  }
+
+  /* Nav link with an underline that grows. */
+  .nav-link {
+    @apply relative py-2 text-xs font-bold uppercase tracking-[0.16em] text-cal-50 transition-colors hover:text-albero-400;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--color-albero-400);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+  .nav-link[aria-current="page"] {
+    color: var(--color-albero-400);
+  }
+}
+
+/* Cross-page transitions with no JS (cross-document view transitions). */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

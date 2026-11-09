@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-
-# /js/ and /css/ are deliberately NOT disallowed. Google renders pages before
-# indexing them, and this site builds its nav and footer in JavaScript, so
-# blocking those directories hid half the page from the crawler.
-
-Sitemap: https://svqtriana.com/sitemap.xml

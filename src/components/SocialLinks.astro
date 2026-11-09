@@ -1,0 +1,29 @@
+---
+import Icon from './Icon.astro';
+import { socialList } from '../data/site';
+
+interface Props {
+  class?: string;
+  size?: number;
+}
+
+const { class: className = '', size = 22 } = Astro.props;
+---
+
+<ul class:list={['flex flex-wrap items-center gap-3', className]} aria-label="Redes sociales de PS SVQ Triana">
+  {
+    socialList.map((social) => (
+      <li>
+        <a
+          href={social.url}
+          class="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-azulejo)] border border-white/15 text-cal-50 transition-colors hover:border-albero-400 hover:text-albero-400"
+          aria-label={`Seguir a PS SVQ Triana en ${social.label}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name={social.key} size={size} />
+        </a>
+      </li>
+    ))
+  }
+</ul>

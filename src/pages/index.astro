@@ -1,0 +1,173 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import PriceCard from '../components/PriceCard.astro';
+import CtaButton from '../components/CtaButton.astro';
+import Icon from '../components/Icon.astro';
+import AzulejoPattern from '../components/deco/AzulejoPattern.astro';
+import { temporada } from '../data/temporada';
+import { videos } from '../data/videos';
+import { sportsClubSchema } from '../data/schema';
+import noche from '../assets/triana/noche.jpg';
+import puente3 from '../assets/triana/puente3.jpg';
+import bufanda from '../assets/productos/bufanda.jpg';
+
+const title = 'PS SVQ Triana | Peña sevillista de Triana, Sevilla';
+const description = `Peña sevillista fundada el 27 de julio de 2019 en el barrio de Triana, Sevilla. Abierta la renovación y las nuevas altas de la temporada ${temporada.etiqueta}.`;
+
+// The gallery's featured thumbnail is the same one /media opens and the one the
+// JSON-LD uses: it changes in a single place (videos.ts).
+const videoDestacado = videos.find((video) => video.destacado) ?? videos[0];
+
+const teasers = [
+  {
+    href: '/nosotros',
+    kicker: 'Nuestra historia',
+    titulo: 'Vinimos al mundo la tarde calurosa del 27 de julio de 2019.',
+    imagen: noche,
+    alt: 'La peña durante una noche de sevillismo',
+  },
+  {
+    href: '/productos',
+    kicker: 'Material',
+    titulo: 'Bufanda oficial roja y negra',
+    imagen: bufanda,
+    alt: 'Bufanda oficial roja y negra',
+  },
+  {
+    href: '/media',
+    kicker: 'Galería',
+    titulo: videoDestacado.titulo,
+    imagen: videoDestacado.miniatura,
+    alt: `Miniatura del vídeo ${videoDestacado.titulo}`,
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/"
+  jsonLd={sportsClubSchema}
+>
+  <Hero />
+
+  <section id="precios" class="relative scroll-mt-24 bg-cal-50 py-16 sm:py-24">
+    <div class="site-container grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
+      <div class="max-w-xl">
+        <p class="kicker text-sevilla-700">Temporada {temporada.etiqueta}</p>
+        <h2 class="mt-4 font-display text-5xl leading-[0.95] tracking-tight sm:text-6xl">
+          Hazte socio
+        </h2>
+        <p class="mt-5 text-lg leading-relaxed text-noche-950/75">
+          Renovación y nuevas altas por formulario. Elige la modalidad y completa tus datos.
+        </p>
+        <div class="mt-8 hidden lg:block">
+          <CtaButton href={temporada.formularioUrl} external icon="external">Hazte socio</CtaButton>
+        </div>
+      </div>
+
+      <div>
+        <div class="grid gap-5 sm:grid-cols-2">
+          <PriceCard
+            etiqueta="Renovación"
+            base={temporada.precios.renovacion.base}
+            conCamiseta={temporada.precios.renovacion.conCamiseta}
+            destacado
+          />
+          <PriceCard
+            etiqueta="Nueva alta"
+            base={temporada.precios.nuevaAlta.base}
+            conCamiseta={temporada.precios.nuevaAlta.conCamiseta}
+          />
+        </div>
+        <div class="mt-8 lg:hidden">
+          <CtaButton href={temporada.formularioUrl} external icon="external" class="w-full sm:w-auto">
+            Hazte socio
+          </CtaButton>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative isolate overflow-hidden border-t border-noche-950/10 bg-cal-100 py-16 sm:py-24">
+    <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-noche-950/[0.035]" />
+    <div class="site-container">
+      <h2 class="font-display text-5xl leading-[0.95] tracking-tight sm:text-6xl">La peña</h2>
+
+      <div class="mt-10 grid gap-5 lg:grid-cols-2 lg:grid-rows-2">
+        {
+          teasers.map((teaser, index) => (
+            <a
+              href={teaser.href}
+              class:list={[
+                'group relative isolate flex min-h-72 flex-col justify-end overflow-hidden rounded-[var(--radius-azulejo)] bg-noche-950 text-cal-50 shadow-[0_18px_40px_-24px_rgb(26_20_20/0.6)] ring-1 ring-noche-950/10',
+                index === 0 ? 'sm:min-h-[26rem] lg:row-span-2 lg:min-h-[34rem]' : 'sm:min-h-64',
+              ]}
+            >
+              <Picture
+                src={teaser.imagen}
+                alt={teaser.alt}
+                formats={['avif', 'webp']}
+                widths={index === 0 ? [540, 720, 1080] : [360, 540, 720]}
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 -z-10 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              />
+              <div
+                class="absolute inset-0 -z-10 bg-gradient-to-t from-noche-950 via-noche-950/70 to-noche-950/0"
+              />
+              <div class="p-6 sm:p-8">
+                <p class="kicker text-albero-400">{teaser.kicker}</p>
+                <h3
+                  class:list={[
+                    'mt-3 max-w-md text-balance font-display leading-tight',
+                    index === 0 ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl',
+                  ]}
+                >
+                  {teaser.titulo}
+                </h3>
+                <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-cal-50 transition-colors group-hover:text-albero-400">
+                  Ver más
+                  <Icon name="arrow-right" size={16} class="transition-transform group-hover:translate-x-1" />
+                </span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="relative isolate overflow-hidden bg-noche-950">
+    <Picture
+      src={puente3}
+      alt="Pancarta de SVQ Triana frente al Puente de Triana iluminado sobre el Guadalquivir"
+      formats={['avif', 'webp']}
+      widths={[720, 1080, 1600]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 -z-10 h-full w-full object-cover opacity-60"
+    />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-noche-950 via-noche-950/80 to-noche-950/10"></div>
+
+    <div class="site-container py-24 sm:py-36">
+      <p class="kicker text-albero-400">Triana</p>
+      <blockquote class="relative mt-6 max-w-2xl">
+        <span
+          class="pointer-events-none block h-12 font-display text-[6rem] leading-none text-sevilla-500"
+          aria-hidden="true">&ldquo;</span
+        >
+        <p class="relative font-display text-3xl leading-tight text-cal-50 sm:text-5xl">
+          Y aquí estamos con más fuerza que nunca. Igual que aquella tarde calurosa de julio.
+        </p>
+      </blockquote>
+      <div class="mt-10">
+        <CtaButton href="/nosotros" variant="outline-dark" icon="arrow-right">Nuestra historia</CtaButton>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

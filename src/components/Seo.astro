@@ -1,0 +1,67 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  ogImage?: string;
+  ogImageAlt?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonicalPath,
+  ogImage = site.ogImage,
+  ogImageAlt = site.ogImageAlt,
+  noindex = false,
+} = Astro.props;
+
+const path = canonicalPath === '/' ? '/' : canonicalPath.replace(/\/+$/, '');
+const canonical = `${site.url}${path}`;
+const image = ogImage.startsWith('http') ? ogImage : `${site.url}${ogImage}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="description" content={description} />
+<meta name="author" content={site.author} />
+<link rel="canonical" href={canonical} />
+
+<!-- Sharing: a stable absolute JPEG; scrapers fail with WebP. -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content={String(site.ogImageSize.width)} />
+<meta property="og:image:height" content={String(site.ogImageSize.height)} />
+<meta property="og:image:alt" content={ogImageAlt} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={site.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+<meta name="twitter:site" content="@ps_svqtriana1" />
+
+<meta name="google-adsense-account" content={site.adsenseAccount} />
+<meta name="theme-color" content={site.themeColor} />
+<meta name="msapplication-TileColor" content={site.themeColor} />
+<meta name="application-name" content={site.name} />
+
+<link rel="manifest" href={site.manifest} />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png" />
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+
+<!-- Only the fonts that paint above the fold. -->
+<link rel="preload" as="font" href="/fonts/GlacialIndifference-Regular.woff2" type="font/woff2" crossorigin />
+<link rel="preload" as="font" href="/fonts/GlacialIndifference-Bold.woff2" type="font/woff2" crossorigin />
+
+<title>{title}</title>

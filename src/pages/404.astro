@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import AzulejoPattern from '../components/deco/AzulejoPattern.astro';
+import { nav } from '../data/site';
+
+const title = 'Página no encontrada | PS SVQ Triana';
+const description = 'La página que buscas no existe. Vuelve al inicio o explora las secciones de PS SVQ Triana.';
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/404" noindex>
+  <section class="relative isolate overflow-hidden py-16 sm:py-24">
+    <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-noche-950/[0.04]" />
+    <div class="site-container">
+      <p class="font-display text-[clamp(4rem,18vw,9rem)] leading-none tracking-tight text-sevilla-500">
+        404
+      </p>
+      <h1 class="mt-4 font-display text-4xl leading-tight tracking-tight sm:text-5xl">
+        Esta página no existe
+      </h1>
+      <p class="mt-4 max-w-xl text-lg leading-relaxed text-noche-950/75">
+        Puede que el enlace esté mal escrito o que la página haya cambiado de sitio. Desde aquí
+        puedes volver a cualquier sección.
+      </p>
+
+      <nav class="mt-10" aria-label="Secciones del sitio">
+        <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="group flex items-center justify-between gap-3 rounded-[var(--radius-azulejo)] border border-noche-950/10 bg-white px-5 py-4 shadow-[0_12px_30px_-24px_rgb(26_20_20/0.5)] text-sm font-bold uppercase tracking-[0.12em] text-noche-950 transition-colors hover:border-sevilla-500 hover:text-sevilla-700"
+                >
+                  {item.label}
+                  <Icon
+                    name="arrow-right"
+                    size={16}
+                    class="transition-transform group-hover:translate-x-1"
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>

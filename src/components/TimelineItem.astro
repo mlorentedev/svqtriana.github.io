@@ -1,0 +1,68 @@
+---
+import { Picture } from 'astro:assets';
+import type { Hito } from '../data/historia';
+
+interface Props {
+  hito: Hito;
+}
+
+const { hito } = Astro.props;
+const fotos = hito.fotos ?? [];
+// With a single photo, it sits next to the text on desktop; with several, below.
+const fotoLateral = fotos.length === 1;
+---
+
+<li class="relative pl-14 md:grid md:grid-cols-[7rem_minmax(0,1fr)] md:gap-x-16 md:pl-0">
+  <!-- Mark on the thread: an azulejo diamond. -->
+  <span
+    class="absolute left-0 top-0 grid h-[2.4rem] w-[2.4rem] rotate-45 place-items-center rounded-[3px] border-2 border-sevilla-500 bg-cal-50 md:left-[7.5rem]"
+    aria-hidden="true"
+  >
+    <span class="h-2.5 w-2.5 rounded-full bg-sevilla-500"></span>
+  </span>
+
+  <div class="md:pt-1.5 md:text-right">
+    {
+      hito.fecha && (
+        <p class="mb-4 inline-block rounded-full bg-sevilla-500 px-3 py-1 text-xs font-bold tracking-[0.1em] text-white md:mb-0">
+          {hito.fecha}
+        </p>
+      )
+    }
+  </div>
+
+  <div
+    class:list={[
+      fotoLateral && 'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,21rem)] lg:items-start lg:gap-10',
+    ]}
+  >
+    <div class="max-w-[65ch] space-y-5 text-[1.075rem] leading-[1.75] text-noche-950/85">
+      {hito.parrafos.map((parrafo) => <p set:html={parrafo} />)}
+    </div>
+
+    {
+      fotos.length > 0 && (
+        <div class:list={['mt-8 grid gap-6', fotoLateral ? 'max-w-xl lg:mt-1' : 'max-w-4xl sm:grid-cols-2']}>
+          {fotos.map((foto) => (
+            <figure class="polaroid">
+              <Picture
+                src={foto.src}
+                alt={foto.alt}
+                formats={['avif', 'webp']}
+                widths={[360, 540, 720, 960]}
+                sizes={
+                  fotoLateral
+                    ? '(min-width: 1024px) 21rem, (min-width: 640px) 36rem, 90vw'
+                    : '(min-width: 640px) 40vw, 90vw'
+                }
+                loading="lazy"
+                decoding="async"
+                class="h-auto w-full"
+              />
+            </figure>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</li>

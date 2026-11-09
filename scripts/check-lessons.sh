@@ -5,8 +5,7 @@
 # 3. When lessons live in category directories, docs/lessons/_index.md (the root index the
 #    pointer stub links) must still exist.
 # Lessons may live flat in docs/lessons/ or one level down in category directories
-# (docs/lessons/<category>/ with a per-category _index.md); both layouts are checked.
-# Portable: bash and zsh, GNU and BSD find (no -printf), filenames compared as literal
+# (docs/lessons/<category>/ with a per-category _index.md); both layouts are checked.# Portable: bash and zsh, GNU and BSD find (no -printf), filenames compared as literal
 # tokens (no regex built from a filename), NUL-separated so spaces cannot split them.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -15,21 +14,34 @@ LESSONS_DIR="$ROOT/docs/lessons"
 rc=0
 total=0
 
+# Both naming schemes are accepted. This guard was written for lesson-NNN-slug.md and
+# this repository names its lessons YYYY-MM-DD-slug.md, so every find matched nothing and
+# it printed "OK (0 lessons)" over fourteen files - a check that cannot fail (#29 in the
+# harness template, defect 6 in the review of #35). The duplicate-number rule below only
+# applies to the numbered scheme: a date is not a unique key, and two lessons written on
+# one day are legitimate.
+LESSON_NAME_PATTERNS=(-name 'lesson-[0-9]*.md' -o -name '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.md')
+lesson_files() { # lesson_files <dir> <maxdepth> [extra find args...]
+  local dir="$1" depth="$2"
+  shift 2
+  find "$dir" -maxdepth "$depth" -type f \( "${LESSON_NAME_PATTERNS[@]}" \) "$@"
+}
+
 # Link targets an index may name: everything between a '(' or a '[[' and the closing
 # ')' / '|' / ']]' that ends in .md, path stripped. Printed one per line; spaces allowed.
 index_targets() {
   # perl, not grep: a markdown target may contain escaped or %-encoded parens and spaces,
   # which no single ERE handles; the targets come back decoded, path stripped, one per line.
   perl -ne '
-    while (/\]\(\s*((?:[^()\\\s#]|\\.|%[0-9A-Fa-f]{2})*?lesson-\d+(?:[^()\\\s#]|\\.|%[0-9A-Fa-f]{2})*?\.md)(?:#[^)\s]*)?\s*\)/g) { print "$1\n" }
+    while (/\]\(\s*((?:[^()\\\s#]|\\.|%[0-9A-Fa-f]{2})*?(?:lesson-\d+|\d{4}-\d{2}-\d{2})[^()\\\s#]*?\.md)(?:#[^)\s]*)?\s*\)/g) { print "$1\n" }
     # Obsidian wikilinks may omit the .md extension; add it back so the token compares.
-    while (/\[\[([^\]|\\]*?lesson-\d+[^\]|\\]*?)(?:\\?\||\]\])/g) { my $t = $1; $t .= ".md" unless $t =~ /\.md$/; print "$t\n" }
+    while (/\[\[([^\]|\\]*?(?:lesson-\d+|\d{4}-\d{2}-\d{2})[^\]|\\]*?)(?:\\?\||\]\])/g) { my $t = $1; $t .= ".md" unless $t =~ /\.md$/; print "$t\n" }
   ' "$1" 2>/dev/null \
     | perl -pe 's/#[^\n]*$//; s/\\(.)/$1/g; s/%([0-9A-Fa-f]{2})/chr(hex($1))/ge; s#.*/##' | sort -u
 }
 
 # --- 1. duplicate numbers across the whole tree (a number is unique per repo) ---
-dupes="$(find "$LESSONS_DIR" -maxdepth 2 -type f -name 'lesson-[0-9]*.md' -exec basename {} \; \
+dupes="$(lesson_files "$LESSONS_DIR" 2 -exec basename {} \; \
   | grep -oE '^lesson-[0-9]+' | sort | uniq -d || true)"
 if [ -n "$dupes" ]; then
   echo "check-lessons: lesson numbers used more than once:"
@@ -54,7 +66,7 @@ while IFS= read -r -d '' dir; do
       printf '%s\n' "$targets" | grep -qxF -- "$name" \
         || { echo "check-lessons: not in ${index#"$ROOT"/}: $name"; rc=1; }
     fi
-  done < <(find "$dir" -maxdepth 1 -type f -name 'lesson-[0-9]*.md' -print0)
+  done < <(lesson_files "$dir" 1 -print0)
   [ "$count" -gt 0 ] || continue
   total=$((total + count))
   if [ -f "$index" ]; then

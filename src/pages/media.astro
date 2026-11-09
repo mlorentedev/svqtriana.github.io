@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import VideoCard from '../components/VideoCard.astro';
+import { videos } from '../data/videos';
+import { videosSchema } from '../data/schema';
+
+const title = 'Galería de vídeos | PS SVQ Triana';
+const description =
+  'Galería de vídeos de PS SVQ Triana: spots promocionales, pregones, desplazamientos y momentos especiales de nuestra peña sevillista.';
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/media" jsonLd={videosSchema}>
+  <PageHeader kicker="Spots y momentos" intro="Cada vídeo se abre en YouTube, en una pestaña nueva.">
+    GALERÍA
+  </PageHeader>
+
+  <section class="py-16 sm:py-20">
+    <div class="site-container">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {videos.map((video) => <VideoCard video={video} destacado={video.destacado} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Timeline from '../components/Timeline.astro';
+import TimelineItem from '../components/TimelineItem.astro';
+import CtaButton from '../components/CtaButton.astro';
+import AzulejoPattern from '../components/deco/AzulejoPattern.astro';
+import PuenteDivider from '../components/deco/PuenteDivider.astro';
+import { historia } from '../data/historia';
+import { temporada } from '../data/temporada';
+
+const title = 'Nuestra historia | PS SVQ Triana';
+const description =
+  'Historia de PS SVQ Triana: peña sevillista fundada el 27 de julio de 2019 en Triana. Conoce nuestros orígenes, crecimiento y pasión sevillista.';
+
+// The last milestone is the closing one: "Y aquí estamos…" and the invitation
+// to join.
+const hitos = historia.hitos.slice(0, -1);
+const cierre = historia.hitos.at(-1);
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/nosotros">
+  <PageHeader kicker="Desde 2019">{historia.titulo}</PageHeader>
+
+  <section class="py-16 sm:py-24">
+    <div class="site-container">
+      <Timeline>
+        {hitos.map((hito) => <TimelineItem hito={hito} />)}
+      </Timeline>
+
+      {
+        cierre && (
+          <div class="relative isolate mt-20 overflow-hidden rounded-[var(--radius-azulejo)] bg-noche-950 text-cal-50 shadow-[0_30px_60px_-30px_rgb(26_20_20/0.7)] sm:mt-24">
+            <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-cal-50/[0.06]" />
+            <div class="franjas h-1.5 w-full" aria-hidden="true" />
+            <div class="grid gap-10 p-8 sm:p-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:p-16">
+              <div class="max-w-2xl space-y-6 font-display text-3xl leading-tight sm:text-4xl [&_strong]:font-semibold [&_strong]:text-albero-400">
+                {cierre.parrafos.map((parrafo) => (
+                  <p set:html={parrafo} />
+                ))}
+              </div>
+              <div>
+                <CtaButton href={temporada.formularioUrl} external icon="external">
+                  Hazte socio
+                </CtaButton>
+              </div>
+            </div>
+            <PuenteDivider class="block h-12 w-full text-albero-400/30" scale={0.75} />
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

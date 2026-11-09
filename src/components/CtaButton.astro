@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'outline' | 'outline-dark';
+  external?: boolean;
+  class?: string;
+  icon?: 'arrow-right' | 'external' | 'mail';
+}
+
+const { href, variant = 'primary', external = false, class: className = '', icon } = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2 rounded-[var(--radius-azulejo)] px-6 py-3 font-sans text-sm font-bold uppercase tracking-[0.14em] transition-colors';
+const variants = {
+  primary: 'bg-sevilla-500 text-white hover:bg-sevilla-700',
+  outline: 'border-2 border-noche-950/20 text-noche-950 hover:border-sevilla-500 hover:text-sevilla-700',
+  'outline-dark': 'border-2 border-white/25 text-cal-50 hover:border-albero-400 hover:text-albero-400',
+};
+---
+
+<a
+  href={href}
+  class:list={[base, variants[variant], className]}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+>
+  <span><slot /></span>
+  {
+    icon && (
+      <Icon
+        name={icon}
+        size={18}
+        class="transition-transform group-hover:translate-x-0.5"
+      />
+    )
+  }
+  {external && <span class="sr-only"> (abre en una pestaña nueva)</span>}
+</a>

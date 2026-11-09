@@ -82,7 +82,13 @@ jobs:
         && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
         && startsWith(github.event.comment.body, '/'))
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Must cover the whole model chain, not one call. The handler retries each model
+    # once, so the worst case is 2 models x 2 attempts x [config] ai_timeout, plus
+    # container setup and the guard below. At ai_timeout=300 that is 1200s + slack;
+    # 15 minutes would cancel the job mid-inference and report a bare cancellation
+    # instead of a review (run 42562380120 spent 8 of them on four timeouts).
+    # scripts/check-harness.mjs asserts this arithmetic against the toml.
+    timeout-minutes: 30
     steps:
       # `The-PR-Agent/pr-agent`, not `qodo-ai/pr-agent` as #786's body says: the
       # project has been renamed and the old path now redirects. Pinned to a tag
@@ -241,6 +247,10 @@ jobs:
           fi
           echo "::error::PR-Agent reported success but published no review" \
             "(no github-actions[bot] comment updated since ${STARTED} carries \"${marker}\")."
-          echo "::error::Most likely cause: NaN concurrency exhaustion — the cluster allows 5 simultaneous"
-          echo "::error::requests, shared with pi, qq and hive embeddings. See #1107."
+          echo "::error::Two shapes have been measured on this chain; the PR-Agent step log says which:"
+          echo "::error::  - litellm.Timeout / APITimeoutError on every model (run 42562380120: four calls at"
+          echo "::error::    exactly ai_timeout). The prompt outgrew the timeout. Lower [config] max_model_tokens"
+          echo "::error::    in .pr_agent.toml before raising ai_timeout — the prompt is the unbounded variable."
+          echo "::error::  - litellm.RateLimitError ... concurrency limit: max 5 (run 32325012314). NaN"
+          echo "::error::    saturation, shared with pi, qq and hive embeddings. Retry later. See #1107."
           exit 1

@@ -1,0 +1,70 @@
+{
+  "$comment": [
+    "What this repository borrows from the dotfiles harness, and what it deliberately",
+    "does not. The dotfiles harness deploys into an agent home directory (~/.claude,",
+    "~/.gemini, ~/.codex) and mirrors vault subpaths (00_meta/agents,",
+    "00_meta/skills, 00_meta/patterns). None of that exists here: this is a static",
+    "site with two registries and a CI guard. Porting the deploy machinery would",
+    "import a contract with no second party.",
+    "",
+    "So this manifest is an inventory, not a deployment plan. scripts/check-harness.mjs",
+    "asserts that every file named in `enforced` exists and is non-empty, which is the",
+    "only thing the inventory can get wrong. The `not_ported` entries are recorded so",
+    "their absence reads as a decision rather than an oversight; each names the reason",
+    "it cannot apply, and a reason that stops being true is the cue to revisit it."
+  ],
+  "version": 1,
+  "sota_source": "dotfiles/harness",
+  "enforced": [
+    { "id": "definition-of-done", "file": "harness/enforced/definition-of-done.md" },
+    { "id": "english-only", "file": "harness/enforced/english-only.md" },
+    { "id": "iac-and-idempotence", "file": "harness/enforced/iac-and-idempotence.md" },
+    { "id": "no-attribution", "file": "harness/enforced/no-attribution.md" },
+    { "id": "no-auto-merge", "file": "harness/enforced/no-auto-merge.md" },
+    { "id": "no-phase-references", "file": "harness/enforced/no-phase-references.md" },
+    { "id": "pr-sizing", "file": "harness/enforced/pr-sizing.md" },
+    { "id": "pr-stewardship", "file": "harness/enforced/pr-stewardship.md" },
+    {
+      "id": "secrets-never-in-output",
+      "file": "harness/enforced/secrets-never-in-output.md"
+    }
+  ],
+  "registries": [
+    { "id": "reviewer-pool", "file": "harness/reviewer-pool.json" },
+    { "id": "review-attestation", "file": "harness/review-attestation.json" }
+  ],
+  "not_ported": [
+    {
+      "id": "manifest-deploy-targets",
+      "why": "The SOTA manifest's `targets`/`doctrine`/`agents`/`skills`/`bind` keys drive a writer that deploys into an agent home directory. Nothing here consumes them, and a manifest with keys no consumer reads is the drift this file exists to prevent. Only the inventory keys above were kept."
+    },
+    {
+      "id": "agents/*/AGENT.md",
+      "why": "Personas are a vault runtime concept (architect, builder, curator, hermes-*). This repository has one agent context and no dispatch layer to select a persona with."
+    },
+    {
+      "id": "skills/**",
+      "why": "The vault skill catalogue is deployed by dotfiles setup into ~/.copilot/skills. Copying it here would fork the catalogue and let the two copies diverge."
+    },
+    {
+      "id": "triggers.json",
+      "why": "Maps vault globs (specs/**, 00_meta/**) to skills. This repository has neither the globs nor the skill loader."
+    },
+    {
+      "id": "model-map.json, model-pins.json, capability-map.json",
+      "why": "Routing and capability tables for the multi-model agent harness. CI here runs one fixed reviewer chain declared in harness/reviewer-pool.json; a second model table would be a second source of truth."
+    },
+    {
+      "id": "nan-quotas.json",
+      "why": "Quota bookkeeping for the Nan provider seat. Quotas are consumed by the harness CLI, not by a GitHub workflow."
+    },
+    {
+      "id": "pr-agent-upstream-contract.json",
+      "why": "Describes the upstream pr-agent release this repo pins. The pin lives in .github/workflows/pr-agent.yml and .pr_agent.toml; a third copy would need its own guard to stay honest."
+    },
+    {
+      "id": "agent-frontmatter.schema.json, skill-frontmatter.schema.json",
+      "why": "Validate the agent and skill records above, which are not ported. The schema without the records validates nothing."
+    }
+  ]
+}

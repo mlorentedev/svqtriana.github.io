@@ -1,0 +1,29 @@
+---
+import AzulejoPattern from './deco/AzulejoPattern.astro';
+
+interface Props {
+  kicker: string;
+  intro?: string;
+}
+
+const { kicker, intro } = Astro.props;
+---
+
+<header class="relative isolate overflow-hidden bg-noche-950 text-cal-50">
+  <AzulejoPattern class="absolute inset-0 -z-10 h-full w-full text-cal-50/[0.06]" />
+  <div
+    class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgb(168_5_10/0.35),transparent_60%)]"
+  >
+  </div>
+
+  <div class="site-container py-14 sm:py-20">
+    <p class="kicker text-albero-400">{kicker}</p>
+    <h1
+      class="mt-5 max-w-4xl text-balance font-display text-[clamp(2.75rem,7.5vw,5rem)] leading-[0.95] tracking-tight"
+    >
+      <slot />
+    </h1>
+    {intro && <p class="mt-6 max-w-2xl text-lg leading-relaxed text-cal-50/80">{intro}</p>}
+  </div>
+
+</header>
