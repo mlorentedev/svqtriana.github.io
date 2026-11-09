@@ -117,21 +117,29 @@ jobs:
         with:
           path: ${{ github.workspace }}/.terraform-plugin-cache
           key: terraform-providers-${{ hashFiles('infra/cloudflare/.terraform.lock.hcl') }}
+          restore-keys: |
+            terraform-providers-
 
       - name: terraform init
         env:
           TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform-plugin-cache
         run: |
           mkdir -p "$TF_PLUGIN_CACHE_DIR"
-          attempt=0
-          until terraform init -backend=false; do
-            attempt=$((attempt + 1))
-            if [ "$attempt" -ge 3 ]; then
+          # A 504 storm on the releases proxy lasts minutes, not seconds. The
+          # first version of this loop backed off 15s twice and still failed
+          # run 42570424209: three 504s inside 30s, on a github.com that was
+          # healthy again a minute later. Back off exponentially to ~4 minutes.
+          delay=15
+          attempt=1
+          until terraform init -backend=false -no-color; do
+            if [ "$attempt" -ge 5 ]; then
               echo "terraform init failed after $attempt attempts" >&2
               exit 1
             fi
-            echo "terraform init failed (attempt $attempt/3); retrying in 15s" >&2
-            sleep 15
+            echo "terraform init failed (attempt $attempt/5); retrying in ${delay}s" >&2
+            sleep "$delay"
+            attempt=$((attempt + 1))
+            delay=$((delay * 2))
           done
 
       - run: terraform validate

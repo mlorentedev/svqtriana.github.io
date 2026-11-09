@@ -6,6 +6,7 @@ accounts.
 
 | Date | Lesson |
 |---|---|
+| 2026-11-09 | [A check that runs before the deploy measures the deploy](2026-11-09-a-check-that-runs-before-the-deploy.md) |
 | 2026-11-09 | [A budget set at its own ceiling never fires](2026-11-09-a-budget-at-its-own-ceiling-never-fires.md) |
 | 2026-11-09 | [A fork PR is reviewed by nobody](2026-11-09-a-fork-pr-is-reviewed-by-nobody.md) |
 | 2026-11-09 | [A guard whose glob matches nothing passes forever](2026-11-09-a-guard-that-matches-nothing-passes.md) |
