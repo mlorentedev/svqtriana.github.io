@@ -5,7 +5,14 @@ Website of **PS SVQ Triana**, a Sevilla FC supporters' club founded on 27 July
 
 Static site generated with **Astro 7** and **Tailwind CSS v4**, published on
 GitHub Pages and served through Cloudflare. No UI framework, no jQuery, no
-third-party scripts.
+third-party scripts in the build output.
+
+Two scripts are injected by the Cloudflare zone at the edge, not by this
+repository: `beacon.min.js` (Web Analytics) and `email-decode.min.js` (Email
+Address Obfuscation). `infra/cloudflare/csp.txt` is the intended allow-list for
+what the edge may load; it is not live yet, because applying it is blocked on the
+missing Terraform state backend
+([#37](https://github.com/mlorentedev/svqtriana.github.io/issues/37)).
 
 ## Getting started
 
@@ -65,8 +72,9 @@ terraform -chdir=infra/cloudflare validate
 CI (`.github/workflows/checks.yml`) runs types, build, `dist/` invariants,
 Playwright, Lighthouse, `terraform validate` and the repository guards
 (`check-harness.mjs`, `check-lessons.sh`, `check-actions-pinned.sh`) on every
-pull request and every push to `main`. `deploy.yml` stays manual: publishing is a
-deliberate act, not a side effect of merging. Every check exists because
+pull request and every push to `main`. `deploy.yml` runs on every push to
+`main`, so **merging publishes**: there is no separate release step. It also
+accepts `workflow_dispatch` for a manual re-publish. Every check exists because
 something really did break in the previous site.
 
 `npm audit --omit=dev` comes back clean: what gets published is static files,
@@ -74,25 +82,20 @@ with no runtime dependencies. The advisories the full `npm audit` reports live
 in the `@lhci/cli` -> `lighthouse` -> `puppeteer-core` chain and only affect the
 machine running the tests, not the site.
 
-## Sharing the MVP without touching production
+## Reviewing a change before it is published
 
-This repository **has not been deployed**. To show it to the DevOps and to
-whoever administers the site there is an isolated path on Cloudflare Pages (free
-plan), with a `*.pages.dev` URL, `noindex` and the real production CSP:
+The site **is deployed**: <https://svqtriana.com>. A pull request is reviewed by
+building it locally (`npm run build && npm run preview`) and by CI, which runs
+Playwright and Lighthouse on the PR itself.
 
-```sh
-npx --yes wrangler@4 login
-npx --yes wrangler@4 pages project create svqtriana-mvp --production-branch mvp
-npm ci
-npm run preview:cf
-```
-
-`npm run preview:cf` builds, checks, prepares `dist/` and publishes. No separate
-`npm run build` needed.
-
-Full instructions, the GitHub alternative and the review checklist:
-[`docs/runbooks/preview-cloudflare.md`](docs/runbooks/preview-cloudflare.md).
-It changes no DNS, no `svqtriana.com` zone, and nothing in production Pages.
+The isolated Cloudflare Pages path (`*.pages.dev`, `noindex`, production CSP)
+described in
+[`docs/runbooks/preview-cloudflare.md`](docs/runbooks/preview-cloudflare.md) is
+**not in use**. `*.pages.dev` is unreachable from some Spanish ISPs, which is the
+same reachability problem that decided the hosting topology in
+[ADR-001](docs/adr/adr-001-github-pages-origin-cloudflare-in-front.md). A preview
+that part of the audience cannot open is worse than no preview. The runbook is
+kept as the procedure of record and carries a `Status: not in use` header.
 
 ## Traps
 

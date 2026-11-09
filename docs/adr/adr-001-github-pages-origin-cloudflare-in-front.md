@@ -57,11 +57,24 @@ that eliminated the obvious alternative.
   orange-clouded. That zone is retained deliberately: it terminates DNS and TLS
   and injects the analytics beacon, none of which is affected by the Pages
   reachability problem.
+- **The reachability observation is scoped to Cloudflare Pages.** It is evidence
+  about `*.pages.dev` and nothing more: it does not establish that the retained
+  zone is reachable, and it is not why the zone is kept. The zone is kept because
+  it is the only implementation the response headers have. The distinction
+  matters because the two failures do not look alike — if the zone became
+  unreachable the site is down, loudly; if Pages is unreachable the site is up
+  and merely invisible to its audience.
 - **No staging or preview environment.** Review happens against the PR and its
   checks, not against a preview URL.
 - The stricter CSP in `infra/cloudflare/csp.txt` is applied through Terraform
   after the site is live, not by the deploy workflow. The deploy path cannot
   change response headers.
+- **That apply has not run yet.** Production still serves the earlier, broader
+  policy — measured 2026-11-09: `script-src` still lists `https://code.jquery.com`
+  and `style-src` still carries `'unsafe-inline'`. Applying it is blocked on the
+  missing Terraform state backend, tracked in
+  [#37](https://github.com/mlorentedev/svqtriana.github.io/issues/37). Until that
+  lands, the policy described above is the intended one, not the live one.
 - Revisit this ADR if the Pages reachability constraint changes, or if GitHub
   Pages gains custom response headers.
 
@@ -101,15 +114,21 @@ that eliminated the obvious alternative.
 - **Every header change is a Terraform apply against production.** Slower and
   higher blast radius than editing a file in the repo, and it is the only path
   the headers have.
-- **Review happens without a URL.** Mobile layout and Lighthouse verification
-  can only be done after merge.
+- **Review happens without a URL.** CI does run Playwright and Lighthouse on the
+  pull request, and a local `npm run preview` reproduces the routes, so the change
+  itself is checked before merge. What cannot be checked before merge is the
+  change **as the real host serves it**: the zone's headers, the injected
+  analytics beacon and the two-CDN cache behaviour exist only in production.
 - Cloudflare Pages' build previews and deploy hooks are unavailable, so no
   pre-merge verification of the real host is possible.
 
 ### Neutral
 
-- `CNAME` in the repository root still matters: it tells GitHub Pages which
-  custom domain to serve, independently of DNS.
+- **The custom domain is a GitHub Pages setting, not the `CNAME` file.** Pages
+  here is configured with `build_type: workflow`, and for that source GitHub reads
+  the domain from Settings -> Pages; `public/CNAME` is published as an ordinary
+  static file and editing it changes nothing. `docs/runbooks/dns.md` said the
+  opposite and is corrected alongside this ADR.
 - Squarespace remains registrar of record but no longer answers queries for the
   domain.
 - If Cloudflare is ever removed from the path, `docs/runbooks/dns.md` holds the
