@@ -42,8 +42,13 @@ GitHub Pages cannot send custom response headers, and Cloudflare can.
 - **The origin IPs are hidden.** Visitors never see the GitHub Pages addresses;
   they see Cloudflare's. Cloudflare holds the `185.199.108-111.153` A records
   (or a CNAME to `mlorentedev.github.io`) internally as the origin.
-- **`CNAME` in the repository root still matters.** It tells GitHub Pages which
-  custom domain to serve, independently of DNS.
+- **The custom domain is a GitHub Pages setting, not the `CNAME` file.** Pages
+  here is configured with `build_type: workflow`, and for that source GitHub
+  reads the domain from Settings -> Pages. `public/CNAME` is copied to `dist/`
+  and published as an ordinary static file: editing it changes nothing. Verify
+  with `gh api repos/mlorentedev/svqtriana.github.io/pages` — the `cname` field
+  is the live value. See
+  [ADR-001](../adr/adr-001-github-pages-origin-cloudflare-in-front.md).
 - **Purging Cloudflare's cache does not purge Fastly's.** There are two CDNs in
   the path. GitHub Pages sends `max-age=600`, so its own layer expires quickly,
   but a Cloudflare purge only clears the outer one.
