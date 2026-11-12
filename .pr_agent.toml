@@ -17,44 +17,22 @@
 # so it can be checked at source.
 
 [config]
-# `openai/` selects LiteLLM's OpenAI-compatible transport; the endpoint is NaN's, set
-# as OPENAI__API_BASE in the workflow. Nothing here talks to OpenAI.
-#
-# mimo-v2.6-flash leads and deepseek-v4-flash follows because the order is the only one that
-# can fail loudly. deepseek's characteristic failure is a 200 with an empty body — it
-# spends the output budget on the reasoning chain and never writes an answer — which
-# raises no exception, so LiteLLM never consults a fallback behind it. kubelab measured
-# that shape on run 32440498259 (#1205). mimo fails by saturation (429), which DOES raise.
-# That 429 shape was measured on mimo-v2.5, retired by NaN on 2026-09-30. Its successor
-# has also been seen to hang under load rather than answer 429, which raises nothing
-# (mlorentedev/dotfiles#1923), so this ordering is the best available, not a guarantee.
-#
-# This is not a quality ranking. harness/reviewer-pool.json says of mimo, in its own
-# words, that no ranking against deepseek was established; both are reasoning-class by
-# profile and both are admitted there, which is the line this file draws. The excluded
-# models stay excluded by name: qwen3.6/gemma4 are the latency tier, and a reviewer that
-# PASSes cheaply converts a gate into a green checkmark.
-model = "openai/mimo-v2.6-flash"
-
-# ONE fallback, and lane separation is why it is deepseek rather than a sibling of the
-# primary. NaN's limit is PER MODEL (kubelab #1107/#1203), so the second bucket is a
-# real fallback and not a re-name of the same wall.
-fallback_models = ["openai/deepseek-v4-flash"]
-
-# `model_weak` deliberately absent: `auto_describe` is off so it would do nothing, and
-# the model upstream defaults it to is the one the pool rejects here.
+# The model, its fallback and the model capacity are set by the shared workflow
+# (mlorentedev/ci-workflows pr-agent.yml) through environment variables, which sit
+# above this file, so they are not repeated here. Its NaN step does NOT set the
+# prompt budget or the timeout, so the two below still govern that path.
 
 # Two ceilings, deliberately different. Confusing them is what broke run 42562380120
 # on PR #35 (2026-11-09), so they are now stated apart and guarded by
 # scripts/check-harness.mjs.
 #
 # `custom_model_max_tokens` is LiteLLM's per-model CAPACITY. NaN ids are not in its
-# registry, so this must be stated or LiteLLM assumes a small default and truncates the
-# diff silently. It describes the model, so it stays at the model's capacity.
-custom_model_max_tokens = 200000
+# registry, so it must be stated or LiteLLM assumes a small default and truncates the
+# diff silently. The shared workflow states it (CONFIG__CUSTOM_MODEL_MAX_TOKENS, 200000)
+# on every PR-Agent step, so it is not repeated here.
 
 # `max_model_tokens` is PR-Agent's PROMPT budget — the guardrail that decides how much
-# diff is actually sent, and it must sit BELOW the capacity above or it never fires. It
+# diff is actually sent, and it must sit BELOW that capacity or it never fires. It
 # was 200000, i.e. above every diff this repo produces, so it was inert: the PR #35 log
 # read `Tokens: 97390, total tokens under limit: 200000, returning full diff`, a
 # 97k-token prompt went out whole, and both models in the chain were killed at
@@ -64,10 +42,11 @@ custom_model_max_tokens = 200000
 max_model_tokens = 32000
 
 # Upstream default is 120s, and 120s is not enough for a reasoning-class model even on a
-# clipped prompt: run 42562380120 lost four consecutive calls at 120.1-120.7s. This has
-# to be read together with `max_model_tokens` above and with `timeout-minutes` in
-# .github/workflows/pr-agent.yml — the handler retries each model once, so the worst case
-# is 2 models x 2 attempts x ai_timeout and that must fit inside the job budget.
+# clipped prompt: run 42562380120 lost four consecutive calls at 120.1-120.7s. It has to
+# be read together with `max_model_tokens` above. The job budget it must fit in is the
+# shared workflow's now: its NaN step is bounded at 12 minutes with
+# `retry_same_model_on_timeout` off, so a hang ends at that bound and the shared publish
+# guard reports it.
 ai_timeout = 300
 
 response_language = "en-US"
@@ -88,6 +67,11 @@ final_update_message = false
 # sixteen at dotfiles (#1072). An instruction ignored 94 % of the time is a comment,
 # not a control.
 extra_instructions = """
+Classify each finding as REAL, THEORETICAL or SPECULATIVE. State the class as
+the first line of its issue_content, alone on that line and spelled exactly
+"Class: REAL", "Class: THEORETICAL" or "Class: SPECULATIVE". The triage reads
+only that line; a finding without it goes to a human unclassified.
+
 This is a static site built by Astro: four routes plus a 404, no client framework, no
 runtime, served by GitHub Pages through Cloudflare. CI (checks.yml) already verifies that
 every route resolves, every referenced asset exists, each page keeps its own title,
@@ -118,13 +102,9 @@ Spend the budget on what those checks cannot see:
 - anything that puts a credential in a transcript, a log line, an argv or the process
   table, including in documentation examples.
 
-Grade each finding REAL, THEORETICAL or SPECULATIVE, and put the grade on its own line
-exactly as `Class: REAL`, `Class: THEORETICAL` or `Class: SPECULATIVE` — one line per
-finding, never a suffix on a heading and never the first word of the paragraph. That
-line is what harness/review-attestation.json reads back and it reads nothing else; a
-grade written as prose leaves the finding unclassified. REAL needs a concrete trace:
-file and line, failing input, or a command and its output. If you cannot place a
-finding, leave it unclassified rather than guessing. Write in English.
+A REAL finding needs a concrete trace: file and line, failing input, or a command and
+its output. If you cannot place a finding, leave it unclassified rather than guessing.
+Write in English.
 Conventional Commits and no AI attribution are enforced here, so do not propose commit
 messages that carry either.
 """

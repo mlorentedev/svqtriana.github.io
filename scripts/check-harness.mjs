@@ -186,58 +186,30 @@ for (const member of pool.pool ?? []) {
   );
 }
 
-// PR-Agent's model chain must be drawn from the pool, or the CI reviewer and the
-// adversarial reviewer are two unrelated allow-lists wearing one filename.
-const configured = [
-  toml.match(/^\s*model\s*=\s*"([^"]+)"/m)?.[1],
-  ...[...toml.matchAll(/"(openai\/[^"]+|anthropic\/[^"]+)"/g)].map((match) => match[1]),
-].filter(Boolean);
-const declared = (pool.pool ?? [])
-  .map((member) => member.pr_agent?.model)
-  .filter((model) => typeof model === 'string');
-for (const model of new Set(configured)) {
-  check(declared.includes(model), `${PR_AGENT_TOML}: "${model}" is not declared by any ${POOL} member's pr_agent.model`);
+// PR-Agent's model chain comes from the shared workflow (mlorentedev/ci-workflows
+// pr-agent.yml): its NaN steps take the model and fallbacks from the pinned dotf's
+// embedded pool and set the model capacity through the environment, which sits above
+// .pr_agent.toml. A value restated here would be silently overridden, so the toml must
+// not carry one. The pool-internal role checks below still hold for this repository's
+// own registry.
+for (const key of ['model', 'fallback_models', 'custom_model_max_tokens']) {
+  check(
+    !new RegExp(`^\\s*${key}\\s*=`, 'm').test(toml),
+    `${PR_AGENT_TOML}: ${key} is set by the shared workflow's environment; a value here is ` +
+      `silently overridden, so remove it`,
+  );
 }
-check(
-  declared.length === new Set(declared).size,
-  `${POOL}: two members declare the same pr_agent.model, so the mapping is ambiguous`,
-);
-
-// Role is position in the CI chain, not a preference. Without this the two roles can
-// swap on a re-port — they did, from the SSOT, which orders deepseek first while this
-// repo's TOML must not — and the registry then describes a chain CI never runs.
-const primaryModel = toml.match(/^\s*model\s*=\s*"([^"]+)"/m)?.[1];
-const fallbackBlock = toml.match(/^\s*fallback_models\s*=\s*\[([^\]]*)\]/m)?.[1] ?? '';
-const fallbackModels = [...fallbackBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
 const ciMembers = (pool.pool ?? []).filter((member) => member.pr_agent?.model);
 const primaries = ciMembers.filter((member) => member.role === 'primary');
-
 check(
   primaries.length === 1,
   `${POOL}: expected exactly one CI member with role="primary", found ${primaries.length}`,
 );
-if (primaries.length === 1) {
-  check(
-    primaries[0].pr_agent.model === primaryModel,
-    `${PR_AGENT_TOML}: model is "${primaryModel}" but ${POOL} marks ` +
-      `"${primaries[0].pr_agent.model}" as primary — the registry and CI disagree about which model leads`,
-  );
-}
 for (const member of ciMembers) {
   if (member.role === 'primary') continue;
   check(
     member.role === 'fallback',
     `${POOL}: ${member.id} is wired to CI but its role is "${member.role}", not "fallback"`,
-  );
-  check(
-    fallbackModels.includes(member.pr_agent.model),
-    `${PR_AGENT_TOML}: fallback_models omits "${member.pr_agent.model}", which ${POOL} marks as a CI fallback`,
-  );
-}
-for (const model of fallbackModels) {
-  check(
-    ciMembers.some((member) => member.pr_agent.model === model),
-    `${PR_AGENT_TOML}: fallback_models names "${model}", which no ${POOL} member maps to CI`,
   );
 }
 for (const member of pool.pool ?? []) {
@@ -249,53 +221,40 @@ for (const member of pool.pool ?? []) {
   );
 }
 
-// The reviewer's time budget is arithmetic that rots silently. Two things must hold:
-// the prompt budget must sit BELOW the model capacity (otherwise the guardrail is inert
-// and every diff is sent whole), and the whole chain must fit inside the job's own
-// timeout (otherwise GitHub cancels mid-inference and reports a bare cancellation
-// instead of a review). Run 42562380120 measured both failures at once: a 97390-token
-// diff declared "under limit: 200000" and four consecutive 120s calls.
+// The prompt budget must sit BELOW the model capacity, otherwise the guardrail is inert
+// and every diff is sent whole (run 42562380120: a 97390-token diff declared "under
+// limit: 200000"). The capacity is the shared workflow's CONFIG__CUSTOM_MODEL_MAX_TOKENS,
+// set on every PR-Agent step at the pinned tag; re-check it when the pin moves. The
+// shared NaN step sets neither max_model_tokens nor ai_timeout, so both stay stated here.
+// The job's time budget is the shared workflow's too (a 12-minute NaN step with
+// retry_same_model_on_timeout off), so the chain arithmetic this file used to run
+// against the caller's timeout-minutes no longer has a caller value to read.
+const SHARED_MODEL_CAPACITY = 200000;
+const SHARED_CALLER =
+  /uses: mlorentedev\/ci-workflows\/\.github\/workflows\/pr-agent\.yml@[0-9a-f]{40} # v\d+\.\d+\.\d+$/m;
 const promptBudget = Number(toml.match(/^\s*max_model_tokens\s*=\s*(\d+)/m)?.[1]);
-const modelCapacity = Number(toml.match(/^\s*custom_model_max_tokens\s*=\s*(\d+)/m)?.[1]);
 const aiTimeout = Number(toml.match(/^\s*ai_timeout\s*=\s*(\d+)/m)?.[1]);
-const jobMinutes = Number(workflow.match(/^\s*timeout-minutes:\s*(\d+)/m)?.[1]);
 
 check(
-  Number.isFinite(promptBudget) && Number.isFinite(modelCapacity),
-  `${PR_AGENT_TOML}: max_model_tokens and custom_model_max_tokens must both be stated as integers`,
+  SHARED_CALLER.test(workflow),
+  `${PR_AGENT_WORKFLOW}: must call mlorentedev/ci-workflows' pr-agent.yml pinned by full SHA ` +
+    `with its tag beside it; the capacity above is only valid for that workflow`,
+);
+check(
+  Number.isFinite(promptBudget),
+  `${PR_AGENT_TOML}: max_model_tokens must be stated as an integer`,
 );
 check(
   Number.isFinite(aiTimeout),
   `${PR_AGENT_TOML}: [config] ai_timeout must be stated; without it PR-Agent silently ` +
     `uses upstream's 120s, which a reasoning-class model does not answer in`,
 );
-check(
-  Number.isFinite(jobMinutes),
-  `${PR_AGENT_WORKFLOW}: timeout-minutes must be stated as an integer`,
-);
-
-if (Number.isFinite(promptBudget) && Number.isFinite(modelCapacity)) {
+if (Number.isFinite(promptBudget)) {
   check(
-    promptBudget < modelCapacity,
-    `${PR_AGENT_TOML}: max_model_tokens (${promptBudget}) must be BELOW ` +
-      `custom_model_max_tokens (${modelCapacity}). At or above it the prompt guardrail never ` +
-      `fires and every diff is sent whole — the defect behind run 42562380120.`,
-  );
-}
-
-if (Number.isFinite(aiTimeout) && Number.isFinite(jobMinutes)) {
-  // pr_agent's litellm handler retries each model once, so the chain costs
-  // (1 + fallbacks) x 2 calls. The slack covers container setup and the guard below.
-  const ATTEMPTS_PER_MODEL = 2;
-  const SETUP_SLACK_SECONDS = 300;
-  const chainSize = 1 + fallbackModels.length;
-  const worstCase = chainSize * ATTEMPTS_PER_MODEL * aiTimeout + SETUP_SLACK_SECONDS;
-  check(
-    worstCase <= jobMinutes * 60,
-    `${PR_AGENT_WORKFLOW}: worst case is ${chainSize} model(s) x ${ATTEMPTS_PER_MODEL} attempts ` +
-      `x ${aiTimeout}s ai_timeout + ${SETUP_SLACK_SECONDS}s setup = ${worstCase}s, which exceeds ` +
-      `timeout-minutes: ${jobMinutes} (${jobMinutes * 60}s). GitHub would cancel the job ` +
-      `mid-inference. Raise timeout-minutes or lower ai_timeout.`,
+    promptBudget < SHARED_MODEL_CAPACITY,
+    `${PR_AGENT_TOML}: max_model_tokens (${promptBudget}) must be BELOW the shared ` +
+      `workflow's model capacity (${SHARED_MODEL_CAPACITY}). At or above it the prompt guardrail ` +
+      `never fires and every diff is sent whole — the defect behind run 42562380120.`,
   );
 }
 
