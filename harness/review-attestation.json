@@ -52,7 +52,7 @@
     "            that does not exist here, and this repo has no release-please: versions are CalVer",
     "            stamped from CHANGELOG.md by a human commit. Copying it would add an exemption that",
     "            can never legitimately fire, which is an author rule in disguise.",
-    "scripts/check-harness.sh asserts the two couplings that can silently rot: the trusted-association",
+    "scripts/check-harness.mjs asserts the two couplings that can silently rot: the trusted-association",
     "set against pr-agent.yml, and the classification contract against .pr_agent.toml."
   ],
   "reviewers": [
@@ -83,14 +83,14 @@
   "triage": {
     "marker": "## Review triage",
     "standing": ["OWNER", "MEMBER", "COLLABORATOR"],
-    "standing_why": "Who may write the record. A triage comment is what takes a PR out of `dotf pr triage-queue`, so a marker from any commenter would clear the disposition step a merge is held to. These are GitHub author_association values, and the same set .github/workflows/pr-agent.yml trusts before it will run a slash command from a comment — a public repository runs `issue_comment` in the base repo context with secrets available, so the two gates answer the same question and must not drift. scripts/check-harness.sh fails if they do.",
+    "standing_why": "Who may write the record. A triage comment is what takes a PR out of `dotf pr triage-queue`, so a marker from any commenter would clear the disposition step a merge is held to. These are GitHub author_association values, and the same set the shared PR-Agent job (mlorentedev/ci-workflows pr-agent.yml, called from .github/workflows/pr-agent.yml) trusts before it will run a slash command from a comment — a public repository runs `issue_comment` in the base repo context with secrets available, so the two gates answer the same question and must not drift. scripts/check-harness.mjs compares this set with the caller's concurrency list, which must equal the shared job's; ci-workflows tests that equality for the kit.",
     "why": "The heading the pr-review-triage skill records its dispositions under, matched at line start. Declared once here and read back by `dotf pr triage-queue`; review-attested.yml matches the same heading by regex (`^#+ *Review triage`), so a change here must be mirrored there. It is posted even when there was nothing to dispose of: 'CI green, no review findings' is a disposition, and leaving it unwritten is indistinguishable from nobody having looked. Measured here: #15 #22 #25 #27 #28 carry one."
   },
   "classification": {
     "prefix": "Class: ",
     "classes": ["REAL", "THEORETICAL", "SPECULATIVE"],
     "reviewers": ["github-actions"],
-    "why": "A finding's class is read from a whole line equal to prefix + class, never parsed out of prose: the SSOT measured PR-Agent writing the gradation as a header suffix, as the first word of the body, and sometimes not at all. A finding with no such line, or with two that disagree, is unclassified and goes to a human. `.pr_agent.toml` asks for exactly these lines in `extra_instructions`, and scripts/check-harness.sh fails if the two drift apart. `reviewers` names who is asked for the line: PR-Agent (github-actions) only, because CodeRabbit writes its own severity format and every one of its findings would read as unclassified. Naming the class is not a severity claim — REAL means a concrete trace was given, not that the finding is important."
+    "why": "A finding's class is read from a whole line equal to prefix + class, never parsed out of prose: the SSOT measured PR-Agent writing the gradation as a header suffix, as the first word of the body, and sometimes not at all. A finding with no such line, or with two that disagree, is unclassified and goes to a human. `.pr_agent.toml` asks for exactly these lines in `extra_instructions`, and scripts/check-harness.mjs fails if the two drift apart. `reviewers` names who is asked for the line: PR-Agent (github-actions) only, because CodeRabbit writes its own severity format and every one of its findings would read as unclassified. Naming the class is not a severity claim — REAL means a concrete trace was given, not that the finding is important."
   },
   "escape": {
     "label": "merged-unreviewed",
