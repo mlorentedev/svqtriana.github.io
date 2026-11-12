@@ -1,7 +1,8 @@
 ---
-id: lesson-011-picture-fallback-heavier-than-source
+id: "lesson-011-picture-fallback-heavier-than-source"
 type: lesson
 status: active
+title: "A fallback heavier than the original"
 created: "2026-11-05"
 owner: manu
 tags: [svqtriana, lesson]

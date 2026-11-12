@@ -1,7 +1,8 @@
 ---
-id: lesson-003-parent-toggle-does-not-undo-child
+id: "lesson-003-parent-toggle-does-not-undo-child"
 type: lesson
 status: active
+title: "Turning off a parent feature does not turn off what it turned on"
 created: "2026-09-05"
 owner: manu
 tags: [svqtriana, lesson]

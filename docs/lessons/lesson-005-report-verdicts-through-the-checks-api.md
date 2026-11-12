@@ -1,7 +1,8 @@
 ---
-id: lesson-005-report-verdicts-through-the-checks-api
+id: "lesson-005-report-verdicts-through-the-checks-api"
 type: lesson
 status: active
+title: "A gate that is its own job status can only answer once"
 created: "2026-09-05"
 owner: manu
 tags: [svqtriana, lesson]

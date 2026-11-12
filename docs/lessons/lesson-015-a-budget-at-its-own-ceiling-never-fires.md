@@ -1,7 +1,8 @@
 ---
-id: lesson-015-a-budget-at-its-own-ceiling-never-fires
+id: "lesson-015-a-budget-at-its-own-ceiling-never-fires"
 type: lesson
 status: active
+title: "A budget set at its own ceiling never fires"
 created: "2026-11-09"
 owner: manu
 tags: [svqtriana, lesson]

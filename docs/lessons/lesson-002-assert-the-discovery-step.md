@@ -1,7 +1,8 @@
 ---
-id: lesson-002-assert-the-discovery-step
+id: "lesson-002-assert-the-discovery-step"
 type: lesson
 status: active
+title: "A guard verified only against the case its author had in mind is not verified"
 created: "2026-09-05"
 owner: manu
 tags: [svqtriana, lesson]

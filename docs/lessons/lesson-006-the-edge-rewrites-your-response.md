@@ -1,7 +1,8 @@
 ---
-id: lesson-006-the-edge-rewrites-your-response
+id: "lesson-006-the-edge-rewrites-your-response"
 type: lesson
 status: active
+title: "The edge modifies your response after you write it"
 created: "2026-09-05"
 owner: manu
 tags: [svqtriana, lesson]

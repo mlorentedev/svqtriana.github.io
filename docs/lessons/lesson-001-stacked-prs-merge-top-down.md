@@ -1,7 +1,8 @@
 ---
-id: lesson-001-stacked-prs-merge-top-down
+id: "lesson-001-stacked-prs-merge-top-down"
 type: lesson
 status: active
+title: "Merging a stacked PR bottom-first orphans everything above it"
 created: "2026-09-04"
 owner: manu
 tags: [svqtriana, lesson]
