@@ -1,3 +1,13 @@
+---
+id: "lesson-016-a-check-that-runs-before-the-deploy"
+type: lesson
+status: active
+title: "A check that runs before the deploy measures the deploy"
+created: "2026-11-09"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A check that runs before the deploy measures the deploy
 
 ## What happened

@@ -1,3 +1,13 @@
+---
+id: "lesson-002-assert-the-discovery-step"
+type: lesson
+status: active
+title: "A guard verified only against the case its author had in mind is not verified"
+created: "2026-09-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A guard verified only against the case its author had in mind is not verified
 
 **2026-09-05.** A check asserted that every service-worker precache URL carried

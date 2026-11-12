@@ -1,3 +1,13 @@
+---
+id: "lesson-009-aria-label-hides-visible-text"
+type: lesson
+status: active
+title: "An `aria-label` replaces the visible text, it does not complete it"
+created: "2026-11-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # An `aria-label` replaces the visible text, it does not complete it
 
 ## What happened

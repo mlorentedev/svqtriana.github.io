@@ -1,3 +1,13 @@
+---
+id: "lesson-008-alpha-white-on-brand-red"
+type: lesson
+status: active
+title: "80 % white on red does not reach 4,5:1"
+created: "2026-11-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # 80 % white on red does not reach 4,5:1
 
 ## What happened

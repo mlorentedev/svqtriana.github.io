@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /*
  * Nothing overflows the viewport width on mobile, not even with the system font
- * enlarged. See docs/lessons/2026-11-08-grid-column-grows-to-longest-word.md.
+ * enlarged. See docs/lessons/lesson-014-grid-column-grows-to-longest-word.md.
  */
 const PAGES = ['/', '/nosotros', '/productos', '/media'];
 const CASES = [

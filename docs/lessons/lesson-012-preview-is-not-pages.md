@@ -1,3 +1,13 @@
+---
+id: "lesson-012-preview-is-not-pages"
+type: lesson
+status: active
+title: "The Astro preview is not GitHub Pages"
+created: "2026-11-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # The Astro preview is not GitHub Pages
 
 ## What happened

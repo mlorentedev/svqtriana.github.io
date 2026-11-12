@@ -71,7 +71,7 @@ terraform -chdir=infra/cloudflare validate
 
 CI (`.github/workflows/checks.yml`) runs types, build, `dist/` invariants,
 Playwright, Lighthouse, `terraform validate` and the repository guards
-(`check-harness.mjs`, `check-lessons.sh`, `check-actions-pinned.sh`) on every
+(`check-harness.mjs`, `check-actions-pinned.sh`) on every
 pull request and every push to `main`. `deploy.yml` runs on every push to
 `main`, so **merging publishes**: there is no separate release step. It also
 accepts `workflow_dispatch` for a manual re-publish. Every check exists because
@@ -135,7 +135,7 @@ Things that look like mistakes and are not, or that look harmless and are not.
 
 - [`docs/adr/`](docs/adr/) — the architectural decisions. Start with [`adr-001`](docs/adr/adr-001-github-pages-origin-cloudflare-in-front.md): why GitHub Pages serves the site and Cloudflare sits in front of it.
 - [`docs/root-files.md`](docs/root-files.md) — why certain files live in `public/` and why `sw.js` is still there.
-- [`docs/lessons/_index.md`](docs/lessons/_index.md) — what broke, the mechanism, and what catches it now.
+- [`docs/lessons/`](docs/lessons/) — what broke, the mechanism, and what catches it now.
 - [`docs/runbooks/maintenance.md`](docs/runbooks/maintenance.md) — the recurring work.
 - [`infra/cloudflare/README.md`](infra/cloudflare/README.md) — why the headers live at the edge.
 - [`CHANGELOG.md`](CHANGELOG.md) — what changes in each deploy.

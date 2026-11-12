@@ -1,3 +1,13 @@
+---
+id: "lesson-004-pruner-dropped-the-licence"
+type: lesson
+status: active
+title: "The pruner read the licence banner as a selector list"
+created: "2026-09-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # The pruner read the licence banner as a selector list
 
 **2026-09-05.** `css/bootstrap.css` shipped without Bootstrap's MIT copyright
