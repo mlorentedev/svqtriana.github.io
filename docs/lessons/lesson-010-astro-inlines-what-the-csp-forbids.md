@@ -1,3 +1,12 @@
+---
+id: lesson-010-astro-inlines-what-the-csp-forbids
+type: lesson
+status: active
+created: "2026-11-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # Astro inlines what the CSP forbids
 
 ## What happened

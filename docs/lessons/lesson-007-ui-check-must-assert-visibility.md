@@ -1,3 +1,12 @@
+---
+id: lesson-007-ui-check-must-assert-visibility
+type: lesson
+status: active
+created: "2026-09-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A UI check must assert visibility, and run at the width where the answer can be no
 
 **2026-09-05.** The JS-built nav was replaced with static HTML and the

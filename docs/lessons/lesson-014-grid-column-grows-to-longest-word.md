@@ -1,3 +1,12 @@
+---
+id: lesson-014-grid-column-grows-to-longest-word
+type: lesson
+status: active
+created: "2026-11-08"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A grid column grows to the longest word
 
 ## What happened

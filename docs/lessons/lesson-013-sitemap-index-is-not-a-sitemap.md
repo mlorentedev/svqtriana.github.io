@@ -1,3 +1,12 @@
+---
+id: lesson-013-sitemap-index-is-not-a-sitemap
+type: lesson
+status: active
+created: "2026-11-05"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # Astro's sitemap is an index, not a sitemap
 
 ## What happened

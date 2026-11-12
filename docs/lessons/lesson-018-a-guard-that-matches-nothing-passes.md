@@ -1,3 +1,12 @@
+---
+id: lesson-018-a-guard-that-matches-nothing-passes
+type: lesson
+status: active
+created: "2026-11-09"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A guard whose glob matches nothing passes forever
 
 ## What happened

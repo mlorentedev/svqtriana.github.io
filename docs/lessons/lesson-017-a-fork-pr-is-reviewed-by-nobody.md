@@ -1,3 +1,12 @@
+---
+id: lesson-017-a-fork-pr-is-reviewed-by-nobody
+type: lesson
+status: active
+created: "2026-11-09"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # A fork PR reaches the maintainer with no review at all
 
 ## What happened

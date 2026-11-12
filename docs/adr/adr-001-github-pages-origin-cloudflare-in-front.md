@@ -140,4 +140,4 @@ that eliminated the obvious alternative.
 - [`docs/runbooks/preview-cloudflare.md`](../runbooks/preview-cloudflare.md) — the abandoned preview procedure, marked not in use.
 - [`infra/cloudflare/`](../../infra/cloudflare/) — where the headers actually live.
 - [`.github/workflows/deploy.yml`](../../.github/workflows/deploy.yml) — the build and publish path.
-- [`docs/lessons/2026-11-09-a-check-that-runs-before-the-deploy.md`](../lessons/2026-11-09-a-check-that-runs-before-the-deploy.md) — the gate that verified production before the deploy had finished.
+- [`docs/lessons/lesson-016-a-check-that-runs-before-the-deploy.md`](../lessons/lesson-016-a-check-that-runs-before-the-deploy.md) — the gate that verified production before the deploy had finished.

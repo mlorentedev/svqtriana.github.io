@@ -1,3 +1,12 @@
+---
+id: lesson-001-stacked-prs-merge-top-down
+type: lesson
+status: active
+created: "2026-09-04"
+owner: manu
+tags: [svqtriana, lesson]
+---
+
 # Merging a stacked PR bottom-first orphans everything above it
 
 **2026-09-04.** Three stacked PRs: #5 (feat -> main), #6 (chore -> feat),
