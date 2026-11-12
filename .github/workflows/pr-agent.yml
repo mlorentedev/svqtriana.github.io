@@ -46,7 +46,8 @@ jobs:
       skip_branch_prefixes: release-please--
     # PR_AGENT_ANTHROPIC_API_KEY is withheld on purpose: this repository's standing rule
     # keeps Anthropic models out of its reviewers (the reviewer must not be the
-    # implementer; scripts/check-harness.mjs enforces it on the pool). Without the key
-    # the shared job draws no Anthropic member. Lift the rule first, then pass the key.
+    # implementer; scripts/check-harness.mjs enforces it on this repository's pool,
+    # not on the embedded pool the shared job draws from). Without the key the shared
+    # job draws no Anthropic member. Lift the rule first, then pass the key.
     secrets:
       NAN_API_KEY: ${{ secrets.NAN_API_KEY }}

@@ -114,8 +114,10 @@ for (const reviewer of attestation.reviewers ?? []) {
 }
 
 // triage.standing is what stops an arbitrary commenter clearing the disposition
-// step a merge is held to, and pr-agent.yml asks the same question of the same
-// set before running a slash command from a public comment. They must not drift.
+// step a merge is held to, and the shared PR-Agent job asks the same question of
+// the same set before running a slash command from a public comment. This reads
+// the caller's concurrency list, which must equal the shared job's (ci-workflows
+// tests that for the kit), so the shared gate itself is not read here.
 const standing = attestation.triage?.standing ?? [];
 const trusted = workflow.match(/contains\(fromJSON\('\[([^\]]*)\]'\)/);
 check(trusted !== null, `${PR_AGENT_WORKFLOW}: no author_association allow-list found`);
@@ -229,16 +231,18 @@ for (const member of pool.pool ?? []) {
 // The job's time budget is the shared workflow's too (a 12-minute NaN step with
 // retry_same_model_on_timeout off), so the chain arithmetic this file used to run
 // against the caller's timeout-minutes no longer has a caller value to read.
+// The capacity is tied to the exact pin it was read from, so a pin bump fails here
+// until someone re-reads CONFIG__CUSTOM_MODEL_MAX_TOKENS at the new SHA and moves both.
 const SHARED_MODEL_CAPACITY = 200000;
 const SHARED_CALLER =
-  /uses: mlorentedev\/ci-workflows\/\.github\/workflows\/pr-agent\.yml@[0-9a-f]{40} # v\d+\.\d+\.\d+$/m;
+  /uses: mlorentedev\/ci-workflows\/\.github\/workflows\/pr-agent\.yml@2355330358344bb08c0b7a305be4ed6488f23d0c # v0\.6\.0$/m;
 const promptBudget = Number(toml.match(/^\s*max_model_tokens\s*=\s*(\d+)/m)?.[1]);
 const aiTimeout = Number(toml.match(/^\s*ai_timeout\s*=\s*(\d+)/m)?.[1]);
 
 check(
   SHARED_CALLER.test(workflow),
-  `${PR_AGENT_WORKFLOW}: must call mlorentedev/ci-workflows' pr-agent.yml pinned by full SHA ` +
-    `with its tag beside it; the capacity above is only valid for that workflow`,
+  `${PR_AGENT_WORKFLOW}: must call mlorentedev/ci-workflows' pr-agent.yml at the pin ` +
+    `SHARED_CALLER names; on a pin bump, re-read the capacity at the new SHA and move both`,
 );
 check(
   Number.isFinite(promptBudget),
