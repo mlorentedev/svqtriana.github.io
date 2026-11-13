@@ -226,11 +226,11 @@ for (const member of pool.pool ?? []) {
 // The prompt budget must sit BELOW the model capacity, otherwise the guardrail is inert
 // and every diff is sent whole (run 42562380120: a 97390-token diff declared "under
 // limit: 200000"). The capacity is the shared workflow's CONFIG__CUSTOM_MODEL_MAX_TOKENS,
-// set on every PR-Agent step at the pinned tag; re-check it when the pin moves. The
-// shared NaN step sets neither max_model_tokens nor ai_timeout, so both stay stated here.
-// The job's time budget is the shared workflow's too (a 12-minute NaN step with
-// retry_same_model_on_timeout off), so the chain arithmetic this file used to run
-// against the caller's timeout-minutes no longer has a caller value to read.
+// set on every PR-Agent step at the pinned tag; re-check it when the pin moves. Since
+// v0.7.0 the shared NaN step sets max_model_tokens (32000), ai_timeout (300) and
+// num_retries (0) itself, above this toml, and its own test keeps them inside its
+// 17-minute bound. The values here now reach only the Anthropic steps, which read
+// them from this toml, so they stay stated and the budget stays below the capacity.
 // The capacity is tied to the exact pin it was read from, so a pin bump fails here
 // until someone re-reads CONFIG__CUSTOM_MODEL_MAX_TOKENS at the new SHA and moves both.
 const SHARED_MODEL_CAPACITY = 200000;
