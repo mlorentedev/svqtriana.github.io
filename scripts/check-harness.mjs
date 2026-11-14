@@ -235,7 +235,7 @@ for (const member of pool.pool ?? []) {
 // until someone re-reads CONFIG__CUSTOM_MODEL_MAX_TOKENS at the new SHA and moves both.
 const SHARED_MODEL_CAPACITY = 200000;
 const SHARED_CALLER =
-  /uses: mlorentedev\/ci-workflows\/\.github\/workflows\/pr-agent\.yml@c05dd6f3fd1691b3b2ee4e0f78305f0cf150e402 # v0\.7\.0$/m;
+  /uses: mlorentedev\/ci-workflows\/\.github\/workflows\/pr-agent\.yml@9b34f5b2815a3090d77d7589ef8bcc5087045544 # v0\.8\.0$/m;
 const promptBudget = Number(toml.match(/^\s*max_model_tokens\s*=\s*(\d+)/m)?.[1]);
 const aiTimeout = Number(toml.match(/^\s*ai_timeout\s*=\s*(\d+)/m)?.[1]);
 
